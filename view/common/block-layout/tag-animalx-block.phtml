@@ -1,0 +1,1424 @@
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
+<!-- Ligação ao CSS externo (com quebra de cache para desenvolvimento) -->
+<link rel="stylesheet" href="<?php $this->headLink()->appendStylesheet($this->assetUrl('css/animalx.css', 'TagAnimalx')); ?>">
+
+<div id="animalx-gamification-wrapper" >
+
+    <div id="animalx-wizard-container" style="position: relative !important; overflow: hidden !important;">
+        
+        <nav class="animalx-top-nav">
+      <button onclick="toggleFullscreen()" class="animalx-nav-circle" title="Ecrã Inteiro" style="cursor: pointer;">
+            ⛶
+        </button>
+    </nav>
+
+        <div class="animalx-image-container" style="display:none;"></div>
+
+        <div id="animalx-screens-wrapper">
+            <!-- ECRÃ INICIAL -->
+            <div id="homescreen" class="animalx-screen active">
+                <div class="animalx-homescreen-content">
+                    <img class="animalx-logo-main" src="<?php echo $this->assetUrl('img/animalx_corvo.png', 'TagAnimalx'); ?>" alt="Logo Tag ANIMALx">
+                    <h1 class="animalx-title-main">TAG ANIMALx</h1>
+                    <h2 class="animalx-subtitle-main">Ajuda-nos a descobrir os animais nas representações do Museu de Lisboa!</h2>
+                    
+                    <div class="animalx-actions-vertical">
+                        <button class="animalx-btn animalx-btn-home" onclick="irParaTela('screen-explanation')">COMEÇAR</button>
+                        <button class="animalx-btn animalx-btn-home" onclick="abrirGuia()">INSTRUÇÕES</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOBRE O PROJETO/DISCLAIMER -->
+            <div id="screen-explanation" class="animalx-screen">
+              <div class="animalx-disclaimer-card">
+                  
+                  <h2 class="animalx-disclaimer-title">O PROJETO</h2>
+                  
+                  <div class="animalx-disclaimer-grid">
+                      <!-- COLUNA ESQUERDA: Texto -->
+                      <div class="animalx-disclaimer-content">
+                          <p class="animalx-disclaimer-text">
+                              <strong>Bem-vindo ao Tag ANIMALx!</strong> Como sabemos, os animais estão por toda a parte da história de Lisboa. Nesta iniciativa de Ciência Cidadã, os utilizadores podem ajudar a equipa do projeto Animais de Lisboa (ANIMALx) a identificar os animais presentes nos objetos e representações na coleção do Museu de Lisboa.
+                          </p>
+                          <p class="animalx-disclaimer-alert">
+                              <strong>DISCLAIMER:</strong> O software do Tag ANIMALx ainda está em desenvolvimento. Neste momento ainda não conseguimos guardar os pontos de cada sessão, para registar o progresso dos jogadores. No entanto, podes tirar uma foto e partilhar com a #TagANIMALx, a equipa do projeto estará atenta às redes sociais!
+                          </p>
+                      </div>
+                      
+                      <!-- COLUNA DIREITA: Caixa Cinzenta -->
+                      <div class="animalx-disclaimer-media"></div>
+                  </div>
+
+                  <!-- RODAPÉ: Botão Seguinte -->
+                  <div class="animalx-disclaimer-footer">
+                      <button class="animalx-btn-next"onclick="irParaTela('screen-registo')">
+                          <span>SEGUINTE</span>
+                          <img src="<?php echo $this->assetUrl('img/seta_bege_direita.png', 'TagAnimalx'); ?>" alt="Seta Direita">
+                      </button>
+                  </div>  
+              </div>
+          </div>
+
+          <!-- REGISTO DO UTILIZADOR -->
+        <div id="screen-registo" class="animalx-screen">
+
+            <div class="animalx-wrapper-principal">
+                <!-- Título Principal -->
+                <h1 class="animalx-titulo">Primeiro Passo: Regista-te como Investigador ANIMALx!</h1>
+                
+                <!-- Layout Dividido (Texto/Formulário à esquerda, Imagem à direita) -->
+                <div class="animalx-layout-colunas">
+                    
+                    <!-- Coluna da Esquerda (Texto e Formulário) -->
+                    <div class="animalx-coluna-esquerda">
+                        <p class="animalx-texto-base">
+                            A nossa base de dados está a crescer graças à tua ajuda, e todas as descobertas merecem ser reconhecidas!<br><br>
+                            Queres que o teu nome fique para sempre associado aos animais que ajudares a catalogar nas coleções do Museu de Lisboa?<br><br>
+                            Ao criares o teu perfil de Investigador ANIMALx, o teu trabalho ganha uma assinatura. Assim, quando os especialistas receberem os teus registos validados, saberão exatamente quem foi o detetive responsável por essa descoberta.
+                        </p>
+                        
+                        <!-- Formulário de Registo -->
+                        <div class="animalx-form-container">
+                            <div class="form-group">
+                                <label for="investigador-nome" class="form-label">Primeiro e último nome</label>
+                                <input type="text" id="investigador-nome" name="nome" placeholder="Escreve aqui o teu nome" class="form-input">
+                            </div>
+                            
+                            <hr class="form-divider">
+                            
+                            <div class="options-container">
+                                <label class="option-card">
+                                    <input type="radio" name="modo_participacao" value="registar" checked>
+                                    <span class="custom-radio"></span>
+                                    <span class="option-text">Registar e Assinar as<br>minhas Descobertas</span>
+                                </label>
+
+                                <label class="option-card">
+                                    <input type="radio" name="modo_participacao" value="anonimo">
+                                    <span class="custom-radio"></span>
+                                    <span class="option-text">Explorar anonimamente</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Coluna da Direita (Imagem do Caderno) -->
+                    <div class="animalx-coluna-direita">
+                        <img class="animalx-imagem-caderno" src="<?php echo $this->assetUrl('img/ilustracao_1.png', 'TagAnimalx'); ?>" alt="Caderno de Campo ANIMALx">
+                    </div>
+                    
+                </div>
+
+                <!-- Secção de Privacidade e Consentimento -->
+                <div class="animalx-seccao-privacidade">
+                    <p class="animalx-texto-privacidade">
+                        Como em qualquer arquivo oficial, temos regras importantes de segurança e privacidade.<br>
+                        Para guardarmos o teu nome e associarmos as tuas descobertas ao teu perfil, precisamos da tua autorização (ou da de um adulto, se fores mais novo).
+                    </p>
+                    
+                    <label class="animalx-label-consentimento">
+                        <input type="checkbox" id="consentimento-dados">
+                        <span class="animalx-custom-checkbox"></span>
+                        <span class="animalx-texto-consentimento">
+                            Li o Formulário de Consentimento e Privacidade e autorizo a que o projeto ANIMALx guarde e reutilize os meus dados para reconhecer as minhas descobertas no âmbito da iniciativa Tag ANIMALx.
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Navegação (Botões Anterior / Seguinte) -->
+                <div class="animalx-navegacao">
+                        <button class="animalx-btn-prev" onclick="irParaTela('screen-explanation')">
+                            <img src="<?php echo $this->assetUrl('img/seta_bege_esquerda.png', 'TagAnimalx'); ?>" alt="Seta Esquerda">
+                            <span>ANTERIOR</span>
+                        </button>
+
+                        <button class="animalx-btn-next" onclick="irParaTela('screen-formulario')">
+                            <span>SEGUINTE</span>
+                            <img src="<?php echo $this->assetUrl('img/seta_bege_direita.png', 'TagAnimalx'); ?>" alt="Seta Direita">
+                        </button>
+                
+                </div>
+
+
+          </div>
+        </div>
+        <div id="screen-formulario" class="animalx-screen">
+                    <div class="animalx-conteiner-perguntas">
+                        
+                        <!-- Os 3 Ícones de Topo -->
+                        <div class="animalx-form-header">
+                            <button class="animalx-icon-btn" title="Ajuda" onclick="abrirGuia()"><img src="<?php echo $this->assetUrl('img/botao_instrucoes.png', 'TagAnimalx'); ?>" alt="Ajuda"></button>
+                            <button class="animalx-icon-btn" title="Caderno" onclick="abrirCaderno()"><img src="<?php echo $this->assetUrl('img/botão_caderno_campo.png', 'TagAnimalx'); ?>" alt="Caderno"></button>
+                            <button class="animalx-icon-btn" title="Sair" onclick="abrirModalSair()"><img src="<?php echo $this->assetUrl('img/botão_saída_circulo.png', 'TagAnimalx'); ?>" alt="Sair"></button>
+                        </div>
+
+                        <!-- 2. PARTE FIXA (Nunca muda, o utilizador pode fazer zoom à vontade) -->
+                        <div class="animalx-area-imagem-fixa">
+                            <div id="projetor-iiif"  >
+                              <!-- Inserir script para visualização de imagem IIIF -->
+                            </div>
+                            <div class="animalx-imagem-legenda">
+                                "Vista do Aqueduto das Águas Livres..." <!-- Inserir script legenda dinâmica -->
+                            </div>
+                        </div>
+
+                        <!-- ==========================================
+                            PASSO 1: HÁ ALGUM ANIMAL NA IMAGEM?
+                        =========================================== -->
+                        <div id="passo-1" class="animalx-form-step" style="display: flex; position: relative !important; overflow: hidden !important;"> <!-- Começa visível -->
+                            
+                            <!-- Bloco da Pergunta -->
+                            <div class="animalx-pergunta-row">
+                                <h2 class="animalx-titulo-pergunta">PERGUNTA 1 – Há algum animal na imagem?</h2>
+                                
+                                <div id="opcoes-p1" class="animalx-botoes-sim-nao">
+                                    <!-- Se for NÃO, ignora o registo -->
+                                    <button class="animalx-btn-opcao" onclick="acaoBotaoNao(this, 'opcoes-p1')">SIM</button>
+                                    <!-- Se for SIM, avança para a Pergunta 2 -->
+                                    <button class="animalx-btn-opcao" onclick="acaoBotaoSim(this, 'opcoes-p1')">NÃO</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div id="passo-2" class="animalx-form-step" style="display: none;">
+    
+                            <!-- Layout de Duas Colunas para a Pergunta 2 -->
+                            <div class="animalx-pergunta-row animalx-layout-p2">
+                                
+                                <!-- Coluna da Esquerda: Texto -->
+                                <div class="animalx-coluna-texto">
+                                    <h2 class="animalx-titulo-pergunta">PERGUNTA 2 – Que animal se encontra na imagem?</h2>
+                                    <p class="animalx-nota">
+                                        NOTA: escolher apenas UM dos animais na seguinte lista. Se houver mais que um animal, poderá ser identificado mais à frente. Em caso de dúvida sobre que animal está representado, selecionar "Não sei".
+                                    </p>
+                                </div>
+                                
+                                <!-- Coluna da Direita: Dropdown e Não Sei -->
+                                <div class="animalx-coluna-interacao">
+                                    
+                                    <div class="animalx-dropdown-pesquisa">
+                                        <!-- O input pesquisável com as tuas cores -->
+                                        <input type="text" id="input-animal" class="animalx-input-roxo" placeholder="Selecionar" onkeyup="filtrarAnimais()" onclick="mostrarLista()">
+                                        
+                                        <!-- A lista que construímos (podes colar aqui a tua lista completa de <li>) -->
+                                        <ul id="lista-animais" class="animalx-lista-opcoes">
+                                            <li onclick="selecionarAnimal(this)">Abelha</li>
+                                            <li onclick="selecionarAnimal(this)">Açor</li>
+                                            <li onclick="selecionarAnimal(this)">Águia</li>
+                                            <li onclick="selecionarAnimal(this)">Albatroz</li>
+                                            <li onclick="selecionarAnimal(this)">Andorinha</li>
+                                            <li onclick="selecionarAnimal(this)">Antílope</li>
+                                            <li onclick="selecionarAnimal(this)">Arara</li>
+                                            <li onclick="selecionarAnimal(this)">Aranha</li>
+                                            <li onclick="selecionarAnimal(this)">Arenque</li>
+                                            <li onclick="selecionarAnimal(this)">Atum</li>
+                                            <li onclick="selecionarAnimal(this)">Ave</li>
+                                            <li onclick="selecionarAnimal(this)">Ave de capoeira</li>
+                                            <li onclick="selecionarAnimal(this)">Ave de rapina</li>
+                                            <li onclick="selecionarAnimal(this)">Azevia</li>
+                                            <li onclick="selecionarAnimal(this)">Bacalhau</li>
+                                            <li onclick="selecionarAnimal(this)">Baleia</li>
+                                            <li onclick="selecionarAnimal(this)">Beija-flor</li>
+                                            <li onclick="selecionarAnimal(this)">Bestas (animais de carga)</li>
+                                            <li onclick="selecionarAnimal(this)">Besouro</li>
+                                            <li onclick="selecionarAnimal(this)">Bicho da Seda</li>
+                                            <li onclick="selecionarAnimal(this)">Bode</li>
+                                            <li onclick="selecionarAnimal(this)">Boi</li>
+                                            <li onclick="selecionarAnimal(this)">Boi de Angola</li>
+                                            <li onclick="selecionarAnimal(this)">Borboleta</li>
+                                            <li onclick="selecionarAnimal(this)">Burro</li>
+                                            <li onclick="selecionarAnimal(this)">Búzio</li>
+                                            <li onclick="selecionarAnimal(this)">Cão</li>
+                                            <li onclick="selecionarAnimal(this)">Cabra</li>
+                                            <li onclick="selecionarAnimal(this)">Cação</li>
+                                            <li onclick="selecionarAnimal(this)">Camaleão</li>
+                                            <li onclick="selecionarAnimal(this)">Camarão</li>
+                                            <li onclick="selecionarAnimal(this)">Camelo</li>
+                                            <li onclick="selecionarAnimal(this)">Canário</li>
+                                            <li onclick="selecionarAnimal(this)">Caracol</li>
+                                            <li onclick="selecionarAnimal(this)">Caramujo</li>
+                                            <li onclick="selecionarAnimal(this)">Caranguejo</li>
+                                            <li onclick="selecionarAnimal(this)">Carapau</li>
+                                            <li onclick="selecionarAnimal(this)">Carneiro</li>
+                                            <li onclick="selecionarAnimal(this)">Cavalo</li>
+                                            <li onclick="selecionarAnimal(this)">Cavalo-marinho</li>
+                                            <li onclick="selecionarAnimal(this)">Cegonha</li>
+                                            <li onclick="selecionarAnimal(this)">Cervídeo</li>
+                                            <li onclick="selecionarAnimal(this)">Chita</li>
+                                            <li onclick="selecionarAnimal(this)">Choco</li>
+                                            <li onclick="selecionarAnimal(this)">Cisne</li>
+                                            <li onclick="selecionarAnimal(this)">Cobra</li>
+                                            <li onclick="selecionarAnimal(this)">Coelho</li>
+                                            <li onclick="selecionarAnimal(this)">Colhereiro</li>
+                                            <li onclick="selecionarAnimal(this)">Concha</li>
+                                            <li onclick="selecionarAnimal(this)">Coral</li>
+                                            <li onclick="selecionarAnimal(this)">Coruja</li>
+                                            <li onclick="selecionarAnimal(this)">Corvo</li>
+                                            <li onclick="selecionarAnimal(this)">Craca</li>
+                                            <li onclick="selecionarAnimal(this)">Crocodilo</li>
+                                            <li onclick="selecionarAnimal(this)">Cucios</li>
+                                            <li onclick="selecionarAnimal(this)">Dragão da Índia</li>
+                                            <li onclick="selecionarAnimal(this)">Dromedário</li>
+                                            <li onclick="selecionarAnimal(this)">Elefante</li>
+                                            <li onclick="selecionarAnimal(this)">Escaravelho</li>
+                                            <li onclick="selecionarAnimal(this)">Escorpião</li>
+                                            <li onclick="selecionarAnimal(this)">Esquilo</li>
+                                            <li onclick="selecionarAnimal(this)">Falcão</li>
+                                            <li onclick="selecionarAnimal(this)">Faisão</li>
+                                            <li onclick="selecionarAnimal(this)">Gado bovino</li>
+                                            <li onclick="selecionarAnimal(this)">Gaivota</li>
+                                            <li onclick="selecionarAnimal(this)">Galinha/Galo</li>
+                                            <li onclick="selecionarAnimal(this)">Gamo</li>
+                                            <li onclick="selecionarAnimal(this)">Ganso</li>
+                                            <li onclick="selecionarAnimal(this)">Garça</li>
+                                            <li onclick="selecionarAnimal(this)">Gato</li>
+                                            <li onclick="selecionarAnimal(this)">Gazela</li>
+                                            <li onclick="selecionarAnimal(this)">Girafa</li>
+                                            <li onclick="selecionarAnimal(this)">Golfinho</li>
+                                            <li onclick="selecionarAnimal(this)">Guaxinim</li>
+                                            <li onclick="selecionarAnimal(this)">Hipopótamo</li>
+                                            <li onclick="selecionarAnimal(this)">Inseto</li>
+                                            <li onclick="selecionarAnimal(this)">Jacaré</li>
+                                            <li onclick="selecionarAnimal(this)">Jaguar</li>
+                                            <li onclick="selecionarAnimal(this)">Javali</li>
+                                            <li onclick="selecionarAnimal(this)">Lagarto</li>
+                                            <li onclick="selecionarAnimal(this)">Lagosta</li>
+                                            <li onclick="selecionarAnimal(this)">Lagostim</li>
+                                            <li onclick="selecionarAnimal(this)">Leão</li>
+                                            <li onclick="selecionarAnimal(this)">Leão-marinho</li>
+                                            <li onclick="selecionarAnimal(this)">Lebre</li>
+                                            <li onclick="selecionarAnimal(this)">Leopardo</li>
+                                            <li onclick="selecionarAnimal(this)">Lince</li>
+                                            <li onclick="selecionarAnimal(this)">Lobo</li>
+                                            <li onclick="selecionarAnimal(this)">Lontra</li>
+                                            <li onclick="selecionarAnimal(this)">Louva-a-Deus</li>
+                                            <li onclick="selecionarAnimal(this)">Macaco</li>
+                                            <li onclick="selecionarAnimal(this)">Manatim</li>
+                                            <li onclick="selecionarAnimal(this)">Marisco</li>
+                                            <li onclick="selecionarAnimal(this)">Mexilhão</li>
+                                            <li onclick="selecionarAnimal(this)">Mosca</li>
+                                            <li onclick="selecionarAnimal(this)">Mosquito</li>
+                                            <li onclick="selecionarAnimal(this)">Mula</li>
+                                            <li onclick="selecionarAnimal(this)">Onça</li>
+                                            <li onclick="selecionarAnimal(this)">Orca</li>
+                                            <li onclick="selecionarAnimal(this)">Ostra</li>
+                                            <li onclick="selecionarAnimal(this)">Ovelha</li>
+                                            <li onclick="selecionarAnimal(this)">Papagaio</li>
+                                            <li onclick="selecionarAnimal(this)">Pardal</li>
+                                            <li onclick="selecionarAnimal(this)">Pargo</li>
+                                            <li onclick="selecionarAnimal(this)">Pato</li>
+                                            <li onclick="selecionarAnimal(this)">Pavão</li>
+                                            <li onclick="selecionarAnimal(this)">Peixe</li>
+                                            <li onclick="selecionarAnimal(this)">Peixota</li>
+                                            <li onclick="selecionarAnimal(this)">Pelicano</li>
+                                            <li onclick="selecionarAnimal(this)">Perdiz</li>
+                                            <li onclick="selecionarAnimal(this)">Peru</li>
+                                            <li onclick="selecionarAnimal(this)">Pescada</li>
+                                            <li onclick="selecionarAnimal(this)">Piolho</li>
+                                            <li onclick="selecionarAnimal(this)">Polvo</li>
+                                            <li onclick="selecionarAnimal(this)">Pombo</li>
+                                            <li onclick="selecionarAnimal(this)">Porco</li>
+                                            <li onclick="selecionarAnimal(this)">Pulga</li>
+                                            <li onclick="selecionarAnimal(this)">Puma</li>
+                                            <li onclick="selecionarAnimal(this)">Rã</li>
+                                            <li onclick="selecionarAnimal(this)">Raia</li>
+                                            <li onclick="selecionarAnimal(this)">Raposa</li>
+                                            <li onclick="selecionarAnimal(this)">Ratazana</li>
+                                            <li onclick="selecionarAnimal(this)">Rato</li>
+                                            <li onclick="selecionarAnimal(this)">Rela</li>
+                                            <li onclick="selecionarAnimal(this)">Rinoceronte</li>
+                                            <li onclick="selecionarAnimal(this)">Ruivo</li>
+                                            <li onclick="selecionarAnimal(this)">Sapo</li>
+                                            <li onclick="selecionarAnimal(this)">Sardinha</li>
+                                            <li onclick="selecionarAnimal(this)">Sável</li>
+                                            <li onclick="selecionarAnimal(this)">Serpente</li>
+                                            <li onclick="selecionarAnimal(this)">Solha</li>
+                                            <li onclick="selecionarAnimal(this)">Tainha</li>
+                                            <li onclick="selecionarAnimal(this)">Tartaruga</li>
+                                            <li onclick="selecionarAnimal(this)">Tigre</li>
+                                            <li onclick="selecionarAnimal(this)">Toupeira</li>
+                                            <li onclick="selecionarAnimal(this)">Traça</li>
+                                            <li onclick="selecionarAnimal(this)">Tubarão</li>
+                                            <li onclick="selecionarAnimal(this)">Urso</li>
+                                            <li onclick="selecionarAnimal(this)">Urso-polar</li>
+                                            <li onclick="selecionarAnimal(this)">Urso-preguiça</li>
+                                            <li onclick="selecionarAnimal(this)">Vaca</li>
+                                            <li onclick="selecionarAnimal(this)">Vespa</li>
+                                            <li onclick="selecionarAnimal(this)">Vieira</li>
+                                            <li onclick="selecionarAnimal(this)">Zebra</li>
+                                            <li onclick="selecionarAnimal(this)">Zebra-comum</li>
+                                            <li onclick="selecionarAnimal(this)">Zebu</li>
+                                            <li onclick="selecionarAnimal(this)">Zebro</li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- O botão de rádio "Não Sei" -->
+                                    <label class="animalx-radio-label">
+                                        <input type="radio" name="animal_desconhecido" id="check-nao-sei" onclick="selecionarNaoSei()">
+                                        <span class="animalx-radio-custom"></span>
+                                        Não sei
+                                    </label>
+
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="passo-3" class="animalx-form-step" style="display: none;">
+        
+                            <!-- Reutilizamos a classe animalx-layout-p2 para manter as duas colunas perfeitas -->
+                            <div class="animalx-pergunta-row animalx-layout-p2">
+                                
+                                <!-- Coluna da Esquerda: Texto da Pergunta -->
+                                <div class="animalx-coluna-texto">
+                                    <h2 class="animalx-titulo-pergunta">PERGUNTA 3 – Na imagem aparece um animal ou vários da mesma espécie?</h2>
+                                </div>
+                                
+                                <!-- Coluna da Direita: Dropdown e Não Sei -->
+                                <div class="animalx-coluna-interacao">
+                                    
+                                    <div class="animalx-dropdown-pesquisa">
+                                        <!-- O input com as tuas cores. Repara no 'readonly' no final! -->
+                                        <input type="text" id="input-quantidade" class="animalx-input-roxo" placeholder="Selecionar" onclick="mostrarListaQuantidade()" readonly>
+                                        
+                                        <!-- A lista de opções curta -->
+                                        <ul id="lista-quantidade" class="animalx-lista-opcoes">
+                                            <li onclick="selecionarQuantidade(this)">Indivíduo</li>
+                                            <li onclick="selecionarQuantidade(this)">Grupo</li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- O botão de rádio "Não Sei" específico para a P3 -->
+                                    <label class="animalx-radio-label">
+                                        <input type="radio" name="quantidade_desconhecida" id="check-nao-sei-p3" onclick="selecionarNaoSeiP3()">
+                                        <span class="animalx-radio-custom"></span>
+                                        Não sei
+                                    </label>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="passo-4" class="animalx-form-step" style="display: none;">
+        
+                            <div class="animalx-pergunta-row animalx-layout-p2">
+                                
+                                <!-- Coluna da Esquerda: Texto e Nota -->
+                                <div class="animalx-coluna-texto">
+                                    <h2 class="animalx-titulo-pergunta">PERGUNTA 4 – Que papel ou função está o animal a desempenhar?</h2>
+                                    <p class="animalx-nota">
+                                        NOTA: Os animais podem ter diversas funções em diferentes contextos. Escolher a mais adequada no contexto representado no objeto/imagem.
+                                    </p>
+                                </div>
+                                
+                                <!-- Coluna da Direita: Dropdown e Não Sei -->
+                                <div class="animalx-coluna-interacao">
+                                    
+                                    <div class="animalx-dropdown-pesquisa">
+                                        <!-- O input com as tuas cores, bloqueado para escrita (readonly) -->
+                                        <input type="text" id="input-funcao" class="animalx-input-roxo" placeholder="Selecionar" onclick="mostrarListaFuncao()" readonly>
+                                        
+                                        <!-- A lista de opções da P4 -->
+                                        <ul id="lista-funcao" class="animalx-lista-opcoes">
+                                            <li onclick="selecionarFuncao(this)">Companhia</li>
+                                            <li onclick="selecionarFuncao(this)">Selvagem</li>
+                                            <li onclick="selecionarFuncao(this)">Consumo</li>
+                                            <li onclick="selecionarFuncao(this)">Trabalho</li>
+                                            <li onclick="selecionarFuncao(this)">Exposição/Espetáculo</li>
+                                            <li onclick="selecionarFuncao(this)">Simbólico/Mítico</li>
+                                            <li onclick="selecionarFuncao(this)">Conhecimento/Saúde</li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- O botão de rádio "Não Sei" específico para a P4 -->
+                                    <label class="animalx-radio-label">
+                                        <input type="radio" name="funcao_desconhecida" id="check-nao-sei-p4" onclick="selecionarNaoSeiP4()">
+                                        <span class="animalx-radio-custom"></span>
+                                        Não sei
+                                    </label>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="passo-5" class="animalx-form-step" style="display: none;">
+        
+                            <div class="animalx-pergunta-row animalx-layout-p2">
+                                
+                                <!-- Coluna da Esquerda: Texto da Pergunta -->
+                                <div class="animalx-coluna-texto">
+                                    <h2 class="animalx-titulo-pergunta">PERGUNTA 5 – Descrever de forma breve o animal identificado. </h2>
+                                    <p class="animalx-nota">
+                                        NOTA: Por exemplo, mencionar onde se encontra representado, com o que interage à sua volta, o seu aspeto, etc.
+                                    </p>
+                                </div>
+                                
+                                <!-- Coluna da Direita: Caixa de Texto e Não Sei -->
+                                <div class="animalx-coluna-interacao">
+                                    
+                                    <!-- Grupo do campo de texto com a respetiva label -->
+                                    <div class="animalx-grupo-descricao">
+                                        
+                                        
+                                        <!-- Repara no oninput: deteta assim que o utilizador começa a digitar -->
+                                        <textarea id="input-descricao" class="animalx-textarea-branca" placeholder="Escrever" rows="4" oninput="desmarcarNaoSeiP5()"></textarea>
+                                    </div>
+
+                                    <!-- O botão de rádio "Não Sei" específico para a P5 -->
+                                    <label class="animalx-radio-label">
+                                        <input type="radio" name="descricao_desconhecida" id="check-nao-sei-p5" onclick="selecionarNaoSeiP5()">
+                                        <span class="animalx-radio-custom"></span>
+                                        Não sei
+                                    </label>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="passo-6" class="animalx-form-step" style="display: none;">
+        
+                            <!-- Bloco da Pergunta 6 -->
+                            <div class="animalx-pergunta-row">
+                                <h2 class="animalx-titulo-pergunta">PERGUNTA 6 – Há mais algum animal de outra espécie na imagem?</h2>
+                                
+                                <div id="opcoes-p6" class="animalx-botoes-sim-nao">
+                                    <button class="animalx-btn-opcao" onclick="acaoBotaoSim(this, 'opcoes-p6')">SIM</button>
+                                    <button class="animalx-btn-opcao" onclick="acaoBotaoNao(this, 'opcoes-p6')">NÃO</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==========================================
+                            RODAPÉ: BARRA DE PROGRESSO E SEGUINTE
+                        =========================================== -->
+                        <div class="animalx-form-footer">
+                            <button id="btn-anterior-form" class="animalx-btn-anterior" style="display: none;" onclick="irParaPasso(1)">
+                                <img src="<?php echo $this->assetUrl('img/seta_bege_esquerda.png', 'TagAnimalx'); ?>" alt="Anterior"> ANTERIOR
+                            </button>
+
+                            <div class="animalx-progresso-wrapper">
+                                <div id="barra-progresso-form" class="animalx-progresso-fill" style="width: 15%;border-radius: 15px 0 0 15px;"></div> <!-- 15% representa o Passo 1 -->
+                            </div>
+                            
+                             <!-- Este botão Seguinte pode estar escondido na P1 e aparecer na P2, ou podes usá-lo globalmente -->
+                            <button id="btn-seguinte-form" class="animalx-btn-seguinte" onclick="submeterSeValido(6)">
+                                SEGUINTE <img src="<?php echo $this->assetUrl('img/seta_bege_direita.png', 'TagAnimalx'); ?>" alt="Seguinte">
+                            </button>
+
+                            <!-- Botão Submeter (Escondido no Passo 1) -->
+                            <button id="btn-submeter-form" class="animalx-btn-submeter" style="display: none;" onclick="submeterSeValido(6)">
+                                SUBMETER
+                            </button>
+                        </div>
+                      
+                        
+                    </div>
+                  
+                </div>
+            </div>
+
+        </div>
+
+    <div id="modal-submissao" class="animalx-modal-overlay" style="display: none;">
+        <div class="animalx-modal-caixa">
+            
+            <button class="animalx-btn-fechar" style="position: absolute !important; top: -10px !important; right: -10px !important;" onclick="fecharModal()" >
+                <img src="<?php echo $this->assetUrl('img/x_roxo.png', 'TagAnimalx'); ?>" alt="Fechar">
+            </button>
+
+            <h2 class="animalx-modal-titulo">Tens a certeza que desejas submeter o registo atual?</h2>
+            
+            <p class="animalx-modal-texto">
+                Não há respostas certas ou erradas! No entanto, para melhor apoiar o projeto na sua investigação, as respostas devem ser revistas antes de submeter o registo.
+            </p>
+
+            <div class="animalx-modal-botoes">
+                <button class="animalx-btn-modal" onclick="confirmarSubmissao()">SIM</button>
+                <button class="animalx-btn-modal" onclick="fecharModal()">NÃO</button>
+            </div>
+
+        </div>
+    </div>
+    <!-- ==========================================
+        MODAL DE INSTRUÇÕES (GUIA TAG ANIMALx)
+    =========================================== -->
+    <div id="modal-guia" class="animalx-modal-overlay">
+        <div class="animalx-guia-caixa" style="background-color: #ede8e9; border: 35px solid #6c75b7; width: 90%; max-width: 1200px; min-height: 650px; padding: 60px; box-sizing: border-box; position: relative; display: flex; flex-direction: column; box-shadow: 0 15px 30px rgba(0,0,0,0.3);">
+            
+            <!-- Botão Fechar -->
+            <button class="animalx-btn-fechar" style="position: absolute !important; top: -10px !important; right: -10px !important;" onclick="fecharGuia()">
+                <img src="<?php echo $this->assetUrl('img/x_roxo.png', 'TagAnimalx'); ?>" alt="Fechar">
+            </button>
+
+            <!-- CONTEÚDO DOS PASSOS (Mantém-se igual) -->
+            <div id="guia-passo-1" class="animalx-guia-passo" style="display: flex; flex-direction: row; gap: 60px; flex-grow: 1;">
+                <div class="animalx-guia-col-esq" style="flex: 1.1; display: flex; flex-direction: column;">
+                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; color: #000; margin-top: 0; margin-bottom: 30px;">GUIA – TAG ANIMALx</h2>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        Bem-vindo ao Tag ANIMALx! Como sabemos, os animais estão por toda a parte da história de Lisboa. Nesta iniciativa de Ciência Cidadã, os utilizadores podem ajudar a equipa do projeto Animais de Lisboa (ANIMALx) a identificar os animais presentes nos objetos e representações na coleção do Museu de Lisboa.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        <strong style="color: #6c75b7;">DISCLAIMER:</strong> O software do Tag ANIMALx ainda está em desenvolvimento. Neste momento ainda não conseguimos guardar os pontos de cada sessão...
+                    </p>
+                </div>
+                <div class="animalx-guia-col-dir" style="flex: 1; background-color: #d9d9d9; border-radius: 4px; min-height: 350px; margin-top: 15px;"></div>
+            </div>
+
+            <div id="guia-passo-2" class="animalx-guia-passo" style="display: none; flex-direction: row; gap: 60px; flex-grow: 1;">
+                <div class="animalx-guia-col-esq" style="flex: 1.1; display: flex; flex-direction: column;">
+                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 2</h2>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300;">Espaço reservado para a explicação da pergunta 1.</p>
+                </div>
+                <div class="animalx-guia-col-dir" style="flex: 1; background-color: #d9d9d9; border-radius: 4px; min-height: 350px; margin-top: 15px;"></div>
+            </div>
+
+            <div id="guia-passo-3" class="animalx-guia-passo" style="display: none; flex-direction: row; gap: 60px; flex-grow: 1;">
+                <div class="animalx-guia-col-esq" style="flex: 1.1; display: flex; flex-direction: column;">
+                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 3</h2>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300;">Espaço reservado para a explicação da pergunta 2.</p>
+                </div>
+                <div class="animalx-guia-col-dir" style="flex: 1; background-color: #d9d9d9; border-radius: 4px; min-height: 350px; margin-top: 15px;"></div>
+            </div>
+
+            <div id="guia-passo-4" class="animalx-guia-passo" style="display: none; flex-direction: row; gap: 60px; flex-grow: 1;">
+                <div class="animalx-guia-col-esq" style="flex: 1.1; display: flex; flex-direction: column;">
+                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 4</h2>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300;">Espaço reservado para a explicação da pergunta 3 e 4.</p>
+                </div>
+                <div class="animalx-guia-col-dir" style="flex: 1; background-color: #d9d9d9; border-radius: 4px; min-height: 350px; margin-top: 15px;"></div>
+            </div>
+
+            <div id="guia-passo-5" class="animalx-guia-passo" style="display: none; flex-direction: row; gap: 60px; flex-grow: 1;">
+                <div class="animalx-guia-col-esq" style="flex: 1.1; display: flex; flex-direction: column;">
+                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 5</h2>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300;">Espaço reservado para a explicação final.</p>
+                </div>
+                <div class="animalx-guia-col-dir" style="flex: 1; background-color: #d9d9d9; border-radius: 4px; min-height: 350px; margin-top: 15px;"></div>
+            </div>
+
+            <!-- ==========================================
+                Navegação Reaproveitada do Caderno 
+                (Ajustes de posição absoluta e cor da fonte via style)
+            =========================================== -->
+           <div style="position: absolute; bottom: -40px; left: 0; width: 100%; height: 65px; z-index: 10;">
+    
+            <button id="btn-guia-prev" class="animalx-btn-prev" style="visibility: hidden; position: absolute; left: 5px; bottom: 0; margin: 0 !important;" onclick="mudarPassoGuia(-1)">
+                <img src="<?php echo $this->assetUrl('img/seta_bege_esquerda.png', 'TagAnimalx'); ?>" alt="Seta Esquerda" style="width: 65px; height: 65px; margin-right: -12px;">
+                <span style="color: #6c75b7; font-size: 18px;">ANTERIOR</span>
+            </button>
+
+            <button id="btn-guia-next" class="animalx-btn-next" style="position: absolute; right: 15px; bottom: 0; margin: 0 !important;" onclick="mudarPassoGuia(1)">
+                <span style="color: #6c75b7; font-size: 18px;">SEGUINTE</span>
+                <img src="<?php echo $this->assetUrl('img/seta_bege_direita.png', 'TagAnimalx'); ?>" alt="Seta Direita" style="width: 65px; height: 65px; margin-left: -12px;">
+            </button>
+
+        </div>
+
+        </div>
+    </div>
+
+    <div id="modal-sair" class="animalx-modal-overlay">
+        <div class="animalx-modal-caixa">
+            
+            <!-- X posicionado dentro da moldura roxa -->
+            <button class="animalx-btn-fechar" style="position: absolute !important; top: -10px !important; right: -10px !important;" onclick="fecharModalSair()">
+                <img src="<?php echo $this->assetUrl('img/x_roxo.png', 'TagAnimalx'); ?>" alt="Fechar">
+            </button>
+
+            <h2 class="animalx-modal-titulo">SAIR DA SESSÃO TAG ANIMALx</h2>
+            
+            <p class="animalx-modal-texto">
+                Tem a certeza que quer terminar sessão?<br>
+                Após terminar sessão, a atividade volta ao estado inicial.<br>
+                Se quiseres guardar o registo desta sessão, deve fazê-lo<br>antes de terminar sessão.
+            </p>
+
+            <div class="animalx-modal-botoes">
+                <button class="animalx-btn-modal" onclick="confirmarSaida()">SIM</button>
+                <button class="animalx-btn-modal" onclick="fecharModalSair()">NÃO</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="modal-validacao" class="animalx-modal-overlay">
+        <div class="animalx-modal-caixa">
+            
+            <!-- Botão X -->
+            <button class="animalx-btn-fechar" style="position: absolute !important; top: -20px !important; right: -10px !important;" onclick="fecharModalValidacao()">
+                <img src="<?php echo $this->assetUrl('img/x_roxo.png', 'TagAnimalx'); ?>" alt="Fechar" style="width: 65px !important; height: 65px !important;">
+            </button>
+
+            <h2 class="animalx-modal-titulo" style="margin-bottom: 20px;">ATENÇÃO</h2>
+            
+            <p class="animalx-modal-texto" style="margin-bottom: 0;">
+                Campo por preencher.<br>
+                Deve selecionar pelo menos uma opção de resposta para continuar
+            </p>
+
+        </div>
+    </div>
+
+    <div id="modal-caderno-campo" class="animalx-modal-overlay">
+        <div class="animalx-wrapper-principal">
+
+            <button class="animalx-btn-fechar" onclick="fecharCaderno()">
+                <img src="<?php echo $this->assetUrl('img/x_roxo.png', 'TagAnimalx'); ?>" alt="Fechar Caderno">
+            </button>
+            
+            <!-- A MESA E O CADERNO -->
+            <div class="animalx-mesa-fundo" style="background-image: url('<?= $this->assetUrl('img/fundo_cc.jpg', 'TagAnimalx') ?>');">
+                <div class="animalx-livro-aberto" style="background-image: url('<?= $this->assetUrl('img/caderno.png', 'TagAnimalx') ?>');">
+                    
+                    <!-- ==========================================
+                        FOLHA 1 (Estatísticas + Coleções 1)
+                        ========================================== -->
+                    <div id="caderno-folha-1" class="animalx-folha-conteudo active">
+                        
+                        <!-- Lado Esquerdo -->
+                        <div class="animalx-pagina animalx-pagina-esquerda">
+                            <h2 class="animalx-titulo-manuscrito">Caderno de Campo</h2>
+                            
+                            <!-- Variável Dinâmica: Nome do Nível -->
+                            <h3 class="animalx-subtitulo-manuscrito"><?= $nomeNivel ?? 'Curador Estagiário' ?></h3>
+                            
+                            <!-- Imagem Dinâmica e Caminho Corrigido -->
+                            <img src="<?= $this->assetUrl('img/selo_nivel' . ($numeroNivel ?? '1') . '.png', 'TagAnimalx') ?>" class="animalx-carimbo" alt="Selo de Nível">
+                            
+                            <div class="animalx-progresso-geral">
+                                <div class="animalx-barra-fundo">
+                                    <!-- Variável Dinâmica: Progresso Geral -->
+                                    <div class="animalx-barra-enchimento" style="width: <?= $percentagemProgressoGeral ?? '45' ?>%;"></div>
+                                </div>
+                                <span class="animalx-pontos-texto"><strong><?= $totalPontos ?? '45' ?></strong> pontos</span>
+                            </div>
+                            
+                            <div class="animalx-estatistica-animais">
+                                <img src="<?= $this->assetUrl('img/pata.png', 'TagAnimalx') ?>" class="animalx-icone-pata" alt="Ícone Animais">
+                                <div class="animalx-numero-identificados">
+                                    <!-- Variável Dinâmica: Animais Identificados -->
+                                    <span class="animalx-numero-grande"><?= $animaisIdentificados ?? '12' ?></span>
+                                    <span class="animalx-legenda-manuscrita">Animais identificados</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lado Direito -->
+                        <div class="animalx-pagina animalx-pagina-direita">
+                            <h2 class="animalx-titulo-manuscrito titulo-colecoes">Coleções</h2>
+                            
+                            <!-- Azulejaria -->
+                            <div class="animalx-item-colecao">
+                                <div class="animalx-info-colecao">
+                                    <h4>Azulejaria</h4>
+                                    <div class="animalx-barra-fundo">
+                                        <div class="animalx-barra-enchimento" style="width: <?= $percentagemAzulejaria ?? '75' ?>%;"></div>
+                                    </div>
+                                    <span class="animalx-registos-texto"><?= $tratadosAzulejaria ?? '75' ?>/<?= $totalAzulejaria ?? '100' ?> registos</span>
+                                </div>
+                                <img src="<?= $this->assetUrl('img/capa_azulejaria.png', 'TagAnimalx') ?>" class="animalx-img-colecao" alt="Azulejaria">
+                            </div>
+
+                            <!-- Cerâmica -->
+                            <div class="animalx-item-colecao">
+                                <div class="animalx-info-colecao">
+                                    <h4>Cerâmica</h4>
+                                    <div class="animalx-barra-fundo">
+                                        <div class="animalx-barra-enchimento" style="width: <?= $percentagemCeramica ?? '30' ?>%;"></div>
+                                    </div>
+                                    <span class="animalx-registos-texto"><?= $tratadosCeramica ?? '30' ?>/<?= $totalCeramica ?? '100' ?> registos</span>
+                                </div>
+                                <img src="<?= $this->assetUrl('img/capa_ceramica.png', 'TagAnimalx') ?>" class="animalx-img-colecao" alt="Cerâmica">
+                            </div>
+                            
+                            <!-- Escultura -->
+                            <div class="animalx-item-colecao">
+                                <div class="animalx-info-colecao">
+                                    <h4>Escultura</h4>
+                                    <div class="animalx-barra-fundo">
+                                        <div class="animalx-barra-enchimento" style="width: <?= $percentagemEscultura ?? '60' ?>%;"></div>
+                                    </div>
+                                    <span class="animalx-registos-texto"><?= $tratadosEscultura ?? '60' ?>/<?= $totalEscultura ?? '100' ?> registos</span>
+                                </div>
+                                <img src="<?= $this->assetUrl('img/capa_escultura.png', 'TagAnimalx') ?>" class="animalx-img-colecao" alt="Escultura">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================
+                        FOLHA 2 (Coleções 2 + Em Breve)
+                        ========================================== -->
+                    <div id="caderno-folha-2" class="animalx-folha-conteudo">
+                        
+                        <!-- Lado Esquerdo -->
+                        <div class="animalx-pagina animalx-pagina-esquerda">
+                            
+                            <!-- Desenho -->
+                            <div class="animalx-item-colecao item-invertido">
+                                <img src="<?= $this->assetUrl('img/capa_desenho.png', 'TagAnimalx') ?>" class="animalx-img-colecao" alt="Desenho">
+                                <div class="animalx-info-colecao">
+                                    <h4>Desenho</h4>
+                                    <div class="animalx-barra-fundo">
+                                        <div class="animalx-barra-enchimento" style="width: <?= $percentagemDesenho ?? '20' ?>%;"></div>
+                                    </div>
+                                    <span class="animalx-registos-texto"><?= $tratadosDesenho ?? '20' ?>/<?= $totalDesenho ?? '100' ?> registos</span>
+                                </div>
+                            </div>
+
+                            <!-- Pintura -->
+                            <div class="animalx-item-colecao item-invertido">
+                                <img src="<?= $this->assetUrl('img/capa_pintura.png', 'TagAnimalx') ?>" class="animalx-img-colecao" alt="Pintura">
+                                <div class="animalx-info-colecao">
+                                    <h4>Pintura</h4>
+                                    <div class="animalx-barra-fundo">
+                                        <div class="animalx-barra-enchimento" style="width: <?= $percentagemPintura ?? '45' ?>%;"></div>
+                                    </div>
+                                    <span class="animalx-registos-texto"><?= $tratadosPintura ?? '45' ?>/<?= $totalPintura ?? '100' ?> registos</span>
+                                </div>
+                            </div>
+
+                            <!-- Gravura -->
+                            <div class="animalx-item-colecao item-invertido">
+                                <img src="<?= $this->assetUrl('img/capa_gravura.png', 'TagAnimalx') ?>" class="animalx-img-colecao" alt="Gravura">
+                                <div class="animalx-info-colecao">
+                                    <h4>Gravura</h4>
+                                    <div class="animalx-barra-fundo">
+                                        <div class="animalx-barra-enchimento" style="width: <?= $percentagemGravura ?? '10' ?>%;"></div>
+                                    </div>
+                                    <span class="animalx-registos-texto"><?= $tratadosGravura ?? '10' ?>/<?= $totalGravura ?? '100' ?> registos</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lado Direito -->
+                        <div class="animalx-pagina animalx-pagina-direita centralizada-em-breve">
+                            <h2 class="animalx-titulo-manuscrito grande">Mais coleções<br>em breve....</h2>
+                        </div>
+                    </div>
+                    <!-- Navegação do Caderno -->
+                    <div class="animalx-navegacao-caderno">
+                        <button id="btn-caderno-prev" class="animalx-btn-prev" onclick="mudarFolhaCaderno(-1)">
+                            <img src="<?php echo $this->assetUrl('img/seta_bege_esquerda.png', 'TagAnimalx'); ?>" alt="Seta Esquerda">
+                            <span>ANTERIOR</span>
+                        </button>
+
+                        <button id="btn-caderno-next" class="animalx-btn-next" onclick="mudarFolhaCaderno(1)">
+                            <span>SEGUINTE</span>
+                            <img src="<?php echo $this->assetUrl('img/seta_bege_direita.png', 'TagAnimalx'); ?>" alt="Seta Direita">
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    
+    </div> 
+
+    <div id="modal-nivel" class="animalx-modal-overlay">
+        <div class="animalx-modal-caixa" style="padding: 50px 60px; max-width: 800px;">
+            
+            <!-- Botão X (Tamanho e posição ajustados para bater certo com a imagem) -->
+            <button class="animalx-btn-fechar" style="position: absolute !important; top: -10px !important; right: -10px !important;" onclick="fecharModalNivel()">
+                <img src="<?php echo $this->assetUrl('img/x_roxo.png', 'TagAnimalx'); ?>" alt="Fechar" style="width: 45px !important; height: 45px !important;">
+            </button>
+
+            <!-- Layout em Duas Colunas -->
+            <div style="display: flex; align-items: center; gap: 40px; text-align: left;">
+                
+                <!-- Coluna Esquerda: Textos -->
+                <div style="flex: 1;">
+                    <h2 id="titulo-novo-nivel" style="font-family: 'Nohemi', sans-serif; font-size: 38px; font-weight: 500; color: #494949; margin-top: 0; margin-bottom: 20px; line-height: 1.1;">
+                        O teu primeiro passo na História!
+                    </h2>
+                    <p id="texto-novo-nivel" style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; color: #494949; line-height: 1.4; margin: 0;">
+                        Acabaste de entrar no arquivo do Museu de Lisboa como Curador Estagiário. Começa a explorar as coleções e ajuda-nos a desvendar as primeiras representações de animais.
+                    </p>
+                </div>
+
+                <!-- Coluna Direita: Selo -->
+                <div style="flex-shrink: 0;">
+                    <img id="imagem-novo-nivel" src="<?php echo $this->assetUrl('img/selo_nivel1.png', 'TagAnimalx'); ?>" alt="Selo de Nível" style="width: 220px; height: auto; object-fit: contain;">
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Formulário Nativo do Omeka S -->
+    <div id="content" role="main" style="display: none;">
+        <?php if (!empty($form)): echo $this->form($form); endif; ?>
+    </div>
+</div>
+
+
+<script>
+(function () {
+    const wrapper = document.getElementById('animalx-gamification-wrapper');
+
+function toggleFullscreen() {
+        // Aponta especificamente para a caixa do jogo, em vez da página toda
+        let gameContainer = document.getElementById('animalx-gamification-wrapper');
+
+        if (!document.fullscreenElement) {
+            // Entra em ecrã inteiro APENAS no contentor do jogo
+            if (gameContainer.requestFullscreen) {
+                gameContainer.requestFullscreen().catch(err => {
+                    console.log(`Erro ao entrar em ecrã inteiro: ${err.message}`);
+                });
+            } else if (gameContainer.webkitRequestFullscreen) { /* Safari antigo */
+                gameContainer.webkitRequestFullscreen();
+            }
+        } else {
+            // Sai de ecrã inteiro
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
+    }
+
+    // Mantém o detetor para ajudar o CSS
+    document.addEventListener('fullscreenchange', (event) => {
+        if (document.fullscreenElement) {
+            document.body.classList.add('em-tela-cheia');
+        } else {
+            document.body.classList.remove('em-tela-cheia');
+        }
+    });
+
+    window.toggleFullscreen = toggleFullscreen;
+})();
+</script>
+
+<script>
+// =========================================
+// LÓGICA DE NAVEGAÇÃO DAS TELAS PRINCIPAIS
+// =========================================
+
+function irParaTela(idTelaDestino) {
+    // 1. Encontra todas as telas com a classe 'animalx-screen'
+    let telas = document.getElementsByClassName('animalx-screen');
+    
+    // 2. Remove a classe 'active' de todas elas (esconde tudo)
+    for (let i = 0; i < telas.length; i++) {
+        telas[i].classList.remove('active');
+    }
+    
+    // 3. Adiciona a classe 'active' APENAS à tela de destino (mostra a tela certa)
+    let telaDestino = document.getElementById(idTelaDestino);
+    if (telaDestino) {
+        telaDestino.classList.add('active');
+    }
+}
+
+</script>
+
+
+
+
+
+
+
+<!-- Script de Navegação das Folhas -->
+<script>
+
+// Abrir o Modal do Caderno
+function abrirCaderno() {
+    // Muda o display de 'none' para 'flex', revelando o modal e centrando o conteúdo
+    document.getElementById('modal-caderno-campo').style.setProperty('display', 'flex', 'important');
+}
+
+// Fechar o Modal do Caderno
+function fecharCaderno() {
+    // Esconde o modal novamente
+    document.getElementById('modal-caderno-campo').style.setProperty('display', 'none', 'important');
+}
+
+let folhaAtual = 1;
+const totalFolhas = 2;
+
+function mudarFolhaCaderno(direcao) {
+    let novaFolha = folhaAtual + direcao;
+
+    if (novaFolha >= 1 && novaFolha <= totalFolhas) {
+        document.getElementById(`caderno-folha-${folhaAtual}`).classList.remove('active');
+        document.getElementById(`caderno-folha-${novaFolha}`).classList.add('active');
+        
+        folhaAtual = novaFolha;
+        atualizarBotoesNavegacao();
+    }
+}
+
+function atualizarBotoesNavegacao() {
+    const btnPrev = document.getElementById('btn-caderno-prev');
+    const btnNext = document.getElementById('btn-caderno-next');
+
+    if (folhaAtual === 1) {
+        btnPrev.style.opacity = "0.4";
+        btnPrev.style.pointerEvents = "none";
+    } else {
+        btnPrev.style.opacity = "1";
+        btnPrev.style.pointerEvents = "auto";
+    }
+
+    if (folhaAtual === totalFolhas) {
+        btnNext.style.opacity = "0.4";
+        btnNext.style.pointerEvents = "none";
+    } else {
+        btnNext.style.opacity = "1";
+        btnNext.style.pointerEvents = "auto";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    atualizarBotoesNavegacao();
+});
+</script>
+
+<script>
+function irParaPasso(destino) {
+    let totalPassos = 6; // O número total de perguntas do teu formulário
+
+    // 1. Esconde todos os passos com um ciclo automático (do 1 ao 6)
+    for (let i = 1; i <= totalPassos; i++) {
+        let passo = document.getElementById('passo-' + i);
+        if (passo) {
+            passo.style.setProperty('display', 'none', 'important');
+        }
+    }
+
+    // 2. Mostra apenas o passo de destino
+    let destinoEl = document.getElementById('passo-' + destino);
+    if (destinoEl) {
+        destinoEl.style.setProperty('display', 'flex', 'important');
+    }
+
+// 3. Captura os elementos específicos do rodapé deste formulário
+    let barra = document.getElementById('barra-progresso-form');
+    let btnAnterior = document.getElementById('btn-anterior-form');
+    let btnSeguinte = document.getElementById('btn-seguinte-form');
+    let btnSubmeter = document.getElementById('btn-submeter-form');
+
+    // 4. A MAGIA: Calcula a percentagem da barra automaticamente!
+    // (Ex: 1/6 = 16.6%, 2/6 = 33.3%, etc.)
+    let percentagem = (destino / totalPassos) * 100;
+    barra.style.width = percentagem + '%';
+
+    if (destino === totalPassos) {
+        barra.style.borderRadius = '15px'; // Arredonda a ponta direita na última pergunta
+    } else {
+        barra.style.borderRadius = '15px 0 0 15px'; // Mantém reta nas outras
+    }
+
+    // 5. Lógica Inteligente de Visibilidade dos Botões
+    if (destino === 1) {
+        // Na P1: Esconde o Anterior e o Submeter
+        btnAnterior.style.setProperty('display', 'none', 'important');
+        btnSubmeter.style.setProperty('display', 'none', 'important');
+        btnSeguinte.style.setProperty('display', 'flex', 'important');
+    } else if (destino === totalPassos) {
+        // Na P6: Esconde o Seguinte, mostra o Anterior e o Submeter
+        btnAnterior.style.setProperty('display', 'flex', 'important');
+        btnSeguinte.style.setProperty('display', 'none', 'important');
+        btnSubmeter.style.setProperty('display', 'block', 'important');
+    } else {
+        // Nas P2, P3, P4 e P5: Mostra o Anterior e o Seguinte
+        btnAnterior.style.setProperty('display', 'flex', 'important');
+        btnSeguinte.style.setProperty('display', 'flex', 'important');
+        btnSubmeter.style.setProperty('display', 'none', 'important');
+    }
+
+    // 6. Atualiza os destinos dos cliques automaticamente (A matemática faz o trabalho!)
+    btnAnterior.setAttribute('onclick', 'irParaPasso(' + (destino - 1) + ')');
+    btnSeguinte.setAttribute('onclick', 'avancarSeValido(' + destino + ')');
+}
+
+irParaPasso(1);
+
+    // Função para garantir que apenas um botão é selecionado de cada vez
+function selecionarOpcao(botaoClicado, idGrupo) {
+    // 1. Encontra a "caixa" (grupo) onde estão os botões desta pergunta
+    let grupo = document.getElementById(idGrupo);
+    
+    // 2. Encontra todos os botões dentro desse grupo
+    let botoes = grupo.getElementsByClassName('animalx-btn-opcao');
+    
+    // 3. Remove a classe 'selecionado' de todos eles (limpa as seleções anteriores)
+    for (let i = 0; i < botoes.length; i++) {
+        botoes[i].classList.remove('selecionado');
+    }
+    
+    // 4. Adiciona a classe 'selecionado' APENAS ao botão que o utilizador clicou agora
+    botaoClicado.classList.add('selecionado');
+}
+
+function acaoBotaoSim(botao, idGrupo) {
+    // 1. Atualiza o visual (a função que criámos hoje)
+    selecionarOpcao(botao, idGrupo);
+    
+    // 2. Recolhe os dados para a futura base de dados
+    // recolherDadosDaPergunta(1, 'SIM');
+    
+}
+
+function acaoBotaoNao(botao, idGrupo) {
+    // 1. Atualiza o visual (a função que criámos hoje)
+    selecionarOpcao(botao, idGrupo);
+    
+    // 2. Recolhe os dados para a futura base de dados
+    // recolherDadosDaPergunta(1, 'NAO');
+    
+}
+
+</script>
+
+<script>
+        /* =========================================
+    LÓGICA DO DROPDOWN PESQUISÁVEL
+    ========================================= */
+
+    // Mostra a lista quando clicas na caixa de texto
+    function mostrarLista() {
+        document.getElementById("lista-animais").style.display = "block";
+    }
+
+    function selecionarNaoSei() {
+        let input = document.getElementById("input-animal");
+        
+        // 1. Apaga o que estiver escrito na caixa de pesquisa
+        input.value = ""; 
+        
+        // 2. Esconde a lista suspensa se estiver aberta
+        document.getElementById("lista-animais").style.display = "none";
+    }
+
+    // Quando o utilizador clica num animal da lista
+    function selecionarAnimal(itemClicado) {
+        let input = document.getElementById("input-animal");
+        input.value = itemClicado.innerText;
+        document.getElementById("lista-animais").style.display = "none";
+        let radioNaoSei = document.getElementById("check-nao-sei");
+        if (radioNaoSei) {
+        radioNaoSei.checked = false; }
+        }
+
+    // O motor de pesquisa (Filtro)
+    function filtrarAnimais() {
+        let input = document.getElementById("input-animal");
+        let filtro = input.value.toUpperCase(); // Passa a maiúsculas para comparar mais fácil
+        let lista = document.getElementById("lista-animais");
+        let itens = lista.getElementsByTagName("li");
+
+        // Mantém a lista visível enquanto se escreve
+        lista.style.display = "block";
+
+        // Percorre todos os itens da lista
+        for (let i = 0; i < itens.length; i++) {
+            let texto = itens[i].innerText;
+            
+            // Se o texto incluir o que escrevemos, mostra. Se não, esconde.
+            if (texto.toUpperCase().indexOf(filtro) > -1) {
+                itens[i].style.display = "";
+            } else {
+                itens[i].style.display = "none";
+            }
+        }
+    }
+
+    // =========================================
+// LÓGICA DO DROPDOWN - PERGUNTA 3
+// =========================================
+
+    // Mostra a lista de Indivíduo/Grupo
+    function mostrarListaQuantidade() {
+        document.getElementById("lista-quantidade").style.display = "block";
+    }
+
+    // Quando o utilizador clica numa das opções
+    function selecionarQuantidade(itemClicado) {
+        let input = document.getElementById("input-quantidade");
+        
+        // Coloca a opção escolhida na caixa
+        input.value = itemClicado.innerText;
+        
+        // Esconde a lista
+        document.getElementById("lista-quantidade").style.display = "none";
+        
+        // Desmarca o botão "Não sei" se estiver selecionado
+        let radioNaoSei = document.getElementById("check-nao-sei-p3");
+        if (radioNaoSei) {
+            radioNaoSei.checked = false;
+        }
+    }
+
+    // Quando o utilizador clica em "Não Sei" na P3
+    function selecionarNaoSeiP3() {
+        let input = document.getElementById("input-quantidade");
+        
+        // Apaga a escolha anterior do dropdown
+        input.value = ""; 
+        
+        // Esconde a lista caso estivesse aberta
+        document.getElementById("lista-quantidade").style.display = "none";
+    }
+
+    // =========================================
+// LÓGICA DO DROPDOWN - PERGUNTA 4
+// =========================================
+
+    // Mostra a lista de Funções
+    function mostrarListaFuncao() {
+        document.getElementById("lista-funcao").style.display = "block";
+    }
+
+    // Quando o utilizador clica numa das opções da P4
+    function selecionarFuncao(itemClicado) {
+        let input = document.getElementById("input-funcao");
+        
+        // Coloca a opção escolhida na caixa
+        input.value = itemClicado.innerText;
+        
+        // Esconde a lista
+        document.getElementById("lista-funcao").style.display = "none";
+        
+        // Desmarca o botão "Não sei" se estiver selecionado
+        let radioNaoSei = document.getElementById("check-nao-sei-p4");
+        if (radioNaoSei) {
+            radioNaoSei.checked = false;
+        }
+    }
+
+    // Quando o utilizador clica em "Não Sei" na P4
+    function selecionarNaoSeiP4() {
+        let input = document.getElementById("input-funcao");
+        
+        // Apaga a escolha anterior do dropdown
+        input.value = ""; 
+        
+        // Esconde a lista caso estivesse aberta
+        document.getElementById("lista-funcao").style.display = "none";
+    }
+
+    // Truque extra: Esconder a lista se o utilizador clicar fora dela
+    document.addEventListener('click', function(event) {
+        // Verifica se o clique não foi dentro de nenhuma caixa de pesquisa
+        if (!event.target.closest('.animalx-dropdown-pesquisa')) {
+            
+            // Esconde todas as listas que possam estar abertas
+            let todasAsListas = document.getElementsByClassName("animalx-lista-opcoes");
+            for (let i = 0; i < todasAsListas.length; i++) {
+                todasAsListas[i].style.display = "none";
+            }
+        }
+    });
+
+    // =========================================
+// LÓGICA DA TEXTAREA - PERGUNTA 5
+// =========================================
+
+// Dispara instantaneamente quando o utilizador escreve algo
+function desmarcarNaoSeiP5() {
+    let radioNaoSei = document.getElementById("check-nao-sei-p5");
+    if (radioNaoSei) {
+        radioNaoSei.checked = false; // Tira a seleção da bolinha
+    }
+}
+
+// Quando o utilizador clica em "Não Sei" na P5
+function selecionarNaoSeiP5() {
+    let textarea = document.getElementById("input-descricao");
+    
+    // Apaga completamente qualquer texto que o utilizador já tivesse escrito
+    textarea.value = ""; 
+}
+
+</script>
+<script>
+   // Função para abrir o aviso
+    function abrirModalSubmissao() {
+        let modal = document.getElementById("modal-submissao");
+        
+        // Rede de segurança: verifica se a modal existe no HTML
+        if (!modal) {
+            alert("Erro: O HTML da modal-submissao não foi encontrado!");
+            return;
+        }
+        
+        // Força a exibição da modal
+        modal.style.setProperty('display', 'flex', 'important');
+    }
+
+    // Função para fechar o aviso
+    function fecharModal() {
+        let modal = document.getElementById("modal-submissao");
+        if (modal) {
+            modal.style.setProperty('display', 'none', 'important');
+        }
+    }
+</script>
+
+<script>
+    // Função para abrir o guia
+    function abrirGuia() {
+        let modal = document.getElementById("modal-guia");
+        if (modal) {
+            modal.style.setProperty('display', 'flex', 'important');
+            // Inicializa o passo do guia para 1
+            mudarPassoGuia(0); // Passo inicial
+        }
+    }
+
+    // Função para fechar o guia
+    function fecharGuia() {
+        let modal = document.getElementById("modal-guia");
+        if (modal) {
+            modal.style.setProperty('display', 'none', 'important');
+        }
+    }
+
+    let passoAtualGuia = 1;
+    const totalPassosGuia = 5;
+
+    function mudarPassoGuia(direcao) {
+        let novaPasso = passoAtualGuia + direcao;
+
+        if (novaPasso >= 1 && novaPasso <= totalPassosGuia) {
+            document.getElementById(`guia-passo-${passoAtualGuia}`).style.display = "none";
+            document.getElementById(`guia-passo-${novaPasso}`).style.display = "flex";
+            
+            passoAtualGuia = novaPasso;
+            atualizarBotoesNavegacaoGuia();
+        }
+    }
+
+    function atualizarBotoesNavegacaoGuia() {
+        const btnPrev = document.getElementById('btn-guia-prev');
+        const btnNext = document.getElementById('btn-guia-next');
+
+        btnPrev.style.visibility = (passoAtualGuia === 1) ? "hidden" : "visible";
+        btnNext.style.visibility = (passoAtualGuia === totalPassosGuia) ? "hidden" : "visible";
+    }
+</script>
+
+<script>
+    // Função para abrir o aviso de saída
+    function abrirModalSair() {
+        let modal = document.getElementById("modal-sair");
+        if (modal) {
+            modal.style.setProperty('display', 'flex', 'important');
+        }
+    }
+
+    // Função para fechar o aviso de saída
+    function fecharModalSair() {
+        let modal = document.getElementById("modal-sair");
+        if (modal) {
+            modal.style.setProperty('display', 'none', 'important');
+        }
+    }
+
+    // Função para confirmar a saída
+        function confirmarSaida() {
+            fecharModalSair();
+         window.location.reload();
+}
+    
+</script>
+
+<script>
+
+    function abrirModalValidacao() {
+        let modal = document.getElementById("modal-validacao");
+        if (modal) modal.style.setProperty('display', 'flex', 'important');
+    }
+
+    function fecharModalValidacao() {
+        let modal = document.getElementById("modal-validacao");
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+    }
+
+    // Verifica se o passo atual tem uma resposta válida
+    function passoValido(passo) {
+        if (passo === 1) {
+            let botoes = document.getElementById('opcoes-p1').getElementsByClassName('selecionado');
+            return botoes.length > 0;
+        } else if (passo === 2) {
+            let input = document.getElementById('input-animal').value;
+            let naoSei = document.getElementById('check-nao-sei').checked;
+            return (input.trim() !== "" || naoSei);
+        } else if (passo === 3) {
+            let input = document.getElementById('input-quantidade').value;
+            let naoSei = document.getElementById('check-nao-sei-p3').checked;
+            return (input.trim() !== "" || naoSei);
+        } else if (passo === 4) {
+            let input = document.getElementById('input-funcao').value;
+            let naoSei = document.getElementById('check-nao-sei-p4').checked;
+            return (input.trim() !== "" || naoSei);
+        } else if (passo === 5) {
+            // Passo 5 livre de validação, avança sempre
+            return true; 
+        } else if (passo === 6) {
+            let botoes = document.getElementById('opcoes-p6').getElementsByClassName('selecionado');
+            return botoes.length > 0;
+        }
+        return true;
+    }
+
+    // Interceta o botão Seguinte
+    function avancarSeValido(passoAtual) {
+        if (passoValido(passoAtual)) {
+            irParaPasso(passoAtual + 1);
+        } else {
+            abrirModalValidacao();
+        }
+    }
+
+    // Interceta o botão Submeter
+    function submeterSeValido(passoAtual) {
+        if (passoValido(passoAtual)) {
+            abrirModalSubmissao();
+        } else {
+            abrirModalValidacao();
+        }
+    }
+
+</script>
+
+<script>
+    // =========================================
+// LÓGICA DE PASSAGEM DE NÍVEL
+// =========================================
+
+// A função recebe agora o Título, o Texto e o link da Imagem
+function abrirModalNivel(titulo, texto, urlSelo) {
+    let modal = document.getElementById("modal-nivel");
+    if (!modal) return;
+
+    // Injeta os dados corretos consoante o nível
+    if (titulo) {
+        document.getElementById("titulo-novo-nivel").innerText = titulo;
+    }
+    if (texto) {
+        document.getElementById("texto-novo-nivel").innerText = texto;
+    }
+    if (urlSelo) {
+        document.getElementById("imagem-novo-nivel").src = urlSelo;
+    }
+
+    modal.style.setProperty('display', 'flex', 'important');
+}
+
+function fecharModalNivel() {
+    let modal = document.getElementById("modal-nivel");
+    if (modal) {
+        modal.style.setProperty('display', 'none', 'important');
+    }
+}
+
+</script>

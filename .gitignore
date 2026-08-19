@@ -1,0 +1,7 @@
+# Ignorar ficheiros com credenciais reais da API do Omeka S
+js/config.js
+.env
+
+# Ignorar ficheiros de sistema operativo
+.DS_Store
+Thumbs.db
