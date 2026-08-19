@@ -1,0 +1,1933 @@
+/* Omeka S override */
+#content > form {
+    display: none !important;
+}
+
+/* =========================================
+   FONTE: CAVEAT
+========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Varta:wght@300..700&display=swap');
+
+/* =========================================
+   FONTE: NOHEMI 
+========================================= */
+
+/* 100 - Thin */
+@font-face {
+    font-family: 'Nohemi';
+    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Thin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+}
+
+/* 200 - ExtraLight */
+@font-face {
+    font-family: 'Nohemi';
+    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-ExtraLight.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+}
+
+/* 300 - Light */
+@font-face {
+    font-family: 'Nohemi';
+    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* 400 - Regular (Normal) */
+@font-face {
+    font-family: 'Nohemi';
+    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Regular.ttf') format('truetype');
+    font-weight: 400; /* Pode ser escrito como 'normal' */
+    font-style: normal;
+}
+
+/* 500 - Medium */
+@font-face {
+    font-family: 'Nohemi';
+    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+/* 600 - SemiBold */
+@font-face {
+    font-family: 'Nohemi';
+    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* 700 - Bold */
+@font-face {
+    font-family: 'Nohemi';
+    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Bold.ttf') format('truetype');
+    font-weight: 700; /* Pode ser escrito como 'bold' */
+    font-style: normal;
+}
+
+/* 800 - ExtraBold */
+@font-face {
+    font-family: 'Nohemi';
+    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+/* 900 - Black */
+@font-face {
+    font-family: 'Nohemi';
+    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+/* =========================================
+PERSONALIZAÇÃO GERAL TAG ANIMALx
+========================================= */
+
+:root {
+    /* Core palette placeholders */
+    --animalx-primary-color: #6c75b7;
+    --animalx-secondary-color: #ede8e9;
+    --animalx-background-color: #6c75b7;
+    --animalx-secondary-background-color: #ede8e9;
+    --animalx-text-color: #000000;
+    --animalx-primary-font: Nohemi;
+    --animalx-secondary-font: sans-serif;
+}
+
+
+/* Main wrapper */
+
+#animalx-gamification-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1266px;
+    height: 900px; /* ALTURA FIXA DA TUA JANELA DE JOGO */
+    margin: 0 auto;
+    padding: 0 !important; /* Limpamos o padding daqui para as margens serem geridas pelas telas */
+    background: var(--animalx-background-color);
+    color: var(--animalx-text-color);
+    font-family: var(--animalx-primary-font);
+    border-radius: 1rem;
+    overflow-y: auto !important; /* A BARRA DE SCROLL MÁGICA */
+    overflow-x: hidden;
+    box-sizing: border-box;
+    zoom: 0.85; /* Mantém o teu zoom para caber melhor */
+}
+
+
+.animalx-top-nav {
+    position: absolute !important;
+    bottom: auto !important;
+    left: 15px !important;
+    right: auto !important;
+    top: 15px !important;
+    z-index: 2147483647 !important; /* O valor máximo absoluto permitido no CSS para ficar sempre por cima de tudo */
+    display: flex !important;
+    gap: 15px;
+    pointer-events: auto !important; /* Garante que é clicável */
+}
+
+.animalx-nav-circle {
+    
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 20px !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+}
+
+.animalx-nav-circle:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+}
+
+
+
+/* Screens system */
+.animalx-screen {
+    padding: 40px !important; /* Margem roxa perfeitamente igual a toda a volta */
+    align-items: flex-start !important; /* Alinha pelo topo para o scroll fluir bem para baixo */
+    min-height: 100%; /* Garante que a tela ocupa toda a janela fixa */
+    box-sizing: border-box;
+    display: none;
+}
+
+
+.animalx-disclaimer-card,
+#screen-registo .animalx-wrapper-principal,
+.animalx-conteiner-perguntas {
+    width: 100% !important;
+    max-width: 1100px !important; /* Todas terão a mesma largura */
+    margin: 0 auto !important; /* Centra perfeitamente e anula margens marotas */
+    height: auto !important;
+}
+
+.animalx-screen.active {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Buttons */
+.animalx-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.2rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: var(--animalx-primary-font);
+    transition: all 0.2s ease;
+    width: fit-content;
+}
+
+.animalx-btn-outline {
+    background: transparent;
+    border-color: var(--animalx-primary-color);
+    color: var(--animalx-primary-color);
+}
+
+.animalx-btn-filled {
+    background: var(--animalx-primary-color);
+    color: var(--animalx-background-color);
+    border-color: var(--animalx-primary-color);
+}
+
+
+
+.animalx-nav-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--animalx-secondary-color);
+    color: var(--animalx-primary-color);
+    border: 1px solid var(--animalx-primary-color);
+}
+
+/* Progress */
+.animalx-progress-bar {
+    width: 100%;
+    height: 0.6rem;
+    background: var(--animalx-secondary-background-color);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.animalx-progress-fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--animalx-primary-color);
+    border-radius: inherit;
+}
+
+/* Image container */
+.animalx-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 240px;
+    padding: 1rem;
+    background: var(--animalx-secondary-background-color);
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.animalx-image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* =========================================
+   MODO FULL SCREEN
+========================================= */
+/* =========================================
+   MODO ECRÃ INTEIRO (Perfeitamente Centrado)
+========================================= */
+#animalx-gamification-wrapper:fullscreen,
+#animalx-gamification-wrapper:-webkit-full-screen,
+#animalx-gamification-wrapper:-moz-full-screen,
+:fullscreen #animalx-gamification-wrapper,
+:-webkit-full-screen #animalx-gamification-wrapper,
+:-moz-full-screen #animalx-gamification-wrapper {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important; /* Removemos o padding para deixar o Flexbox centrar a 100% */
+    background-color: #6c75b7 !important;
+    
+    overflow: hidden !important; 
+    
+    /* CENTRAGEM ABSOLUTA DE AMBOS OS EIXOS */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important; /* Centra na vertical */
+    align-items: center !important;     /* Centra na horizontal */
+    
+    zoom: 1 !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+}
+
+/* Garante que a tela ativa lá dentro também assume a centragem exata */
+#animalx-gamification-wrapper:fullscreen .animalx-screen.active,
+:fullscreen #animalx-gamification-wrapper .animalx-screen.active {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 2rem !important; /* Margem de respiro interior em ecrã inteiro */
+    box-sizing: border-box !important;
+    padding: 6rem 2rem 2rem 2rem !important;
+}
+
+/* =========================================
+   BOTÕES DE NAVEGAÇÃO (SETAS)
+========================================= */
+
+.animalx-navegacao {
+    display: flex !important;
+    flex-direction: row !important;      
+    justify-content: space-between !important; 
+    align-items: center !important;
+    width: 100% !important;              
+    margin-top: 80px !important;         
+    padding-bottom: 20px !important;     
+    clear: both !important;
+    /* Forçamos a posição relativa para evitar que voem pelo ecrã */
+    position: relative !important; 
+    z-index: 1 !important;
+}
+.animalx-btn-next,
+.animalx-btn-prev {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: var(--animalx-primary-font);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--animalx-primary-color, #6c75b7);
+    padding: 0;
+    transition: transform 0.2s ease;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+}
+
+.animalx-btn-next:hover,
+.animalx-btn-prev:hover {
+    transform: scale(1.05);
+}
+
+/* Ajustes de alinhamento ótico do texto */
+.animalx-btn-next span,
+.animalx-btn-prev span {
+    margin-top: 8px;
+}
+
+/* Dimensões fixas das setas (140x140) */
+.animalx-btn-next img,
+.animalx-btn-prev img {
+    width: 140px !important; 
+    height: 140px !important;
+    object-fit: contain;
+}
+
+/* Margens negativas para compensar a transparência do PNG */
+.animalx-btn-next img {
+    margin-left: -30px; /* Puxa a seta esquerda em direção ao texto */
+}
+
+.animalx-btn-prev img {
+    margin-right: -30px; /* Puxa a seta direita em direção ao texto */
+}
+/* =========================================
+   NAVEGAÇÃO EXCLUSIVA DO CADERNO DE CAMPO
+========================================= */
+.animalx-navegacao-caderno {
+    position: absolute !important;
+    bottom: 6% !important; /* Ajusta se quiseres subir/descer os botões */
+    left: 0 !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;      
+    justify-content: space-between !important; 
+    align-items: center !important;
+    padding: 0 8% !important; /* Define a margem esquerda/direita */
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    
+    /* AS DUAS LINHAS MÁGICAS PARA A INTERATIVIDADE: */
+    z-index: 999 !important; /* Coloca os botões à frente de todas as folhas */
+    pointer-events: auto !important; /* Garante que os cliques passam */
+}
+
+/* Reduzir o tamanho das imagens apenas no caderno */
+.animalx-navegacao-caderno .animalx-btn-next img,
+.animalx-navegacao-caderno .animalx-btn-prev img {
+    width: 65px !important; 
+    height: 65px !important;
+}
+
+/* Compensação das margens negativas para a escala menor */
+.animalx-navegacao-caderno .animalx-btn-next img {
+    margin-left: -12px !important; 
+}
+.animalx-navegacao-caderno .animalx-btn-prev img {
+    margin-right: -12px !important;
+}
+
+/* Reduzir ligeiramente a fonte */
+.animalx-navegacao-caderno .animalx-btn-next,
+.animalx-navegacao-caderno .animalx-btn-prev {
+    font-size: 1rem !important;
+    gap: 0.15rem !important;
+}
+
+/* Ajuste ótico do texto */
+.animalx-navegacao-caderno .animalx-btn-next span,
+.animalx-navegacao-caderno .animalx-btn-prev span {
+    margin-top: 4px !important;
+}
+
+/* =========================================
+   ECRÃ INICIAL (Homescreen)
+========================================= */
+
+.animalx-homescreen-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    min-height: auto !important; /* Anula o cálculo antigo que forçava o scroll */
+    margin-top: 3rem;
+}
+
+.animalx-logo-main {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 1.5rem;
+    object-fit: contain;
+}
+
+.animalx-title-main {
+    font-size: 4.375rem; /* Aprox. 70px */
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.animalx-subtitle-main {
+    font-size: 2.5rem; /* Aprox. 40px */
+    font-weight: 300;
+    max-width: 900px;
+    margin-bottom: 2rem !important;
+    line-height: 1.2;
+}
+
+.animalx-actions-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+/* Estilização específica dos botões do ecrã inicial baseada no design */
+.animalx-btn-home {
+    background-color: var(--animalx-secondary-color); /* Bege */
+    color: var(--animalx-primary-color); /* Letra Roxa/Azul */
+    font-size: 3rem; /* Aprox. 48px */
+    padding: 1.5rem 4rem;
+    width: 420px;
+    border-radius: 2rem;
+    /* Recria a borda dupla do Figma usando box-shadow e border */
+    border: 2px solid var(--animalx-primary-color);
+    box-shadow: 0 0 0 6px var(--animalx-secondary-color);
+}
+
+.animalx-btn-home:hover {
+    transform: scale(1.02);
+    opacity: 0.95;
+}
+
+
+
+
+/* =========================================
+   ECRÃ DE DISCLAIMER / O PROJETO
+========================================= */
+.animalx-disclaimer-card {
+    background-color: var(--animalx-secondary-color, #ede8e9);
+    width: 100%;
+    /* Permite que o cartão cresça para preencher o ecrã */
+    min-height: calc(792px - 8rem); 
+    padding: 3.5rem;
+    border-radius: 1rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.animalx-disclaimer-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--animalx-text-color, #000000);
+    margin-bottom: 2rem;
+    font-family: var(--animalx-primary-font);
+}
+
+.animalx-disclaimer-grid {
+    display: grid;
+    /* Divide em duas colunas iguais (50% / 50%) */
+    grid-template-columns: 1fr 1fr; 
+    gap: 4rem;
+    /* Empurra o rodapé para o fundo */
+    flex-grow: 1; 
+}
+
+.animalx-disclaimer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.animalx-disclaimer-text {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--animalx-text-color, #000000);
+    margin: 0;
+}
+
+.animalx-disclaimer-alert {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    /* Cor roxa para o alerta conforme o design */
+    color: var(--animalx-primary-color, #6c75b7); 
+    margin: 0;
+}
+
+.animalx-disclaimer-alert strong {
+    font-weight: 700;
+}
+
+.animalx-disclaimer-media {
+    background-color: #d9d9d9;
+    width: 100%;
+    min-height: 350px;
+    height: 100%;
+    border-radius: 0.5rem;
+}
+
+.animalx-disclaimer-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 3rem;
+}
+
+
+
+/* Responsivo para ecrãs mais pequenos */
+@media (max-width: 768px) {
+    .animalx-disclaimer-grid {
+        grid-template-columns: 1fr;
+    }
+    .animalx-disclaimer-card {
+        padding: 2rem;
+    }
+}
+
+
+/* =========================================
+   FORMULÁRIO DE REGISTO DO UTILIZADOR
+========================================= */
+
+/* --- LAYOUT PRINCIPAL --- */
+.animalx-wrapper-principal {
+       background-color: var(--animalx-secondary-color, #ede8e9);
+        width: 100%;
+        /* Permite que o cartão cresça para preencher o ecrã */
+        min-height: calc(792px - 8rem); 
+        padding: 3.5rem;
+        border-radius: 1rem;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;      
+}
+
+/* Título */
+.animalx-titulo {
+    font-size: 42px;
+    font-weight: bold;
+    color: #000;
+    margin-top: 0;
+    margin-bottom: 40px;
+    line-height: 1.2;
+}
+
+/* Divisão em duas colunas (Flexbox) */
+.animalx-layout-colunas {
+    display: flex;
+    gap: 60px; /* Espaço entre o texto e a imagem */
+    margin-bottom: 40px;
+}
+
+.animalx-coluna-esquerda {
+    flex: 1.2; /* Ocupa um pouco mais de espaço que a imagem */
+    display: flex;
+    flex-direction: column;
+}
+
+.animalx-coluna-direita {
+    flex: 1; /* Ocupa o restante espaço */
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.animalx-texto-base {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    margin-bottom: 30px;
+}
+
+/* Imagem do Caderno */
+.animalx-imagem-caderno {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Dá um ligeiro relevo ao caderno */
+}
+
+/* --- ESTILOS DO FORMULÁRIO (RESTAURADOS) --- */
+.animalx-form-container {
+    background-color: #F8F7F4;
+    border-radius: 8px;
+    padding: 24px 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #E5E5E5;
+}
+
+.form-label {
+    display: block;
+    font-size: 15px;
+    color: #1A1A1A;
+    margin-bottom: 8px;
+}
+
+.form-input {
+    width: 100%;
+    max-width: 350px;
+    padding: 12px 14px;
+    border: 1px solid #C0C0C0;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #FFFFFF;
+}
+
+.form-divider {
+    border: 0;
+    height: 1px;
+    background-color: #E5E5E5;
+    margin: 24px 0;
+}
+
+.options-container {
+    display: flex;
+    gap: 16px;
+}
+
+.option-card {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: 16px;
+    border: 1px solid #C0C0C0;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #FFF;
+    transition: all 0.2s;
+}
+
+.option-card:hover {
+    background-color: #F0EFEA;
+}
+
+.option-card input[type="radio"] {
+    display: none;
+}
+
+.custom-radio {
+    width: 22px;
+    height: 22px;
+    border: 1px solid #999;
+    border-radius: 50%;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.option-text {
+    font-size: 15px;
+    line-height: 1.3;
+}
+
+.option-card input[type="radio"]:checked + .custom-radio {
+    border-color: #6A6C92;
+}
+
+.option-card input[type="radio"]:checked + .custom-radio::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background-color: #6A6C92;
+    border-radius: 50%;
+}
+
+.option-card:has(input[type="radio"]:checked) {
+    border-color: #6A6C92;
+    background-color: #F0F0F5;
+}
+
+/* --- PRIVACIDADE E CONSENTIMENTO --- */
+.animalx-seccao-privacidade {
+    margin-top: 20px;
+}
+
+.animalx-texto-privacidade {
+    font-size: 16px;
+    color: #6c75b7;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.animalx-label-consentimento {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+}
+
+.animalx-label-consentimento input {
+    display: none;
+}
+
+/* O pequeno círculo branco do consentimento */
+.animalx-custom-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #666;
+    border-radius: 50%; /* Mantém o aspeto redondo pedido */
+    margin-right: 12px;
+    margin-top: 3px;
+    flex-shrink: 0;
+    background-color: #FFF;
+    display: inline-block;
+}
+
+.animalx-label-consentimento input:checked + .animalx-custom-checkbox {
+    background-color: #6c75b7;
+    border-color: #6c75b7;
+}
+
+.animalx-texto-consentimento {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.4;
+}
+
+/* --- BOTÕES DE NAVEGAÇÃO --- */
+.animalx-navegacao {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 60px;
+}
+
+.animalx-btn-nav {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #6c75b7;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+}
+
+.animalx-icone-seta {
+    width: 60px;
+    height: 60px;
+}
+
+.roda-seta {
+    transform: rotate(180deg);
+}
+
+/* --- RESPONSIVIDADE (ECRÃS MAIS PEQUENOS) --- */
+@media (max-width: 900px) {
+    .animalx-wrapper-principal {
+        padding: 30px;
+        border-width: 15px;
+    }
+    
+    .animalx-layout-colunas {
+        flex-direction: column;
+    }
+    
+    .options-container {
+        flex-direction: column;
+    }
+}
+
+/* =========================================
+   FORMULÁRIO ANIMALX - ESTILOS GERAIS
+========================================= */
+
+/* Esta classe afeta APENAS o ecrã das perguntas */
+.animalx-conteiner-perguntas {
+    position: relative !important; /* Isto é OBRIGATÓRIO para a modal não fugir */
+    overflow: hidden !important;
+    width: 100%;
+    height: 800px !important; /* Deixa uma margem de segurança nas laterais */
+    max-width: 1400px;
+    margin: 1rem auto !important;
+    min-height: 650px; 
+    justify-content: space-between; 
+    background-color: #ede8e9; 
+    border:none;
+    border-radius: 8px;
+    padding: 2rem 4rem;
+    box-sizing: border-box !important;
+    display: flex;
+    flex-direction: column !important;
+    padding: 2rem 4rem !important;
+    font-family: 'Nohemi', sans-serif;
+    position: relative;
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.1); 
+}
+
+.animalx-conteiner-perguntas .animalx-form-header {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.animalx-conteiner-perguntas .animalx-form-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.animalx-conteiner-perguntas .animalx-form-step.active,
+.animalx-conteiner-perguntas .animalx-form-step {
+    flex-grow: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin-bottom: 0 !important;
+}
+
+.animalx-conteiner-perguntas .animalx-visualizador-imagem {
+    width: 100%;
+    max-width: 1000px;
+    height: 300px;
+    background-color: #f5f5f5; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 0.5rem;
+}
+
+.animalx-conteiner-perguntas .animalx-imagem-legenda {
+    width: 100%;
+    max-width: 1000px;
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+    text-decoration: underline;
+    margin-bottom: 1rem;
+}
+
+.animalx-conteiner-perguntas .animalx-pergunta-row {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4rem;
+}
+
+/* =========================================
+   CABEÇALHO (Ícones de Topo)
+========================================= */
+.animalx-form-header {
+    display: flex !important;
+    justify-content: flex-end !important; 
+    align-items: center !important;
+    gap: 15px !important; /* Espaçamento limpo e seguro entre os botões */
+    margin-bottom: 0.2rem !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+.animalx-icon-btn {
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin: 0 !important; /* Removemos todas as margens negativas que causavam a sobreposição */
+    transition: transform 0.2s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.animalx-icon-btn:hover {
+    transform: scale(1.1) !important;
+}
+
+.animalx-icon-btn img {
+    width: 80px !important; /* Ajusta para o tamanho real pretendido (ex: 45px ou 50px) */
+    height: 80px !important;
+    object-fit: contain !important;
+}
+/* =========================================
+   ÁREA DO PROJETOR E LEGENDA
+========================================= */
+.animalx-form-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.animalx-area-imagem-fixa {
+    width: 100% !important;
+    max-width: 1000px !important; /* A mesma largura da zona das perguntas */
+    margin: 0 auto 1.5rem auto !important;    /* Centra na caixa bege */
+    display: flex !important;
+    flex-direction: column !important;
+    z-index: 2 !important; /* Garante que os botões de topo flutuam acima se necessário */
+}
+
+/* O espaço do projetor IIIF */
+#projetor-iiif {
+    width: 100% !important;
+    min-height: 350px !important; /* Altura fixa à semelhança do teu protótipo */
+    background-color: #333 !important; /* A cor de teste que escolheste */
+    border-radius: 4px !important; 
+    margin-bottom: 0.5rem !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.animalx-imagem-legenda {
+    width: 100%;
+    max-width: 1000px;
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+    text-decoration: underline;
+    margin-bottom: 2rem;
+}
+
+/* =========================================
+   LINHA DA PERGUNTA E BOTÕES SIM/NÃO
+========================================= */
+.animalx-pergunta-row {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4rem;
+}
+
+.animalx-titulo-pergunta {
+    font-size: 22px;
+    font-weight: 500;
+    color: #000;
+    margin: 0;
+}
+
+/* =========================================
+   BOTÕES DE OPÇÃO (SIM/NÃO)
+========================================= */
+
+.animalx-botoes-sim-nao {
+    display: flex;
+    gap: 1.5rem;
+}
+
+/* Estado Base (Desmarcado) */
+.animalx-conteiner-perguntas .animalx-btn-opcao {
+    background-color: transparent !important;
+    color: #6c75b7 !important;
+    font-family: 'Nohemi', sans-serif !important;
+    font-size: 20px !important;
+    border: 2px solid #6c75b7 !important;
+    border-radius: 20px !important;
+    padding: 12px 45px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Efeito de Hover (quando o rato passa por cima sem clicar) */
+.animalx-conteiner-perguntas .animalx-btn-opcao:hover {
+    background-color: rgba(108, 117, 183, 0.1) !important; /* Fica um roxo muito clarinho */
+}
+
+/* ESTADO SELECIONADO (O botão clicado ganha esta classe via JS) */
+.animalx-conteiner-perguntas .animalx-btn-opcao.selecionado {
+    background-color: #6c75b7 !important;
+    color: white !important;
+    /* Um anel suave à volta do botão para dar um destaque extra (opcional, mas fica incrível) */
+    box-shadow: 0 0 0 4px rgba(108, 117, 183, 0.3) !important; 
+}
+
+/* =========================================
+   RODAPÉ (Progresso e Seguinte)
+========================================= */
+.animalx-form-footer {
+    width: 100% !important;
+    max-width: 100%;
+    margin-top: auto !important;
+    margin-bottom:0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position:relative;
+}
+
+/* Barra de Progresso tipo Cápsula */
+.animalx-progresso-wrapper {
+    width: 400px;
+    height: 35px;
+    border: 3px solid #6c75b7;
+    border-radius: 20px;
+    background-color: transparent;
+    overflow: hidden;
+    margin: 0 ; 
+}
+
+.animalx-progresso-fill {
+    height: 100%;
+    background-color: #6c75b7;
+    border-radius: 15px 0 0 15px; /* Arredonda só a esquerda */
+    transition: width 0.4s ease;
+}
+
+/* Botão Seguinte */
+.animalx-conteiner-perguntas .animalx-btn-seguinte {
+    position: absolute !important;
+    right: 0 !important;
+    margin-right: -50px !important;
+    background: transparent !important;
+    border: none !important;
+    color: #6c75b7 !important; /* O roxo institucional */
+    font-family: 'Nohemi', sans-serif !important;
+    font-size: 20px !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 5px !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    transition: opacity 0.2s ease, transform 0.2s ease !important;
+}
+
+/* Efeito interativo: fica ligeiramente transparente e "empurra" para a direita */
+.animalx-conteiner-perguntas .animalx-btn-seguinte:hover {
+    opacity: 0.8 !important;
+    transform: translateX(5px) !important; 
+}
+
+/* Ajuste da imagem da seta */
+.animalx-conteiner-perguntas .animalx-btn-seguinte img {
+    /* Se a seta original parecer muito grande ou pequena, ajusta estes dois valores */
+    width: 140px !important; 
+    height: 140px !important;
+    object-fit: contain !important;
+    margin-left: -30px !important; 
+}
+
+/* =========================================
+   BOTÃO ANTERIOR
+========================================= */
+.animalx-conteiner-perguntas .animalx-btn-anterior {
+    position: absolute !important;
+    left: 0 !important; /* Encosta o botão à margem esquerda */
+    
+    /* Afinação para alinhar visualmente com o limite esquerdo do formulário (ajusta se necessário) */
+    margin-left: -50px !important; 
+    background: transparent !important;
+    border: none !important;
+    color: #6c75b7 !important;
+    font-family: 'Nohemi', sans-serif !important;
+    font-size: 20px !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    transition: opacity 0.2s ease, transform 0.2s ease !important;
+}
+
+/* Animação invertida: desliza ligeiramente para a esquerda */
+.animalx-conteiner-perguntas .animalx-btn-anterior:hover {
+    opacity: 0.8 !important;
+    transform: translateX(-5px) !important; 
+}
+
+.animalx-conteiner-perguntas .animalx-btn-anterior img {
+    width: 140px !important; 
+    height: 140px !important;
+    object-fit: contain !important;
+    margin-right: -30px !important; 
+}
+
+/* =========================================
+   BOTÃO SUBMETER
+========================================= */
+.animalx-conteiner-perguntas .animalx-btn-submeter {
+    position: absolute !important;
+    right: 0 !important; /* Encosta à direita como o botão Seguinte fazia */
+    margin-right: -10px !important; /* Usa o mesmo ajuste que aplicaste ao Seguinte */
+    
+    /* Estilo sólido igual aos botões Sim/Não */
+    background-color: #6c75b7 !important;
+    color: white !important;
+    font-family: 'Nohemi', sans-serif !important;
+    font-size: 20px !important;
+    border: 2px solid #5a629e !important;
+    border-radius: 20px !important;
+    padding: 12px 35px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+    transition: background-color 0.2s, transform 0.2s !important;
+}
+
+.animalx-conteiner-perguntas .animalx-btn-submeter:hover {
+    background-color: #5a629e !important;
+    transform: scale(1.05) !important; /* Ligeiro aumento para dar feedback ao clique final */
+}
+
+/* =========================================
+   LAYOUT ESPECÍFICO PERGUNTA 2
+========================================= */
+.animalx-layout-p2 {
+    align-items: flex-start !important; 
+    gap: 3rem;
+}
+
+.animalx-layout-p2 .animalx-coluna-texto {
+    flex: 1; 
+}
+
+.animalx-layout-p2 .animalx-coluna-interacao {
+    width: 350px; 
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.animalx-nota {
+    font-size: 16px;
+    font-family: 'Nohemi', sans-serif;
+    color: #000000;
+    line-height: 1.6;
+    margin-top: 1rem;
+}
+
+/* =========================================
+   MENU DROPDOWN PESQUISÁVEL (Estilo Roxo)
+========================================= */
+.animalx-conteiner-perguntas .animalx-dropdown-pesquisa {
+    position: relative;
+    width: 100%;
+}
+
+/* A caixa onde o utilizador escreve (Roxa) */
+.animalx-input-roxo {
+    width: 100%;
+    background-color: #d3b2ff !important; 
+    color: #494949 !important;
+    font-family: 'Nohemi', sans-serif;
+    font-size: 18px;
+    padding: 12px 20px;
+    border: none !important;
+    border-radius: 5px !important; 
+    box-sizing: border-box;
+    outline: none;
+    cursor: pointer;
+    
+    /* Seta falsa à direita */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7"><path fill="%23494949" d="M6 7L0 0h12z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+}
+
+.animalx-input-roxo::placeholder {
+    color: #494949;
+}
+
+/* A lista suspensa (Branca, com scroll) */
+.animalx-conteiner-perguntas .animalx-lista-opcoes {
+    display: none; 
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 250px; /* Cria a barra de scroll se a lista for muito longa */
+    overflow-y: auto;
+    background-color: white;
+    border: 2px solid #d3b2ff; /* Rebordo a combinar com o input */
+    border-top: none;
+    border-radius: 0 0 5px 5px; 
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+
+.animalx-conteiner-perguntas .animalx-lista-opcoes li {
+    padding: 12px 20px;
+    font-family: 'Nohemi', sans-serif;
+    font-size: 18px;
+    color: #494949;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.animalx-conteiner-perguntas .animalx-lista-opcoes li:last-child {
+    border-bottom: none;
+}
+
+.animalx-conteiner-perguntas .animalx-lista-opcoes li:hover {
+    background-color: rgba(211, 178, 255, 0.2); /* Um roxo muito clarinho ao passar o rato */
+    color: #000;
+}
+
+/* =========================================
+   RADIO BUTTON "NÃO SEI"
+========================================= */
+.animalx-radio-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Nohemi', sans-serif;
+    font-size: 18px;
+    color: #494949;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.animalx-radio-label input[type="radio"] {
+    display: none; /* Esconde o botão padrão feio */
+}
+
+.animalx-radio-custom {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #494949;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+}
+
+.animalx-radio-label input[type="radio"]:checked + .animalx-radio-custom::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background-color: #494949;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* =========================================
+   TEXTAREA (PERGUNTA 5)
+========================================= */
+.animalx-grupo-descricao {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Espaço entre a palavra 'Descrição' e a caixa de texto */
+    width: 100%;
+}
+
+/* O pequeno título "Descrição" */
+.animalx-label-simples {
+    font-family: 'Nohemi', sans-serif;
+    font-size: 16px;
+    color: #494949;
+    font-weight: 500;
+    margin-left: 5px;
+}
+
+/* A caixa branca onde o utilizador escreve */
+.animalx-textarea-branca {
+    width: 100%;
+    background-color: #ffffff !important;
+    color: #494949 !important;
+    font-family: 'Nohemi', sans-serif;
+    font-size: 16px;
+    padding: 15px 20px;
+    border: 2px solid transparent !important; 
+    border-radius: 10px !important; /* Arredondamento suave semelhante ao teu design */
+    box-sizing: border-box;
+    outline: none;
+    resize: vertical; /* Permite ao utilizador esticar a caixa para baixo se escrever uma redação */
+    min-height: 80px;
+    
+    /* Uma sombra muito suave para destacar o branco sobre o fundo cinza claro */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* O que acontece quando o utilizador clica lá dentro para escrever */
+.animalx-textarea-branca:focus {
+    /* Cria um "anel" roxo suave à volta da caixa para dar feedback visual de que está ativa */
+    box-shadow: 0 0 0 3px rgba(108, 117, 183, 0.3); 
+}
+
+.animalx-textarea-branca::placeholder {
+    color: #a0a0a0;
+}
+
+.animalx-conteiner-perguntas {
+    margin: 0 auto !important; /* Remove as margens de 3rem antigas para aproveitar o espaço */
+    padding: 1.5rem 4rem !important; /* Reduz ligeiramente o preenchimento de topo/fundo */
+}
+
+.animalx-conteiner-perguntas .animalx-visualizador-imagem {
+    height: 330px !important; /* Reduz a imagem de 450px para 330px */
+    margin-bottom: 0.5rem !important;
+}
+
+.animalx-conteiner-perguntas .animalx-imagem-legenda {
+    margin-bottom: 1.5rem !important; /* Reduz o espaço morto a meio para metade */
+}
+
+.animalx-conteiner-perguntas .animalx-pergunta-row {
+    margin-bottom: 2rem !important; /* Aproxima a pergunta da barra de progresso */
+}
+/* =========================================
+   TELAS MODAIS (AVISOS)
+========================================= */
+
+/* Fundo escurecido que ocupa o ecrã todo */
+
+.animalx-modal-overlay {
+    position: absolute !important; /* Tranca a modal dentro do contentor pai */
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;  /* 100% da caixa do jogo (e não 100vw do ecrã) */
+    height: 100% !important;
+    min-height: 100% !important; 
+    background-color: rgba(0, 0, 0, 0.7) !important; 
+    z-index: 9999 !important; 
+    display: none !important; /* Mantém escondido até o JS chamar */
+    justify-content: center !important;
+    align-items: center !important;
+    
+}
+/* A caixa de aviso */
+.animalx-modal-caixa {
+    background-color: #ede8e9; /* Fundo bege/cinza claro */
+    border: 35px solid #6c75b7; /* A borda grossa que cria o efeito de duas caixas! */
+    width: 90%;
+    max-width: 650px;
+    padding: 40px 60px;
+    position: relative;
+    text-align: center;
+    box-sizing: border-box;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+/* O pequeno X no canto superior direito */
+.animalx-btn-fechar {
+    position: absolute;
+    top: -40px;   /* Puxa a imagem para cima da moldura roxa */
+    right: -40px; /* Puxa a imagem para a direita */
+    background: transparent;
+    border: none;
+    padding: 0;
+    width: 86px;  /* O tamanho exato que estava no teu Figma */
+    height: 86px;
+    cursor: pointer;
+    z-index: 10;  /* Garante que o botão fica acima da moldura */
+    transition: transform 0.2s ease;
+}
+
+/* Garante que a imagem preenche o espaço corretamente */
+.animalx-btn-fechar img {
+    width: 140%;
+    height: 140%;
+    object-fit: contain;
+}
+
+/* Pequeno efeito de aumentar ao passar o rato (opcional) */
+.animalx-btn-fechar:hover {
+    transform: scale(1.05);
+}
+
+/* Título e Texto */
+.animalx-modal-titulo {
+    font-family: 'Nohemi', sans-serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: #494949;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.animalx-modal-texto {
+    font-family: 'Nohemi', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: #494949;
+    line-height: 1.5;
+    margin-bottom: 40px;
+}
+
+/* Os botões SIM e NÃO da Modal */
+.animalx-modal-botoes {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.animalx-btn-modal {
+    background-color: #6c75b7;
+    color: white;
+    font-family: 'Nohemi', sans-serif;
+    font-size: 20px;
+    border: 2px solid white; /* Um pequeno contorno branco para destacar do fundo */
+    border-radius: 15px;
+    padding: 15px 40px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.animalx-btn-modal:hover {
+    background-color: #5a629e;
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   CADERNO DE CAMPO
+========================================= */
+
+/* --- A CAIXA GERAL BEGE E ROXA --- */
+#modal-caderno-campo .animalx-wrapper-principal {
+    width: 100%;
+    max-width: 1337px;
+    margin: 40px auto;
+    background-color: #ede8e9;
+    border: 35px solid #6c75b7;
+    padding: 60px 40px;
+    box-sizing: border-box;
+}
+
+/* --- A MESA DE MADEIRA --- */
+.animalx-mesa-fundo {
+    width: 100%;
+    max-width: 1100px;
+    height: 700px; /* ALTURA FIXA! Para a mesa não encolher nem esticar */
+    margin: 0 auto;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center; /* Centra o livro horizontalmente */
+    align-items: center;     /* Centra o livro verticalmente */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* --- O LIVRO ABERTO --- */
+.animalx-livro-aberto {
+    width: 850px;
+    height: 580px; 
+    background-size: 90%; 
+    background-position: center center; /* Mantém o livro bem centrado enquanto faz o zoom */
+    background-repeat: no-repeat;
+    
+    background-color: transparent !important;
+    position: relative !important;
+}
+
+/* Garante que o texto se afasta das bordas do teu novo livro recortado */
+.animalx-pagina-esquerda {
+    width: 425px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    /* PADDING: Cima, Direita, Baixo, Esquerda */
+    padding: 60px 30px 40px 60px; /* Ajusta estes 60px se quiseres o texto mais longe das pontas */
+    box-sizing: border-box;
+}
+
+/* --- ESTRUTURA DAS FOLHAS --- */
+.animalx-folha-conteudo {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none; 
+    flex-direction: row;
+}
+
+.animalx-folha-conteudo.active {
+    display: flex;
+}
+
+/* --- AS PÁGINAS (ESQUERDA E DIREITA) --- */
+.animalx-pagina-esquerda {
+    width: 425px; /* Metade exata da largura do livro */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    /* PADDING FIXO EM PX: Cima, Direita (Lombada), Baixo, Esquerda (Borda do livro) */
+    padding: 50px 30px 40px 80px; 
+    box-sizing: border-box;
+}
+
+.animalx-pagina-direita {
+    width: 425px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 60px 60px 40px 30px; 
+    box-sizing: border-box;
+}
+
+/* --- TEXTOS E TIPOGRAFIA (TAMANHOS FIXOS) --- */
+
+
+/* Títulos Principais ("Caderno de Campo" e "Coleções") */
+.animalx-titulo-manuscrito {
+    font-family: 'Caveat', cursive !important;
+    font-size: 2.8rem !important; 
+    font-weight: 700 !important;
+    text-align: left !important; /* Centra o texto como na Imagem 1 */
+    color: #4a3b32 !important; /* Tom castanho escuro idêntico ao protótipo */
+    margin-top: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1.2 !important;
+}
+
+/* Subtítulo (Nível - ex: "Curador Estagiário") */
+.animalx-subtitulo-manuscrito {
+    font-family: 'Caveat', cursive !important;
+    font-size: 2.2rem !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    color: #4a3b32 !important;
+    margin-top: 0 !important;
+    margin-bottom: 2rem !important;
+}
+
+/* Legenda ("Animais identificados") */
+.animalx-legenda-manuscrita {
+    font-family: 'Caveat', cursive !important;
+    font-size: 2rem !important;
+    font-weight: 500 !important;
+    color: #4a3b32 !important;
+}
+
+/* --- ELEMENTOS GRÁFICOS DA ESQUERDA --- */
+.animalx-carimbo {
+    width: 120px; /* Tamanho fixo em vez de % */
+    height: auto;
+    align-self: center;
+    margin-bottom: 15px;
+}
+
+
+
+.animalx-barra-fundo {
+    width: 200px;
+    height: 12px;
+    border: 2px solid #4a3b32;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    overflow: hidden;
+    flex-shrink: 0; 
+}
+
+.animalx-barra-enchimento {
+    height: 100%;
+    background-color: #4a3b32;
+}
+
+.animalx-progresso-geral {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.animalx-progresso-geral .animalx-barra-fundo {
+    width: 100% !important; /* Devolve a largura total à barra do Curador Estagiário */
+}
+
+.animalx-pontos-texto, .animalx-registos-texto {
+    font-family: 'Nohemi', sans-serif;
+    color: #4a3b32;
+    font-size: 13px; /* Tamanho legível e fixo */
+    display: block;
+    text-align: right;
+    align-self: flex-end !important;
+}
+
+
+.animalx-estatistica-animais {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important; 
+    gap: 1rem !important; 
+    margin-top: 2rem !important; /* Espaço em relação à barra de progresso acima */
+    margin-bottom: 4.5rem !important; /* A LINHA MÁGICA: Empurra o bloco para cima, afastando-o da seta */
+    width: 100% !important;
+    padding: 0 1rem !important; 
+    box-sizing: border-box !important;
+    position: relative !important;
+    top: -40px !important; /* Puxa o bloco 40 pixeis para cima. Aumenta para -50px ou -60px se precisares de o subir mais */
+
+}
+
+/* Ajuste da Pata */
+.animalx-icone-pata {
+    width: 90px !important; /* Diminuído para não ultrapassar a margem do caderno */
+    height: auto !important;
+    object-fit: contain !important;
+    flex-shrink: 0 !important; /* Garante que a imagem não é esmagada pelo texto */
+}
+
+/* Contentor do Número e da Legenda */
+.animalx-numero-identificados {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+}
+
+/* Ajuste do Número */
+.animalx-numero-grande {
+    font-size: 2.8rem !important; /* Reduzido para ficar mais proporcional */
+    font-weight: 700 !important;
+    color: #4a3b32 !important; 
+    line-height: 1 !important;
+    margin-bottom: -5px !important; 
+    text-align: right !important; /* Alinha o número à direita da pata */
+}
+
+/* Ajuste do Texto "Animais identificados" */
+.animalx-legenda-manuscrita {
+    font-family: 'Caveat', cursive !important;
+    font-size: 1.6rem !important; /* Reduzido para caber melhor na largura */
+    font-weight: 500 !important;
+    color: #4a3b32 !important;
+    white-space: nowrap !important; /* Força o texto a manter-se numa única linha */
+    line-height: 1.1 !important;
+}
+
+/* --- COLEÇÕES DA DIREITA --- */
+.titulo-colecoes {
+    margin-bottom: 20px;
+}
+
+.animalx-item-colecao {
+    display: flex;
+    align-items: center;
+    gap: 1rem !important;
+    margin-bottom: 2.5rem !important;
+}
+
+.animalx-item-colecao:last-child {
+    margin-bottom: 0 !important;
+}
+
+.animalx-info-colecao {
+    flex: 1;
+    padding-right: 15px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 220px !important;
+    min-width: 220px !important; /* Deve ter exatamente o mesmo valor que escolheste para a barra acima */
+    flex-shrink: 0 !important; 
+}
+
+.animalx-info-colecao h4 {
+    font-family: 'Nohemi', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 3px 0;
+    color: #4a3b32;
+}
+
+.animalx-info-colecao .animalx-barra-fundo {
+    width: 220px !important;
+    min-width: 220px !important;
+    flex-shrink: 0 !important;
+    height: 13px !important; /* Força a espessura exata */
+    min-height: 13px !important;
+    max-height: 13px !important;
+}
+
+.animalx-info-colecao .animalx-barra-enchimento {
+    height: 100% !important; 
+}
+
+.animalx-img-colecao {
+    max-width: 85px !important; /* Limita o tamanho do papel rasgado */
+    height: auto !important;
+    object-fit: contain !important;
+    flex-shrink: 0 !important;
+    filter: drop-shadow(2px 3px 5px rgba(0,0,0,0.3));
+}
+
+/* Para a Folha 2 (Imagem à esquerda) */
+.item-invertido {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.item-invertido .animalx-info-colecao {
+    padding-right: 0;
+}
+
+.animalx-pagina-esquerda {
+    padding-top: 3.7rem !important;
+    padding-left: 6rem !important; 
+}
+
+.centralizada-em-breve {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important; /* Centra verticalmente */
+    align-items: center !important;     /* Centra horizontalmente */
+    height: 100% !important;            /* Garante que ocupa a altura toda da página */
+}
+
+.centralizada-em-breve .animalx-titulo-manuscrito {
+    margin: 0 !important; 
+    text-align: center !important; /* Centra o título horizontalmente */
+}
+#caderno-folha-2 .animalx-pagina-esquerda .animalx-item-colecao:first-child {
+    margin-top: 50px !important; /* Ajusta este valor (ex: 70px ou 100px) para alinhar perfeitamente com a folha 1 */
+}
+
+#caderno-folha-1 .animalx-item-colecao {
+    gap: 0rem !important; /* Reduz o espaço entre a barra e a imagem. O valor original era 1rem */
+}
+
+/* =========================================
+   MODAL DE SOBREPOSIÇÃO E LIMPEZA DE FUNDO
+========================================= */
+
+
+/* Garante que o contentor do caderno fica contido no centro e cria a sombra de flutuação */
+.animalx-modal-overlay .animalx-wrapper-principal {
+    position: relative !important;
+    width: 90% !important; 
+    max-width: 1200px !important;
+    
+    /* As regras mágicas para anular as cores herdadas do tema: */
+    background: transparent !important; 
+    background-color: transparent !important;
+    border: none !important; 
+    outline: none !important;
+    box-shadow: none !important; 
+    padding: 0 !important; 
+    margin: 0 auto !important;
+}
+
+
+/* =========================================
+   BOTÃO X DE FECHAR (IMAGEM)
+========================================= */
+
+.animalx-btn-fechar {
+    position: absolute !important;
+    /* Estes valores empurram o botão para dentro. 
+       Aumenta para 40px ou 50px se precisares de o arrastar mais para o centro da madeira */
+    top: 10px !important; 
+    right: 50px !important; 
+    
+    background: transparent !important; 
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important; 
+    cursor: pointer !important;
+    z-index: 10000 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    transition: transform 0.2s ease !important;
+}
+
+/* Tamanho do botão X */
+.animalx-btn-fechar img {
+    /* Aumentado de 50px para 65px para maior destaque */
+    width: 140px !important; 
+    height: 140px !important;
+    object-fit: contain !important;
+}
+
+/* Efeito de aumento ao passar o rato */
+.animalx-btn-fechar:hover {
+    transform: scale(1.1) !important;
+    background: transparent !important; 
+}
+
+
+
+/* =========================================
+   MEDIA QUERIES (Responsividade Global)
+========================================= */
+
+/* 1. Laptops e ecrãs curtos (Zoom out automático) */
+@media screen and (max-height: 850px) {
+    #animalx-gamification-wrapper {
+        zoom: 0.85;
+    }
+}
+
+@media screen and (max-height: 700px) {
+    #animalx-gamification-wrapper {
+        zoom: 0.75;
+    }
+}
+
+/* 2. Tablet (até 1024px) */
+@media screen and (max-width: 1024px) {
+    /* Homescreen */
+    .animalx-title-main {
+        font-size: 3.5rem;
+    }
+    .animalx-subtitle-main {
+        font-size: 2rem;
+        margin-bottom: 2.5rem;
+    }
+    .animalx-btn-home {
+        font-size: 2.5rem;
+        width: 350px;
+    }
+    
+    /* Formulário e Modais (Ajustes de espaço) */
+    .animalx-conteiner-perguntas {
+        padding: 2rem !important;
+    }
+    .animalx-modal-caixa {
+        padding: 40px !important;
+        width: 95% !important;
+    }
+}
+
+/* 3. Mobile (até 768px) */
+@media screen and (max-width: 768px) {
+    /* Estrutura Global e Desativação do Zoom */
+    #animalx-gamification-wrapper {
+        padding: 1rem;
+        zoom: 1 !important;
+        transform: none !important;
+    }
+    .animalx-screen.active {
+        flex-direction: column;
+    }
+    .animalx-btn {
+        width: 100%;
+    }
+    .animalx-top-nav {
+            right: 0 !important;
+            left: 0 !important;
+            bottom: 15px !important;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    h1 {
+        font-size: 1.5rem;
+    }
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    /* Homescreen */
+    .animalx-homescreen-content {
+        justify-content: flex-start;
+        padding-top: 2rem;
+        
+    }
+    .animalx-logo-main {
+        max-width: 200px;
+    }
+    .animalx-title-main {
+        font-size: 2.5rem;
+    }
+    .animalx-subtitle-main {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .animalx-btn-home {
+        font-size: 2rem;
+        width: 100%;
+        max-width: 300px;
+        padding: 1rem 2rem;
+        border-radius: 1.5rem;
+    }
+
+    /* Formulário e Modais (Empilhamento) */
+    .animalx-conteiner-perguntas {
+        padding: 1rem !important;
+    }
+    .animalx-visualizador-imagem {
+        height: 250px !important;
+    }
+    .animalx-pergunta-row {
+        flex-direction: column !important;
+        text-align: center;
+        gap: 20px;
+    }
+    .animalx-modal-caixa > div {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+    .animalx-modal-caixa img#imagem-novo-nivel {
+        width: 150px !important;
+    }
+}
