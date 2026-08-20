@@ -1,93 +1,127 @@
 import {
-	carregarItemAleatorio,
-	prepararDadosDoItem
+    carregarItemAleatorio,
+    obterValorMetadado
 } from './api.js';
 
 let itemAtivo = null;
 let visualizadorIIIF = null;
 
+const URL_BASE_IIIF = 'https://DanielaTGomes.github.io/imagens_omeka/resultado';
+const PREFIXO_OPEN_SEADRAGON = 'https://cdn.jsdelivr.net/npm/openseadragon@4.1/build/openseadragon/images/';
+
 /**
- * Inicializa o visualizador IIIF dentro do elemento dedicado.
+ * Extrai e normaliza o código usado pelo serviço IIIF.
  *
- * @param {Object} dadosItem - Dados tratados pelo módulo da API
+ * @param {Object} item - Item devolvido pela API
+ * @returns {string} Código sem pontos
  */
-function inicializarVisualizadorIIIF(dadosItem) {
-	const elementoVisualizador = document.getElementById('projetor-iiif');
+function extrairCodigoMedia(item) {
+    const codigoOriginal = obterValorMetadado(item, 'dcterms:identifier')
+        || obterValorMetadado(item, 'o:source')
+        || obterValorMetadado(item, 'o:title');
 
-	if (!elementoVisualizador || !dadosItem.codigoMedia) {
-		console.warn('Não foi possível inicializar o visualizador IIIF.');
-		return;
-	}
-
-	if (visualizadorIIIF) {
-		visualizadorIIIF.destroy();
-		visualizadorIIIF = null;
-	}
-
-	elementoVisualizador.dataset.iiifManifest = dadosItem.urlInfoJson;
-	elementoVisualizador.dataset.apiItemId = String(dadosItem.itemId);
-	elementoVisualizador.dataset.apiMetadata = dadosItem.metadata;
-
-	if (typeof window.OpenSeadragon !== 'function') {
-		console.error('OpenSeadragon não está disponível na página.');
-		return;
-	}
-
-	visualizadorIIIF = window.OpenSeadragon({
-		id: 'projetor-iiif',
-		prefixUrl: 'https://cdn.jsdelivr.net/npm/openseadragon@4.1/build/openseadragon/images/',
-		tileSources: dadosItem.urlInfoJson,
-		showNavigationControl: false
-	});
+    return String(codigoOriginal).replaceAll('.', '_');
 }
 
 /**
- * Injeta a legenda preparada pelo módulo da API.
+ * Inicializa OpenSeadragon dentro de #projetor-iiif.
  *
- * @param {string} legenda - Texto da legenda
+ * @param {Object} item - Item devolvido pela API
  */
-function injetarLegenda(legenda) {
-	const elementoLegenda = document.querySelector('.animalx-imagem-legenda');
+function inicializarImagemIIIF(item) {
+    const elementoVisualizador = document.getElementById('projetor-iiif');
+    const codigoMedia = extrairCodigoMedia(item);
 
-	if (elementoLegenda) {
-		elementoLegenda.textContent = legenda;
-	}
+    if (!elementoVisualizador || !codigoMedia) {
+        console.warn('Não foi possível encontrar o viewer IIIF ou o código da imagem.');
+        return;
+    }
+
+    if (visualizadorIIIF) {
+        visualizadorIIIF.destroy();
+        visualizadorIIIF = null;
+    }
+
+    // Garante que restos de uma instância anterior não ficam no elemento.
+    elementoVisualizador.replaceChildren();
+
+    const urlInfoJson = `${URL_BASE_IIIF}/${codigoMedia}/info.json`;
+    elementoVisualizador.dataset.iiifManifest = urlInfoJson;
+    elementoVisualizador.dataset.apiItemId = String(item?.['o:id'] ?? item?.id ?? '');
+    elementoVisualizador.dataset.apiMetadata = JSON.stringify(item);
+
+    if (typeof window.OpenSeadragon !== 'function') {
+        console.error('OpenSeadragon não está disponível na página.');
+        return;
+    }
+
+    try {
+        visualizadorIIIF = window.OpenSeadragon({
+            id: 'projetor-iiif',
+            prefixUrl: PREFIXO_OPEN_SEADRAGON,
+            tileSources: urlInfoJson,
+            showNavigationControl: false
+        });
+
+        visualizadorIIIF.addHandler('open-failed', (evento) => {
+            console.error(`Falha ao carregar o URL IIIF ${urlInfoJson}:`, evento?.message || evento);
+        });
+
+        visualizadorIIIF.addHandler('tile-source-failed', (evento) => {
+            console.error(`Falha ao carregar o tile source IIIF ${urlInfoJson}:`, evento?.message || evento);
+        });
+    } catch (erro) {
+        console.error(`Erro ao inicializar o OpenSeadragon com ${urlInfoJson}:`, erro);
+        visualizadorIIIF = null;
+    }
 }
 
 /**
- * Renderiza o item atual no visualizador e na legenda.
+ * Injeta a legenda dinâmica em #legenda-dinamica.
  *
- * @param {Object} item - Item retornado pela API
+ * @param {Object} item - Item devolvido pela API
  */
-function renderizarItem(item) {
-	if (!item) {
-		return;
-	}
+function injetarLegendaDinamica(item) {
+    const elementoLegenda = document.getElementById('legenda-dinamica');
 
-	itemAtivo = item;
-	const dadosItem = prepararDadosDoItem(item);
+    if (!elementoLegenda) {
+        console.warn('O elemento #legenda-dinamica não foi encontrado.');
+        return;
+    }
 
-	inicializarVisualizadorIIIF(dadosItem);
-	injetarLegenda(dadosItem.legenda);
+    const titulo = obterValorMetadado(item, 'dcterms:relation')
+        || obterValorMetadado(item, 'dcterms:title')
+        || obterValorMetadado(item, 'o:title')
+        || 'Título não disponível';
+    const dataRegisto = obterValorMetadado(item, 'dcterms:date') || 'Data não disponível';
+    const autoria = obterValorMetadado(item, 'dcterms:provenance') || 'Autoria não disponível';
+    const nInventario = obterValorMetadado(item, 'dcterms:identifier') || 'Nº de inventário não disponível';
+
+    elementoLegenda.textContent = `${titulo} (${dataRegisto}) de ${autoria}, disponível no acervo do Museu de Lisboa (${nInventario}).`;
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-	const botaoInicio = document.querySelector('.animalx-btn-home');
+/**
+ * Carrega e apresenta um novo item, mantendo-o disponível para a sessão atual.
+ */
+async function carregarEApresentarItem() {
+    const item = await carregarItemAleatorio();
 
-	if (!botaoInicio) {
-		return;
-	}
+    if (!item) {
+        return;
+    }
 
-	botaoInicio.addEventListener('click', async (evento) => {
-		evento.preventDefault();
+    itemAtivo = item;
+    inicializarImagemIIIF(item);
+    injetarLegendaDinamica(item);
+}
 
-		const item = await carregarItemAleatorio();
-		renderizarItem(item);
-	});
+document.addEventListener('DOMContentLoaded', () => {
+    carregarEApresentarItem();
 });
 
 export {
-	inicializarVisualizadorIIIF,
-	injetarLegenda,
-	renderizarItem
+    carregarEApresentarItem,
+    extrairCodigoMedia,
+    inicializarImagemIIIF,
+    injetarLegendaDinamica
 };

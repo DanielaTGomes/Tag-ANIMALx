@@ -942,7 +942,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 #projetor-iiif {
     width: 100% !important;
     min-height: 350px !important; /* Altura fixa à semelhança do teu protótipo */
-    background-color: #333 !important; /* A cor de teste que escolheste */
+    position:relative;
     border-radius: 4px !important; 
     margin-bottom: 0.5rem !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
