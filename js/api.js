@@ -18,22 +18,25 @@ function construirUrlItens() {
 async function carregarItemAleatorio() {
     try {
         const resposta = await fetch(construirUrlItens());
-
+        
+        // 1. Se o Omeka rejeitar a ligação (ex: Chave errada)
         if (!resposta.ok) {
-            throw new Error(`Erro HTTP: ${resposta.status} ${resposta.statusText}`);
+            return { erroCritico: `O Omeka S rejeitou o pedido (Erro HTTP ${resposta.status}). Confirma se as chaves no config.js estão corretas e se o teu utilizador tem permissões.` };
         }
 
         const items = await resposta.json();
-
+        
+        // 2. Se a resposta chegar bem, mas a coleção não tiver itens
         if (!Array.isArray(items) || items.length === 0) {
-            console.warn('Nenhum item encontrado na coleção.');
-            return null;
+            return { erroCritico: `O Omeka S respondeu bem, mas a coleção está vazia! Confirma se o 'item_set_id=1' no api.js é o ID correto da coleção "Por Classificar".` };
         }
 
+        // Tudo correu bem! Devolve um item ao calhas
         return items[Math.floor(Math.random() * items.length)];
+        
     } catch (erro) {
-        console.error('Erro ao carregar item aleatório:', erro.message);
-        return null;
+        // 3. Se o browser bloquear o pedido (ex: erro de CORS ou XAMPP desligado)
+        return { erroCritico: `Falha de rede (${erro.message}). Isto acontece geralmente se o XAMPP estiver desligado ou devido a um bloqueio de CORS (estás a usar o Live Server no VS Code?).` };
     }
 }
 

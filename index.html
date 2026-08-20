@@ -923,7 +923,13 @@ function irParaTela(idTelaDestino) {
     // 3. Adiciona a classe 'active' APENAS à tela de destino (mostra a tela certa)
     let telaDestino = document.getElementById(idTelaDestino);
     if (telaDestino) {
+        // Se a tela de destino for o formulário, dizemos à API para ir buscar os dados
         telaDestino.classList.add('active');
+        if (idTelaDestino === 'screen-formulario') {
+            if (typeof window.carregarItemANIMALx === 'function') {
+                window.carregarItemANIMALx();
+            }
+        }
     }
 }
 
