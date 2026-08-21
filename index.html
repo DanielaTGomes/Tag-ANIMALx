@@ -700,16 +700,16 @@
                             <div class="animalx-progresso-geral">
                                 <div class="animalx-barra-fundo">
                                     <!-- Variável Dinâmica: Progresso Geral -->
-                                    <div class="animalx-barra-enchimento" style="width: 45%;" data-api-style-width="percentagemProgressoGeral"></div>
+                                    <div id="barra-nivel-pontos" class="animalx-barra-enchimento" style="width: 0%;"></div>
                                 </div>
-                                <span class="animalx-pontos-texto"><strong><span data-api-field="totalPontos">45</span></strong> pontos</span>
+                                <span class="animalx-pontos-texto"><strong><span data-api-field="totalPontos">0</span></strong> pontos</span>
                             </div>
                             
                             <div class="animalx-estatistica-animais">
                                 <img src="asset/img/pata.png" class="animalx-icone-pata" alt="Ícone Animais">
                                 <div class="animalx-numero-identificados">
                                     <!-- Variável Dinâmica: Animais Identificados -->
-                                    <span class="animalx-numero-grande"><span id="animalx-animais-identificados" data-api-field="animaisIdentificados">12</span></span>
+                                    <span class="animalx-numero-grande"><span id="animalx-animais-identificados" data-api-field="animaisIdentificados">0</span></span>
                                     <span class="animalx-legenda-manuscrita">Animais identificados</span>
                                 </div>
                             </div>
@@ -860,7 +860,7 @@
     
     </div>
 
-     <div id="modal-consentimento" class="animalx-modal-overlay" style="position:relative">
+     <div id="modal-consentimento" class="animalx-modal-overlay" style="min-height: 165% !important; ">
         <div class="animalx-modal-caixa">
             
             <!-- Botão X -->
@@ -963,18 +963,17 @@ function irParaTela(idTelaDestino) {
 <!-- Script de Navegação das Folhas -->
 <script>
 
+
 // Abrir o Modal do Caderno
 function abrirCaderno() {
-    // Muda o display de 'none' para 'flex', revelando o modal e centrando o conteúdo
+    // Atualiza os pontos e a interface antes de mostrar o caderno!
+    if (typeof window.atualizarCadernoDeCampo === 'function') {
+        window.atualizarCadernoDeCampo();
+    }
+    
+    // Muda o display para revelar o modal
     document.getElementById('modal-caderno-campo').style.setProperty('display', 'flex', 'important');
 }
-
-// Fechar o Modal do Caderno
-function fecharCaderno() {
-    // Esconde o modal novamente
-    document.getElementById('modal-caderno-campo').style.setProperty('display', 'none', 'important');
-}
-
 let folhaAtual = 1;
 const totalFolhas = 2;
 
@@ -1014,6 +1013,16 @@ function atualizarBotoesNavegacao() {
 document.addEventListener("DOMContentLoaded", function() {
     atualizarBotoesNavegacao();
 });
+
+function fecharCaderno() {
+    let modal = document.getElementById('modal-caderno-campo');
+    if (modal) {
+        modal.style.setProperty('display', 'none', 'important');
+    }
+}
+
+// Tornar a função global para que o botão HTML a consiga encontrar
+window.fecharCaderno = fecharCaderno;
 </script>
 
 <script>
@@ -1359,10 +1368,17 @@ function selecionarNaoSeiP5() {
     }
 
     // Função para confirmar a saída
-        function confirmarSaida() {
-            fecharModalSair();
-         window.location.reload();
-}
+    function confirmarSaida() {
+        // 1. Esconde a modal de saída
+        fecharModalSair();
+        
+        // 2. A MAGIA: Apagar os dados da sessão atual do navegador
+        localStorage.removeItem('animalx_progresso'); // Apaga os pontos, animais e coleções
+        sessionStorage.removeItem('animalx_utilizador'); // Apaga o nome do utilizador
+        
+        // 3. Recarrega a página para devolver o sistema ao estado "Zero"
+        window.location.reload();
+    }
     
 </script>
 

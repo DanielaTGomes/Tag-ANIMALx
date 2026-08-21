@@ -8,6 +8,9 @@ import {
     obterDadosTaxonomicos
 } from './taxonomy.js';
 
+import { GestorGamificacao, animalxConfig } from './gamification.js';
+
+
 let itemAtivo = null;
 let visualizadorIIIF = null;
 
@@ -114,7 +117,7 @@ window.carregarItemANIMALx = carregarEApresentarItem;
  * // Chamada do HTML ou JS
  * await submeterFormularioReal();
  */
-async function submeterFormularioReal() {
+    async function submeterFormularioReal() {
     try {
         console.log('🚀 Iniciando submissão do formulário...');
         
@@ -257,40 +260,100 @@ async function submeterFormularioReal() {
         // ============================================
         // PASSO 6: SUBMISSÃO E FEEDBACK
         // ============================================
-        const resultado = await submeterRegistoAnimal(dadosFormulario, itemAtivo);;
+        const resultado = await submeterRegistoAnimal(dadosFormulario, itemAtivo);
 
-        if (resultado.sucesso) {
-            console.log(`✅ SUCESSO! Registo criado com ID: ${resultado.itemId}`);
-            console.log(`📝 Mensagem: ${resultado.mensagem}`);
+        if (resultado && resultado.sucesso) {
+            const teveAnimal = dadosFormulario['dcterms:subject'] === 'SIM';
+            const descricao = dadosFormulario['dcterms:description'] || '';
+            const teveDescricao = descricao.trim().length > 0;
+
+            const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, 0, null);
             
-            return {
-                sucesso: true,
-                itemId: resultado.itemId,
-                mensagem: resultado.mensagem
-            };
-        } else {
-            console.error(`❌ FALHA na submissão:`, resultado.erro);
-            console.error(`Detalhes do servidor:`, resultado.detalhes);
-            
-            return {
-                sucesso: false,
-                erro: resultado.erro,
-                detalhes: resultado.detalhes
-            };
+            console.log(`🏆 Pontos: +${infoJogo.pontosGanhos} (Total: ${infoJogo.progressoAtual.pontos})`);
+
+            // SE SUBIU DE NÍVEL, CHAMA O MODAL DO TEU INDEX.HTML
+            if (infoJogo.subiuDeNivel) {
+                let titulo = `Novo Nível Alcançado!`;
+                let texto = `Parabéns! Alcançaste os ${infoJogo.nivelAtual.limite} pontos e és agora um ${infoJogo.nivelAtual.titulo}.`;
+                
+                if (typeof abrirModalNivel === 'function') {
+                    // Chama a tua função com os textos dinâmicos e o respetivo selo
+                    abrirModalNivel(titulo, texto, infoJogo.nivelAtual.imagem);
+                }
+            }
         }
-
     } catch (erro) {
-        // Tratamento de erros críticos não capturados
-        console.error('💥 Erro CRÍTICO ao submeter formulário:', erro);
-        console.error('Stack trace:', erro.stack);
+        console.error('❌ Erro ao submeter o formulário:', erro);
 
         return {
             sucesso: false,
-            erro: `Erro crítico não previsto: ${erro.message}`,
-            detalhes: erro
+            erro: erro.message || 'Erro inesperado ao submeter o formulário.'
         };
     }
+
+    return resultado;
 }
 
 // Torna a função acessível globalmente para o HTML e outras funções
 window.submeterFormularioReal = submeterFormularioReal;
+
+// Torna a função acessível globalmente para o HTML e outras funções
+window.submeterFormularioReal = submeterFormularioReal;
+
+// =========================================
+// ATUALIZAÇÃO DO CADERNO DE CAMPO (COM DIAGNÓSTICO)
+// =========================================
+
+window.atualizarCadernoDeCampo = function() {
+    // 1. Carrega os dados e o nível atual
+    const progresso = GestorGamificacao.carregarProgresso();
+    const nivelAtual = GestorGamificacao.obterNivelAtual(progresso.pontos);
+    
+    // 2. Atualiza Pontos, Animais, Nome e Selo do Nível
+    const elPontos = document.querySelector('[data-api-field="totalPontos"]');
+    const elAnimais = document.getElementById('animalx-animais-identificados');
+    const elNomeNivel = document.getElementById('animalx-nome-nivel');
+    const elSeloNivel = document.getElementById('animalx-selo-nivel');
+
+    if (elPontos) elPontos.innerText = progresso.pontos;
+    if (elAnimais) elAnimais.innerText = progresso.animaisIdentificados;
+    if (elNomeNivel) elNomeNivel.innerText = nivelAtual.titulo;
+    if (elSeloNivel) elSeloNivel.src = nivelAtual.imagem;
+
+    // ==========================================
+    // 3. CALCULAR O PREENCHIMENTO DA BARRA DE NÍVEL
+    // ==========================================
+ 
+    const niveis = animalxConfig.niveis;
+    
+    let limiteBase = 0;
+    let proximoLimite = 100; // Começa por defeito com a meta do Nível 2
+    let pontosFaltam = 0;
+    let percentagemBarra = 100; // Por defeito 100% (caso seja o nível máximo)
+
+    // Descobre qual é a meta do próximo nível
+    for (let i = 0; i < niveis.length; i++) {
+        if (progresso.pontos >= niveis[i].limite) {
+            limiteBase = niveis[i].limite;
+            if (i + 1 < niveis.length) {
+                proximoLimite = niveis[i + 1].limite;
+            } else {
+                proximoLimite = limiteBase; // Atingiu o teto máximo!
+            }
+        }
+    }
+
+    // Calcula a percentagem e quantos pontos faltam
+    if (proximoLimite > limiteBase) {
+        percentagemBarra = ((progresso.pontos - limiteBase) / (proximoLimite - limiteBase)) * 100;
+        pontosFaltam = proximoLimite - progresso.pontos;
+    }
+
+    // Aplica o preenchimento na barra visual (ID 'barra-nivel-pontos')
+    const barraNivel = document.getElementById('barra-nivel-pontos');
+    if (barraNivel) {
+        barraNivel.style.width = percentagemBarra + '%';
+    }
+
+    console.log(`📊 Nível: ${nivelAtual.titulo} | Faltam ${pontosFaltam}pts para subir | Barra a ${percentagemBarra}%`);
+};
