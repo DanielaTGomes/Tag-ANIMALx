@@ -143,7 +143,7 @@
                             <span>ANTERIOR</span>
                         </button>
 
-                        <button class="animalx-btn-next" onclick="irParaTela('screen-formulario')">
+                        <button class="animalx-btn-next" onclick="verificarConsentimentoEAvancar('screen-formulario')">
                             <span>SEGUINTE</span>
                             <img src="asset/img/seta_bege_direita.png" alt="Seta Direita">
                         </button>
@@ -857,6 +857,25 @@
             </div>
 
         </div>
+    
+    </div>
+
+     <div id="modal-consentimento" class="animalx-modal-overlay" style="position:relative">
+        <div class="animalx-modal-caixa">
+            
+            <!-- Botão X -->
+            <button class="animalx-btn-fechar" style="position: absolute !important; top: -20px !important; right: -10px !important;" onclick="fecharModalConsentimento()">
+                <img src="asset/img/x_roxo.png" alt="Fechar" style="width: 65px !important; height: 65px !important;">
+            </button>
+
+            <h2 class="animalx-modal-titulo" style="margin-bottom: 20px;">ATENÇÃO</h2>
+            
+            <p class="animalx-modal-texto" style="margin-bottom: 0;">
+                Campo por preencher.<br>
+                Para avançar deves autorizar a utilização das tuas respostas na iniciativa Tag Animalx após a leitura do Formulário de Consentimento e Privacidade.
+            </p>
+
+        </div>
     </div>
 
     <!-- Formulário Nativo do Omeka S -->
@@ -1386,10 +1405,34 @@ function selecionarNaoSeiP5() {
         return true;
     }
 
+
+    // Função auxiliar para verificar se a opção selecionada na P1 foi "NÃO"
+    function verificarRespostaNaoP1() {
+        const containerP1 = document.getElementById('opcoes-p1');
+        if (!containerP1) return false;
+
+        const btnSelecionado = containerP1.querySelector('.animalx-btn-opcao.selecionado');
+        if (!btnSelecionado) return false;
+
+        return btnSelecionado.innerText.trim().toUpperCase() === 'NÃO';
+    }
+
     // Interceta o botão Seguinte
     function avancarSeValido(passoAtual) {
         if (passoValido(passoAtual)) {
+            
+            // --- REGRA ESPECIAL DA PERGUNTA 1 ---
+            if (passoAtual === 1) {
+                // Se o utilizador respondeu NÃO na P1, salta diretamente para o Modal de Submissão!
+                if (verificarRespostaNaoP1()) {
+                    abrirModalSubmissao(); // Mostra logo o aviso de submissão
+                    return; // Interrompe a função, não o deixando ir para a P2!
+                }
+            }
+
+            // Se respondeu SIM na P1 (ou se estiver a avançar noutros passos), vai para a seguinte
             irParaPasso(passoAtual + 1);
+
         } else {
             abrirModalValidacao();
         }
@@ -1437,6 +1480,152 @@ function fecharModalNivel() {
     }
 }
 
+</script>
+
+
+
+<script type="module">
+
+// ===================================================
+// FERRAMENTAS DE LIMPEZA E VERIFICAÇÃO DO FORMULÁRIO
+// ===================================================
+
+// Função auxiliar para verificar a seleção do botão SIM na Pergunta 6
+function verificarRespostaSimP6() {
+    const containerP6 = document.getElementById('opcoes-p6');
+    if (!containerP6) return false;
+
+    const btnSim = Array.from(containerP6.querySelectorAll('.animalx-btn-opcao'))
+                        .find(btn => btn.innerText.trim().toUpperCase() === 'SIM');
+
+    return btnSim ? btnSim.classList.contains('selecionado') : false;
+}
+
+// Limpa apenas os campos do animal individual (P2 a P6), mantendo a P1 intacta ("SIM")
+function limparCamposP2aP6() {
+    // 1. Limpar Inputs de texto
+    const idInputs = ['input-animal', 'input-quantidade', 'input-funcao', 'input-descricao'];
+    idInputs.forEach(id => {
+        let el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+
+    // 2. Desmarcar botões "Não Sei"
+    const idRadios = ['check-nao-sei', 'check-nao-sei-p3', 'check-nao-sei-p4', 'check-nao-sei-p5'];
+    idRadios.forEach(id => {
+        let radio = document.getElementById(id);
+        if (radio) radio.checked = false;
+    });
+
+    // 3. Desmarcar botões SIM/NÃO apenas da Pergunta 6
+    const containerP6 = document.getElementById('opcoes-p6');
+    if (containerP6) {
+        let btns = containerP6.querySelectorAll('.animalx-btn-opcao');
+        btns.forEach(btn => btn.classList.remove('selecionado'));
+    }
+
+    // 4. Esconder listas de dropdown que possam ter ficado abertas
+    let listas = document.querySelectorAll('.animalx-lista-opcoes');
+    listas.forEach(lista => lista.style.display = 'none');
+}
+
+// Limpa todo o formulário (P1 a P6) para carregar um novo registo limpo
+function limparFormulario() {
+    // Aproveita a limpeza que já fizemos da P2 à P6...
+    limparCamposP2aP6();
+    
+    // ... e limpa também os botões SIM/NÃO da P1
+    const containerP1 = document.getElementById('opcoes-p1');
+    if (containerP1) {
+        let btns = containerP1.querySelectorAll('.animalx-btn-opcao');
+        btns.forEach(btn => btn.classList.remove('selecionado'));
+    }
+}
+
+async function confirmarSubmissao() {
+    // 1. Esconde o modal de confirmação
+    fecharModal();
+
+    // 2. SUBMISSÃO REAL PARA O OMEKA S
+    console.log("⏳ A enviar dados para o Omeka S...");
+    
+    // Chama a função central do app.js que lê a interface e envia para a API
+    const resultado = await window.submeterFormularioReal();
+
+    // 3. Só avança na interface se a submissão tiver sucesso garantido!
+    if (resultado && resultado.sucesso) {
+        
+        // Verifica se o utilizador respondeu "SIM" na Pergunta 6 ("Existe outro animal?")
+        const temOutroAnimal = verificarRespostaSimP6();
+
+        if (temOutroAnimal) {
+            // --- CASO 1: HÁ MAIS ANIMAIS NA MESMA IMAGEM ---
+            console.log("-> [DUPLICAÇÃO]: A manter a imagem base e a regressar à Pergunta 2 para novo animal.");
+
+            // A. Limpa apenas as respostas do formulário (P2 a P6)
+            limparCamposP2aP6();
+
+            // B. Regressa diretamente à Pergunta 2 (Identificação)
+            irParaPasso(2);
+            
+        } else {
+            // --- CASO 2: NÃO HÁ MAIS ANIMAIS (OU É O ÚLTIMO) ---
+            console.log("-> [FINALIZADO]: A limpar formulário e a carregar novo registo do Omeka S.");
+            
+            // A. Limpa todos os campos do formulário (P1 a P6)
+            limparFormulario();
+
+            // B. Regressa à Pergunta 1
+            irParaPasso(1);
+
+            // C. Carrega um novo registo aleatório do Omeka S
+            if (typeof window.carregarItemANIMALx === 'function') {
+                await window.carregarItemANIMALx();
+            }
+        }
+    } else {
+        // Se houver erro de rede ou do Omeka, mostra um alerta e NÃO limpa o ecrã
+        // Assim o utilizador não perde os dados preenchidos e pode tentar novamente
+        alert("Atenção: Houve uma falha ao enviar o registo. Verifica a tua ligação e tenta novamente.");
+    }
+}
+window.confirmarSubmissao = confirmarSubmissao;
+</script>
+
+<script>
+    // =========================================
+// VALIDAÇÃO DO ECRÃ DE REGISTO (CONSENTIMENTO)
+// =========================================
+
+function abrirModalConsentimento() {
+    let modal = document.getElementById("modal-consentimento");
+    if (modal) {
+        modal.style.setProperty('display', 'flex', 'important');
+    }
+}
+
+function fecharModalConsentimento() {
+    let modal = document.getElementById("modal-consentimento");
+    if (modal) {
+        modal.style.setProperty('display', 'none', 'important');
+    }
+}
+
+// Interceta o avanço do ecrã de registo para o formulário
+function verificarConsentimentoEAvancar() {
+    const modoParticipacao = document.querySelector('input[name="modo_participacao"]:checked')?.value;
+    const consentimentoMarcado = document.getElementById('consentimento-dados')?.checked;
+
+    // Se o utilizador escolheu "Registar" MAS NÃO marcou a caixa de consentimento
+    if (modoParticipacao === 'registar' && !consentimentoMarcado) {
+        // Abre o modal de aviso de consentimento que criaste
+        abrirModalConsentimento();
+        return; // Bloqueia o avanço
+    }
+
+    // Se estiver tudo em ordem (ou se for anónimo), avança para a tela do formulário
+    irParaTela('screen-formulario');
+}
 </script>
 </body>
 </html>

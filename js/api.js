@@ -38,7 +38,10 @@ async function carregarItemAleatorio() {
         // 3. Se o browser bloquear o pedido (ex: erro de CORS ou XAMPP desligado)
         return { erroCritico: `Falha de rede (${erro.message}). Isto acontece geralmente se o XAMPP estiver desligado ou devido a um bloqueio de CORS (estás a usar o Live Server no VS Code?).` };
     }
+
+    
 }
+
 
 /**
  * Obtém o primeiro valor legível de um campo de metadados do Omeka S.
@@ -100,16 +103,33 @@ function prepararDadosDoItem(item) {
 // IMPORTANTE: Confirma que estes IDs correspondem à tua instalação do Omeka S!
 // Para obter os IDs corretos, faz um pedido GET a: /api/properties?key_identity=...&key_credential=...
 const MAPA_PROPRIEDADES = {
+    // Metadados obtidos através do formulário
     'dcterms:title': 1,
     'dcterms:subject': 3,
     'dcterms:description': 4,
     'dcterms:contributor': 6,
     'dcterms:type': 8,
-    'dcterms:relation': 13,
+    'dcterms:isReferencedBy':35,
     'dcterms:audience': 16,
     'dwc:scientificName': 419,
     'dwc:taxonRank': 439,
-    'dwc:organismScope': 372
+    'dwc:organismScope': 372,
+    // Metadados a recuperar do item original
+    'dcterms:relation': 13,
+    'dcterms:format':9,
+    'dcterms:medium':26,
+    'dcterms:coverage':14,
+    'dcterms:spatial':40,
+    'dcterms:identifier':10,
+    'dcterms:date':7,
+    'dcterms:available':22,
+    'dcterms:provenance':51,
+    'dcterms:bibliographicCitation':48,
+    'bibo:uri':121,
+    'bibo:annotates':57,
+    'dcterms:creator':2,
+    'dcterms:created':20,
+
 };
 
 /**
@@ -181,192 +201,152 @@ function converterParaFormatolOmekaS(valor, nomePropiedade) {
  *     console.log(`Item criado com ID: ${resultado.itemId}`);
  * }
  */
-async function submeterRegistoAnimal(dadosFormulario, itemOriginalId) {
+
+// =========================================
+// EXTRAÇÃO DE METADADOS DO ITEM ORIGINAL
+// =========================================
+function extrairMetadadosOriginais(itemOriginal) {
+    const metadadosExtraidos = {};
+    const termosARecuperar = [
+        'dcterms:relation', 'dcterms:format', 'dcterms:medium', 
+        'dcterms:coverage', 'dcterms:spatial', 'dcterms:identifier', 
+        'dcterms:date', 'dcterms:available', 'dcterms:provenance', 
+        'dcterms:bibliographicCitation', 'bibo:uri', 'bibo:annotates', 
+        'dcterms:creator', 'dcterms:created'
+    ];
+
+    termosARecuperar.forEach(termo => {
+        if (itemOriginal && itemOriginal[termo]) {
+            metadadosExtraidos[termo] = itemOriginal[termo][0]['@value'];
+        }
+    });
+
+    return metadadosExtraidos;
+}
+
+// =========================================
+// GERADOR DO LINK IIIF
+// =========================================
+function gerarUrlIiif(itemOriginal) {
+    if (!itemOriginal || !itemOriginal['dcterms:identifier']) return null;
+    const numInventario = itemOriginal['dcterms:identifier'][0]['@value'];
+    const codigoMedia = numInventario.replaceAll('.', '_');
+    return `https://DanielaTGomes.github.io/imagens_omeka/resultado/${codigoMedia}/info.json`;
+}
+
+// =========================================
+// SUBMISSÃO DUPLA (ITEM + MULTIMÉDIA)
+// =========================================
+async function submeterRegistoAnimal(dadosFormulario, itemOriginal) {
     try {
-        // Valida entrada básica
         if (!dadosFormulario || typeof dadosFormulario !== 'object') {
-            return {
-                sucesso: false,
-                erro: 'Dados do formulário inválidos',
-                detalhes: 'O objeto dadosFormulario deve ser um objeto válido'
-            };
+            return { sucesso: false, erro: 'Dados do formulário inválidos' };
         }
 
-        // Constrói a URL de submissão com credenciais
-        const urlSubmissao = `${CONFIG.API_URL}/items?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
-
-        // Obtém o nome do utilizador do sessionStorage, ou usa valor padrão
-        const nomeUtilizador = sessionStorage.getItem('nomeUtilizador') 
-            || window.nomeUtilizador 
-            || 'Curador Anónimo';
-
-        // ============================================
-        // CONSTRUÇÃO DO PAYLOAD EM FORMATO JSON-LD
-        // ============================================
         const baseUrl = String(CONFIG.API_URL || '').replace(/\/+$/, '');
-
+        
+        const idModeloRecursos = 2;
+        // Inicializa o Payload - ATENÇÃO: Confirma se o item_set id é 22 ou 2
         const payload = {
             '@context': `${baseUrl}/api-context`,
             '@type': 'o:Item',
-            'o:item_set': [
-                {
-                    'o:id': 22
-                }
-            ]
+            'o:is_public': false,
+            'o:item_set': [ { 'o:id': 22 } ],
+            'o:resource_template': { 'o:id': idModeloRecursos }
         };
 
-        // Propriedades Dublin Core (dcterms) e Darwin Core (dwc)
-        // IMPORTANTE: Cada propriedade é um array de objetos com type, property_id e @value
-
-        if (dadosFormulario['dcterms:title']) {
-            payload['dcterms:title'] = converterParaFormatolOmekaS(
-                dadosFormulario['dcterms:title'],
-                'dcterms:title'
-            );
-        }
-
-        if (dadosFormulario['dcterms:subject']) {
-            payload['dcterms:subject'] = converterParaFormatolOmekaS(
-                dadosFormulario['dcterms:subject'],
-                'dcterms:subject'
-            );
-        }
-
-        if (dadosFormulario['dcterms:description']) {
-            payload['dcterms:description'] = converterParaFormatolOmekaS(
-                dadosFormulario['dcterms:description'],
-                'dcterms:description'
-            );
-        }
-
-        payload['dcterms:contributor'] = converterParaFormatolOmekaS(
-            nomeUtilizador,
-            'dcterms:contributor'
-        );
-
-        if (dadosFormulario['dcterms:type']) {
-            payload['dcterms:type'] = converterParaFormatolOmekaS(
-                dadosFormulario['dcterms:type'],
-                'dcterms:type'
-            );
-        }
-
-        if (itemOriginalId) {
-            payload['dcterms:relation'] = converterParaFormatolOmekaS(
-                itemOriginalId,
-                'dcterms:relation'
-            );
-        }
-
-        if (dadosFormulario['dcterms:audience']) {
-            payload['dcterms:audience'] = converterParaFormatolOmekaS(
-                dadosFormulario['dcterms:audience'],
-                'dcterms:audience'
-            );
-        }
-
-        if (dadosFormulario['dwc:scientificName']) {
-            payload['dwc:scientificName'] = converterParaFormatolOmekaS(
-                dadosFormulario['dwc:scientificName'],
-                'dwc:scientificName'
-            );
-        }
-
-        if (dadosFormulario['dwc:taxonRank']) {
-            payload['dwc:taxonRank'] = converterParaFormatolOmekaS(
-                dadosFormulario['dwc:taxonRank'],
-                'dwc:taxonRank'
-            );
-        }
-
-        if (dadosFormulario['dwc:organismScope']) {
-            payload['dwc:organismScope'] = converterParaFormatolOmekaS(
-                dadosFormulario['dwc:organismScope'],
-                'dwc:organismScope'
-            );
-        }
-
-        // ============================================
-        // DIAGNÓSTICO: LOG DO PAYLOAD FINAL
-        // ============================================
-        console.log('═══════════════════════════════════════════════════════════════════');
-        console.log('🔍 DIAGNÓSTICO - Payload JSON-LD final antes do fetch:');
-        console.log(JSON.stringify(payload, null, 2));
-        console.log('═══════════════════════════════════════════════════════════════════');
-
-        let todasPropriedadesValidas = true;
-        for (const [chave, valor] of Object.entries(payload)) {
-            if (chave === '@context' || chave === '@type' || chave === 'o:item_set') continue;
-
-            if (Array.isArray(valor)) {
-                valor.forEach((obj, idx) => {
-                    if (obj && typeof obj === 'object' && obj.property_id === undefined) {
-                        console.error(`❌ ERRO: "${chave}" na posição ${idx} não tem property_id.`);
-                        todasPropriedadesValidas = false;
-                    }
-                });
+        // 1. Extrair e adicionar os metadados herdados do item original
+        const metadadosOriginais = extrairMetadadosOriginais(itemOriginal);
+        for (const [termo, valor] of Object.entries(metadadosOriginais)) {
+            if (valor && valor !== "") {
+                payload[termo] = converterParaFormatolOmekaS(valor, termo);
             }
         }
 
-        if (todasPropriedadesValidas) {
-            console.log('✅ Todas as propriedades do payload têm property_id correto.');
-        } else {
-            console.warn('⚠️ Há propriedades sem property_id e o Omeka S vai ignorá-las.');
+        // 2. Adicionar as respostas do formulário
+        for (const [termo, valor] of Object.entries(dadosFormulario)) {
+            if (valor && valor !== "") {
+                payload[termo] = converterParaFormatolOmekaS(valor, termo);
+            }
         }
 
-        // ============================================
-        // EXECUÇÃO DO PEDIDO POST
-        // ============================================
-        const resposta = await fetch(urlSubmissao, {
+        // 3. Adicionar utilizador e relação de anotação
+       
+        if (itemOriginal && itemOriginal['o:id']) {
+            payload['dcterms:isReferencedBy'] = converterParaFormatolOmekaS(itemOriginal['o:id'], 'dcterms:isReferencedBy');
+        }
+
+        console.log('📦 Payload JSON-LD pronto para envio:', payload);
+
+        // ==========================================
+        // PEDIDO 1: CRIAR O ITEM
+        // ==========================================
+        const urlItem = `${baseUrl}/items?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
+        const respostaItem = await fetch(urlItem, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        // ============================================
-        // PROCESSAMENTO DA RESPOSTA
-        // ============================================
-        if (!resposta.ok) {
-            const erroServidor = await resposta.json().catch(() => ({}));
-            
-            console.error('Erro ao submeter registo:', {
-                statusCode: resposta.status,
-                statusText: resposta.statusText,
-                detalhesServidor: erroServidor
-            });
-
-            return {
-                sucesso: false,
-                erro: `Erro do servidor Omeka S (HTTP ${resposta.status})`,
-                detalhes: erroServidor?.['hydra:description'] 
-                    || erroServidor?.message 
-                    || resposta.statusText 
-                    || 'Erro desconhecido'
-            };
+        if (!respostaItem.ok) {
+            throw new Error(`Falha ao criar o Item: ${await respostaItem.text()}`);
         }
 
-        // Parse da resposta bem-sucedida
-        const itemCriado = await resposta.json();
-        const idNovoItem = itemCriado?.['o:id'];
+        const novoItem = await respostaItem.json();
+        const novoItemId = novoItem['o:id'];
+        console.log(`✅ Sucesso! Item Base criado com ID: ${novoItemId}`);
 
-        console.log('✅ Registo de animal submetido com sucesso!', {
-            itemId: idNovoItem,
-            nomeAnimal: dadosFormulario['dcterms:title'],
-            nomeCientifico: dadosFormulario['dwc:scientificName'],
-            utilizador: nomeUtilizador,
-            timestampSubmissao: new Date().toISOString()
-        });
+        // ==========================================
+        // PEDIDO 2: CLONAR A MULTIMÉDIA ORIGINAL
+        // ==========================================
+        if (itemOriginal['o:media'] && itemOriginal['o:media'].length > 0) {
+            console.log("🔗 A ler configurações da multimédia original...");
+            try {
+                const urlMediaOriginal = itemOriginal['o:media'][0]['@id'];
+                const respostaMediaOriginal = await fetch(urlMediaOriginal);
+                
+                if (respostaMediaOriginal.ok) {
+                    const dadosMediaOriginal = await respostaMediaOriginal.json();
+
+                    const tipoIngester = dadosMediaOriginal['o:ingester'];
+                    const urlOrigem = dadosMediaOriginal['o:source'] || dadosMediaOriginal['o:original_url'];
+
+                    if (urlOrigem) {
+                        // Constrói o novo payload com a dupla garantia (ingest_url + o:source)
+                        const payloadMedia = {
+                            "o:ingester": tipoIngester,
+                            "file_index": 0,
+                            "o:item": { "o:id": novoItemId },
+                            "ingest_url": urlOrigem, // Para ingesters do tipo 'url' nativo
+                            "o:source": urlOrigem    // ⬅️ A CORREÇÃO: O módulo 'iiif' exige esta chave!
+                        };
+
+                        const urlCriarMedia = `${baseUrl}/media?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
+                        const respostaMedia = await fetch(urlCriarMedia, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payloadMedia)
+                        });
+
+                        if (!respostaMedia.ok) {
+                            console.warn(`⚠️ O Item foi criado, mas falhou ao clonar a media: ${await respostaMedia.text()}`);
+                        } else {
+                            console.log("🖼️ Multimédia clonada e associada com sucesso!");
+                        }
+                    }
+                }
+            } catch (erroMedia) {
+                console.error("❌ Erro ao tentar clonar a multimédia:", erroMedia);
+            }
+        }
 
         return {
             sucesso: true,
-            itemId: idNovoItem,
-            mensagem: `Registo de animal "${dadosFormulario['dcterms:title']}" submetido com sucesso ao Omeka S!`
+            itemId: novoItemId,
+            mensagem: `Registo de animal criado com sucesso no Omeka S.`
         };
 
     } catch (erro) {
-        // Erro de rede ou outra exceção crítica
         console.error('Erro crítico ao submeter registo:', erro);
 
         return {
@@ -380,5 +360,6 @@ async function submeterRegistoAnimal(dadosFormulario, itemOriginalId) {
 export {
     carregarItemAleatorio,
     obterValorMetadado,
-    prepararDadosDoItem
+    prepararDadosDoItem,
+    submeterRegistoAnimal
 };

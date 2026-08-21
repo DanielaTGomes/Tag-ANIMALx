@@ -117,34 +117,34 @@ window.carregarItemANIMALx = carregarEApresentarItem;
 async function submeterFormularioReal() {
     try {
         console.log('🚀 Iniciando submissão do formulário...');
-
+        
         // ============================================
         // PASSO 1: RECOLHA DO NOME DO UTILIZADOR
         // ============================================
         const modoParticipacao = document.querySelector('input[name="modo_participacao"]:checked')?.value;
+        const consentimentoMarcado = document.getElementById('consentimento-dados')?.checked;
         let nomeUtilizador = 'Curador Anónimo';
 
-        // Se o modo for "registar", tenta obter o nome real
-        if (modoParticipacao === 'registar') {
+        // Verifica o modo de registo e o consentimento explícito
+        if (modoParticipacao === 'registar' && consentimentoMarcado) {
+            // 1. Extrai do elemento de input do formulário
             const nomeInputado = document.getElementById('investigador-nome')?.value?.trim();
             
             if (nomeInputado && nomeInputado.length > 0) {
                 nomeUtilizador = nomeInputado;
-                // Armazena no sessionStorage para uso posterior
+                // 2. Associa e guarda na chave animalx_utilizador
                 sessionStorage.setItem('animalx_utilizador', nomeUtilizador);
             } else {
-                // Se o campo está vazio mas selecionou "registar", usa sessão ou anonimato
+                // Recupera da memória caso o utilizador já tenha preenchido antes
                 const nomeStorage = sessionStorage.getItem('animalx_utilizador');
                 if (nomeStorage && nomeStorage.length > 0) {
                     nomeUtilizador = nomeStorage;
-                } else {
-                    console.warn('⚠️ Modo "registar" selecionado, mas sem nome fornecido. Usando "Curador Anónimo".');
-                    nomeUtilizador = 'Curador Anónimo';
                 }
             }
+        } else {
+            // Se for anónimo, limpa a chave da memória
+            sessionStorage.removeItem('animalx_utilizador');
         }
-
-        console.log(`👤 Utilizador: ${nomeUtilizador} (Modo: ${modoParticipacao})`);
 
         // ============================================
         // PASSO 2: VALIDAÇÃO DO ITEM ATIVO
@@ -248,7 +248,8 @@ async function submeterFormularioReal() {
             'dwc:organismScope': quantidadeSelecionada, // Pergunta 3
             'dcterms:type': funcaoSelecionada, // Pergunta 4
             'dcterms:description': descricaoPreenchida, // Pergunta 5
-            'dcterms:audience': "1" // Contador de avaliações (inicia a 1)
+            'dcterms:audience': "1", // Contador de avaliações (inicia a 1)
+            'dcterms:contributor': nomeUtilizador
         };
 
         console.log('📦 Payload mapeado para o Omeka S:', dadosFormulario);
@@ -256,7 +257,7 @@ async function submeterFormularioReal() {
         // ============================================
         // PASSO 6: SUBMISSÃO E FEEDBACK
         // ============================================
-        const resultado = await submeterRegistoAnimal(dadosFormulario, idItemOriginal);
+        const resultado = await submeterRegistoAnimal(dadosFormulario, itemAtivo);;
 
         if (resultado.sucesso) {
             console.log(`✅ SUCESSO! Registo criado com ID: ${resultado.itemId}`);
