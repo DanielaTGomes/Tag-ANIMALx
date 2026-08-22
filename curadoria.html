@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Curadoria - Tag ANIMALx</title>
+    <!-- Usa a tua fonte Nohemi e cores do projeto -->
+    <style>
+        body { font-family: 'Nohemi', sans-serif; padding: 2rem; background-color: #ede8e9; color: #494949; }
+        h1 { color: #5C2D91; }
+        .item-curadoria { background: #ffffff; border: 2px solid #5C2D91; border-radius: 8px; margin-bottom: 2rem; padding: 1.5rem; }
+        .grid-respostas { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+        .cartao-resposta { background: #f4f4f4; padding: 1rem; border-radius: 5px; border-left: 4px solid #5C2D91; }
+        ul { padding-left: 20px; margin-top: 10px; }
+        li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔬 Painel de Curadoria (Regra dos 5 Votos)</h1>
+    <p>A carregar os registos analisados pela comunidade...</p>
+    
+    <!-- O JavaScript vai injetar as tabelas de revisão aqui dentro -->
+    <div id="painel-resultados"></div>
+
+    <!-- Importa as configurações e o script deste painel -->
+    <script type="module" src="js/curadoria.js"></script>
+</body>
+</html>

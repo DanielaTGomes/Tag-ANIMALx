@@ -1,8 +1,7 @@
 import {
     carregarItemAleatorio,
-    submeterRegistoAnimal,
     obterValorMetadado,
-    atualizarItemOriginal
+    submeterRegistoAnimal
 } from './api.js';
 
 import {
@@ -189,17 +188,28 @@ function darBoasVindasEstagiario() {
 // ==========================================
 // VALIDAÇÃO CRUZADA (MULTI-PEER REVIEW)
 // ==========================================
+
+const contagemAtual = obterContagemValidacoes(itemAtivo);
+const novaContagem = contagemAtual + 1;
+
+// 1. Destino do ITEM ORIGINAL (A Imagem Base): Fica no 1 até ter 5 votos
+const destinoItemOriginal = novaContagem >= 5 ? 22 : 1;
+
+// 2. Destino do NOVO ITEM (A tua classificação): Vai sempre para a 22 (oculto do sorteio)
+const idColecaoDestino = 22
+/**
+ * Obtém a contagem atual de validações de um item.
+ * Lê o valor do campo 'dcterms:audience' que armazena o número de avaliações.
+ * 
+ * @param {Object} item - Item do Omeka S
+ * @returns {number} Número de validações (0 se não encontrado)
+ */
 function obterContagemValidacoes(item) {
-    // 1. Se o item não tiver o campo audience (é a primeira vez que é analisado), começa no 0
-    if (!item || !item['dcterms:audience']) {
-        return 0;
-    }
-
-    // 2. O Omeka S guarda os valores estruturados. Vamos extrair o valor real.
-    const valorBruto = item['dcterms:audience'][0]['@value'];
-    const contagem = parseInt(valorBruto, 10);
-
-    // 3. Se por algum erro o valor não for um número válido, devolve 0 por segurança
+    if (!item) return 0;
+    
+    const audienceRaw = obterValorMetadado(item, 'dcterms:audience');
+    const contagem = parseInt(audienceRaw, 10);
+    
     return isNaN(contagem) ? 0 : contagem;
 }
 /**
@@ -225,9 +235,9 @@ function obterContagemValidacoes(item) {
  * // Chamada do HTML ou JS
  * await submeterFormularioReal();
  */
-    async function submeterFormularioReal() {
+export async function submeterFormularioReal() {
     try {
-        console.log('🚀 Iniciando submissão do formulário...');
+        console.log('🚀 Iniciando submissão do formulário (Cópia Intermédia)...');
         
         // ============================================
         // PASSO 1: RECOLHA DO NOME DO UTILIZADOR
@@ -236,24 +246,18 @@ function obterContagemValidacoes(item) {
         const consentimentoMarcado = document.getElementById('consentimento-dados')?.checked;
         let nomeUtilizador = 'Curador Anónimo';
 
-        // Verifica o modo de registo e o consentimento explícito
         if (modoParticipacao === 'registar' && consentimentoMarcado) {
-            // 1. Extrai do elemento de input do formulário
             const nomeInputado = document.getElementById('investigador-nome')?.value?.trim();
-            
             if (nomeInputado && nomeInputado.length > 0) {
                 nomeUtilizador = nomeInputado;
-                // 2. Associa e guarda na chave animalx_utilizador
                 sessionStorage.setItem('animalx_utilizador', nomeUtilizador);
             } else {
-                // Recupera da memória caso o utilizador já tenha preenchido antes
                 const nomeStorage = sessionStorage.getItem('animalx_utilizador');
                 if (nomeStorage && nomeStorage.length > 0) {
                     nomeUtilizador = nomeStorage;
                 }
             }
         } else {
-            // Se for anónimo, limpa a chave da memória
             sessionStorage.removeItem('animalx_utilizador');
         }
 
@@ -263,165 +267,77 @@ function obterContagemValidacoes(item) {
         if (!itemAtivo || !itemAtivo['o:id']) {
             const mensagemErro = 'Nenhum item carregado para anotar. Carrega uma imagem primeiro.';
             console.error(`❌ ${mensagemErro}`);
-            return {
-                sucesso: false,
-                erro: mensagemErro
-            };
+            return { sucesso: false, erro: mensagemErro };
         }
 
-        const idItemOriginal = itemAtivo['o:id'];
-        console.log(`📷 Item a anotar: ${idItemOriginal}`);
-
         // ============================================
-        // PASSO 3: RECOLHA DOS VALORES DO FORMULÁRIO
+        // PASSO 3: RECOLHA DE DADOS E TAXONOMIA
         // ============================================
-
-        // Pergunta 1: Há animal na imagem? (SIM/NÃO)
-        const respostaPergunta1 = document.querySelector('input[name="pergunta-1"]:checked')?.value 
-            || document.querySelector('#opcoes-p1 button.selecionado')?.textContent?.trim()
-            || '';
-
-        // Pergunta 2: Que animal?
-        const nomeComumAnimal = document.getElementById('input-animal')?.value?.trim() || '';
-
-        // Pergunta 3: Quantidade/Âmbito
-        const quantidadeAnimal = document.getElementById('input-quantidade')?.value?.trim() || '';
-
-        // Pergunta 4: Função/Contexto do animal
-        const funcaoAnimal = document.getElementById('input-funcao')?.value?.trim() || '';
-
-        // Pergunta 5: Notas e observações
-        const notasObservacoes = document.getElementById('input-descricao')?.value?.trim() || '';
-
-        console.log('📋 Respostas recolhidas:', {
-            pergunta1: respostaPergunta1,
-            animal: nomeComumAnimal,
-            quantidade: quantidadeAnimal,
-            funcao: funcaoAnimal,
-            notas: notasObservacoes
-        });
-
-        // ============================================
-        // PASSO 4: OBTENÇÃO DE DADOS TAXONÓMICOS
-        // ============================================
-        let nomeCientifico = 'Não identificado';
-        let categoriaTaxonomica = 'Não identificada';
-
-        if (nomeComumAnimal && nomeComumAnimal.length > 0) {
-            const dadosTaxonomicos = obterDadosTaxonomicos(nomeComumAnimal);
-            nomeCientifico = dadosTaxonomicos.cientifico;
-            categoriaTaxonomica = dadosTaxonomicos.categoria;
-            
-            console.log(`🔬 Dados Taxonómicos:`, {
-                comum: nomeComumAnimal,
-                cientifico: nomeCientifico,
-                categoria: categoriaTaxonomica
-            });
-        }
-
-// ----------------------------------------------------
-        // RECOLHA DE DADOS DA INTERFACE (Mapeado pelo index.html)
-        // ----------------------------------------------------
-
-        // P1: Há algum animal? (Lê o texto do botão que tem a classe 'selecionado' ou assume 'SIM')
         const p1Resposta = document.querySelector('#opcoes-p1 .selecionado')?.innerText || "SIM";
 
-        // P2: Qual animal? (Verifica se clicou no "Não sei", senão lê o input)
         const isAnimalNaoSei = document.getElementById('check-nao-sei')?.checked;
         const animalSelecionado = isAnimalNaoSei ? "Não sei" : (document.getElementById('input-animal')?.value || "Não identificado");
-        
-        // Vai ao dicionário taxonómico buscar o Nome Científico e a Categoria
         const infoTaxonomia = obterDadosTaxonomicos(animalSelecionado);
 
-        // P3: Quantidade (Verifica se clicou no "Não sei", senão lê o input)
         const isQuantidadeNaoSei = document.getElementById('check-nao-sei-p3')?.checked;
         const quantidadeSelecionada = isQuantidadeNaoSei ? "Não sei" : (document.getElementById('input-quantidade')?.value || "Não especificado");
 
-        // P4: Função (Verifica se clicou no "Não sei", senão lê o input)
         const isFuncaoNaoSei = document.getElementById('check-nao-sei-p4')?.checked;
         const funcaoSelecionada = isFuncaoNaoSei ? "Não sei" : (document.getElementById('input-funcao')?.value || "Não especificado");
 
-        // P5: Descrição (Verifica se clicou no "Não sei", senão lê a textarea)
         const isDescricaoNaoSei = document.getElementById('check-nao-sei-p5')?.checked;
         const descricaoPreenchida = isDescricaoNaoSei ? "Sem descrição" : (document.getElementById('input-descricao')?.value || "");
 
-        // P6: Outro animal? (Apenas para controlo lógico do sistema, não vai para a BD)
-        const p6Resposta = document.querySelector('#opcoes-p6 .selecionado')?.innerText || "NÃO";
-
-        // ----------------------------------------------------
-        // VALIDAÇÃO CRUZADA (A Regra dos 5 Votos)
-        // ----------------------------------------------------
-        const contagemAtual = obterContagemValidacoes(itemAtivo);
-        const novaContagem = contagemAtual + 1;
-        
-        // Define o Item Set de destino. 
-        // 2 = Tag AnimalX (Em análise). 3 = Substitui pelo ID real da tua coleção "Registos analisados"
-        const idColecaoDestino = novaContagem >= 5 ? 22 : 2;
-
-        // ----------------------------------------------------
-        // CONSTRUÇÃO DO OBJETO PARA O OMEKA S
-        // ----------------------------------------------------
-        const dadosFormulario = {
-            'dcterms:subject': p1Resposta, // Pergunta 1
-            'dcterms:title': animalSelecionado, // Pergunta 2 (Nome Comum)
-            'dwc:scientificName': infoTaxonomia.cientifico, // Taxonomia
-            'dwc:taxonRank': infoTaxonomia.categoria, // Taxonomia
-            'dwc:organismScope': quantidadeSelecionada, // Pergunta 3
-            'dcterms:type': funcaoSelecionada, // Pergunta 4
-            'dcterms:description': descricaoPreenchida, // Pergunta 5
-            'dcterms:audience': novaContagem.toString(), // O novo número de validações
-            'animalx_colecao_destino': idColecaoDestino, // Contador de avaliações (inicia a 1)
-            'dcterms:contributor': nomeUtilizador
+        // ============================================
+        // PASSO 4: EMPACOTAMENTO DOS DADOS LIMPOS
+        // ============================================
+        const dadosParaPainel = {
+            'Curador': nomeUtilizador,
+            'Tem animal?': p1Resposta,
+            'Animal (Comum)': animalSelecionado,
+            'Nome Científico': infoTaxonomia.cientifico,
+            'Categoria': infoTaxonomia.categoria,
+            'Quantidade': quantidadeSelecionada,
+            'Função': funcaoSelecionada,
+            'Descrição': descricaoPreenchida
         };
 
-        console.log('📦 Payload mapeado para o Omeka S:', dadosFormulario);
-
         // ============================================
-        // PASSO 6: SUBMISSÃO E FEEDBACK
+        // PASSO 5: SUBMISSÃO (CRIAR CÓPIA INTERMÉDIA)
         // ============================================
-        const resultado = await submeterRegistoAnimal(dadosFormulario, itemAtivo);
+        console.log(`🔄 A criar cópia no Conjunto Intermédio para o Item Base ID: ${itemAtivo['o:id']}...`);
+        
+        // Chamamos a função (POST) e passamos o pacote limpo e o item completo para clonagem
+        const resultado = await submeterRegistoAnimal(dadosParaPainel, itemAtivo);
 
         if (resultado && resultado.sucesso) {
+            console.log(`✅ Sucesso! Cópia criada. A processar gamificação...`);
 
-            await atualizarItemOriginal(itemAtivo, novaContagem, idColecaoDestino, dadosFormulario);
-            
-            const teveAnimal = dadosFormulario['dcterms:subject'] === 'SIM';
-            const descricao = dadosFormulario['dcterms:description'] || '';
-            const teveDescricao = descricao.trim().length > 0;
+            const teveAnimal = p1Resposta === 'SIM';
+            const teveDescricao = descricaoPreenchida.trim().length > 0 && !isDescricaoNaoSei;
+            const colecaoItem = typeof identificarColecaoDoItem === 'function' ? identificarColecaoDoItem(itemAtivo) : "Desconhecida";
 
-            const colecaoItem = identificarColecaoDoItem(itemAtivo);
-
+            // Aplica os pontos
             const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, 0, colecaoItem);
-            
             console.log(`🏆 Pontos: +${infoJogo.pontosGanhos} | Coleção: ${colecaoItem}`);
 
-            // SE SUBIU DE NÍVEL, CHAMA O MODAL DO TEU INDEX.HTML
-            if (infoJogo.subiuDeNivel) {
+            // Dispara a Modal de Nível (se aplicável)
+            if (infoJogo.subiuDeNivel && typeof abrirModalNivel === 'function') {
                 let titulo = `Novo Nível Alcançado!`;
                 let texto = `Parabéns! Alcançaste os ${infoJogo.nivelAtual.limite} pontos e és agora um ${infoJogo.nivelAtual.titulo}.`;
-                
-                if (typeof abrirModalNivel === 'function') {
-                    // Chama a tua função com os textos dinâmicos e o respetivo selo
-                    abrirModalNivel(titulo, texto, infoJogo.nivelAtual.imagem);
-                }
+                abrirModalNivel(titulo, texto, infoJogo.nivelAtual.imagem);
             }
+
+            return { sucesso: true, itemId: resultado.itemId };
+        } else {
+            throw new Error(resultado.erro || "Falha ao criar o registo intermédio.");
         }
-         return resultado;
+
     } catch (erro) {
         console.error('❌ Erro ao submeter o formulário:', erro);
-
-        return {
-            sucesso: false,
-            erro: erro.message || 'Erro inesperado ao submeter o formulário.'
-        };
+        return { sucesso: false, erro: erro.message || 'Erro inesperado ao submeter o formulário.' };
     }
-
-   
 }
-
-// Torna a função acessível globalmente para o HTML e outras funções
-window.submeterFormularioReal = submeterFormularioReal;
-
 // Torna a função acessível globalmente para o HTML e outras funções
 window.submeterFormularioReal = submeterFormularioReal;
 

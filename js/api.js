@@ -244,124 +244,141 @@ async function submeterRegistoAnimal(dadosFormulario, itemOriginal) {
         }
 
         const baseUrl = String(CONFIG.API_URL || '').replace(/\/+$/, '');
+        const idModeloRecursos = 2; // Confirma se este é o ID do teu modelo
+        const colecaoIdIntermedia = 141; 
         
-        const idModeloRecursos = 2;
-
-        // Extrai o ID da coleção que o app.js calculou (ou assume 22 por defeito)
-        const colecaoId = dadosFormulario['animalx_colecao_destino'] || 22;
-        
-        // Apaga esta variável do objeto para ela não ser enviada como metadado por engano
         delete dadosFormulario['animalx_colecao_destino'];
 
-       
-        // Inicializa o Payload - ATENÇÃO: Confirma se o item_set id é 22 ou 2
-        const payload = {
-            '@context': `${baseUrl}/api-context`,
-            '@type': 'o:Item',
-            'o:is_public': false,
-            'o:item_set': [ { "o:id": colecaoId } ],
-            'o:resource_template': { 'o:id': idModeloRecursos }
+        const pacoteAnotacao = {
+            data: new Date().toISOString(),
+            respostas: dadosFormulario
         };
+        const novaAnotacaoFormatada = converterParaFormatolOmekaS(JSON.stringify(pacoteAnotacao), 'bibo:annotates')[0];
 
-        // 1. Extrair e adicionar os metadados herdados do item original
-        const metadadosOriginais = extrairMetadadosOriginais(itemOriginal);
-        for (const [termo, valor] of Object.entries(metadadosOriginais)) {
-            if (valor && valor !== "") {
-                payload[termo] = converterParaFormatolOmekaS(valor, termo);
+        // ==========================================
+        // PASSO 1: VERIFICAR SE JÁ EXISTE CÓPIA
+        // ==========================================
+        const urlBusca = `${baseUrl}/items?item_set_id=${colecaoIdIntermedia}&property[0][property]=35&property[0][type]=eq&property[0][text]=${itemOriginal['o:id']}&key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
+        
+        const respostaBusca = await fetch(urlBusca);
+        const itensEncontrados = await respostaBusca.json();
+
+        if (itensEncontrados && itensEncontrados.length > 0) {
+            // ==========================================
+            // CASO A: JÁ EXISTE CÓPIA (PATCH SEGURO)
+            // ==========================================
+            const copiaExistente = itensEncontrados[0];
+            const copiaId = copiaExistente['o:id'];
+            console.log(`🔍 Cópia já existe (ID: ${copiaId}). A agrupar avaliação e preservar metadados...`);
+
+            const payloadPatch = {
+                '@context': `${baseUrl}/api-context`,
+                '@type': 'o:Item'
+            };
+
+            // 1. Preserva as configurações base
+            if (copiaExistente['o:item_set']) payloadPatch['o:item_set'] = copiaExistente['o:item_set'];
+            if (copiaExistente['o:resource_template']) payloadPatch['o:resource_template'] = copiaExistente['o:resource_template'];
+
+            // 2. O TRUQUE: Copia TODOS os metadados antigos para o novo envio!
+            for (const chave in copiaExistente) {
+                // Ignora as chaves internas do Omeka (começam com @ ou o:)
+                if (!chave.startsWith('@') && !chave.startsWith('o:')) {
+                    payloadPatch[chave] = copiaExistente[chave];
+                }
             }
-        }
 
-        // 2. Adicionar as respostas do formulário
-        for (const [termo, valor] of Object.entries(dadosFormulario)) {
-            if (valor && valor !== "") {
-                payload[termo] = converterParaFormatolOmekaS(valor, termo);
+            // 3. Adiciona a nova anotação ao histórico que acabámos de salvar
+            let historicoAtual = payloadPatch['bibo:annotates'] || [];
+            historicoAtual.push(novaAnotacaoFormatada);
+            payloadPatch['bibo:annotates'] = historicoAtual;
+
+            const urlPatch = `${baseUrl}/items/${copiaId}?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
+            const respostaPatch = await fetch(urlPatch, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payloadPatch)
+            });
+
+            if (!respostaPatch.ok) throw new Error(`Falha ao atualizar cópia: ${await respostaPatch.text()}`);
+
+            return { sucesso: true, itemId: copiaId, mensagem: `Avaliação agrupada na cópia existente.` };
+
+        } else {
+            // ==========================================
+            // CASO B: PRIMEIRA AVALIAÇÃO (CRIAR CÓPIA)
+            // ==========================================
+            console.log("🆕 Nenhuma cópia encontrada. A criar nova cópia intermédia...");
+            
+            const payload = {
+                '@context': `${baseUrl}/api-context`,
+                '@type': 'o:Item',
+                'o:is_public': false,
+                'o:item_set': [ { "o:id": colecaoIdIntermedia } ],
+                'o:resource_template': { 'o:id': idModeloRecursos }
+            };
+
+            const metadadosOriginais = extrairMetadadosOriginais(itemOriginal);
+            for (const [termo, valor] of Object.entries(metadadosOriginais)) {
+                if (valor && valor !== "") {
+                    payload[termo] = converterParaFormatolOmekaS(valor, termo);
+                }
             }
-        }
 
-        // 3. Adicionar utilizador e relação de anotação
-       
-        if (itemOriginal && itemOriginal['o:id']) {
-            payload['dcterms:isReferencedBy'] = converterParaFormatolOmekaS(itemOriginal['o:id'], 'dcterms:isReferencedBy');
-        }
+            payload['bibo:annotates'] = [ novaAnotacaoFormatada ];
+            if (itemOriginal && itemOriginal['o:id']) {
+                payload['dcterms:isReferencedBy'] = converterParaFormatolOmekaS(itemOriginal['o:id'], 'dcterms:isReferencedBy');
+            }
 
-        console.log('📦 Payload JSON-LD pronto para envio:', payload);
+            const urlItem = `${baseUrl}/items?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
+            const respostaItem = await fetch(urlItem, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-        // ==========================================
-        // PEDIDO 1: CRIAR O ITEM
-        // ==========================================
-        const urlItem = `${baseUrl}/items?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
-        const respostaItem = await fetch(urlItem, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+            if (!respostaItem.ok) throw new Error(`Falha ao criar o Item: ${await respostaItem.text()}`);
 
-        if (!respostaItem.ok) {
-            throw new Error(`Falha ao criar o Item: ${await respostaItem.text()}`);
-        }
+            const novoItem = await respostaItem.json();
+            const novoItemId = novoItem['o:id'];
+            console.log(`✅ Sucesso! Cópia Base criada com ID: ${novoItemId}`);
 
-        const novoItem = await respostaItem.json();
-        const novoItemId = novoItem['o:id'];
-        console.log(`✅ Sucesso! Item Base criado com ID: ${novoItemId}`);
+            // Clonagem da Multimédia original
+            if (itemOriginal['o:media'] && itemOriginal['o:media'].length > 0) {
+                try {
+                    const urlMediaOriginal = itemOriginal['o:media'][0]['@id'];
+                    const respostaMediaOriginal = await fetch(`${urlMediaOriginal}?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`);
+                    
+                    if (respostaMediaOriginal.ok) {
+                        const dadosMediaOriginal = await respostaMediaOriginal.json();
+                        const urlOrigem = dadosMediaOriginal['o:source'] || dadosMediaOriginal['o:original_url'];
 
-        // ==========================================
-        // PEDIDO 2: CLONAR A MULTIMÉDIA ORIGINAL
-        // ==========================================
-        if (itemOriginal['o:media'] && itemOriginal['o:media'].length > 0) {
-            console.log("🔗 A ler configurações da multimédia original...");
-            try {
-                const urlMediaOriginal = itemOriginal['o:media'][0]['@id'];
-                const respostaMediaOriginal = await fetch(urlMediaOriginal);
-                
-                if (respostaMediaOriginal.ok) {
-                    const dadosMediaOriginal = await respostaMediaOriginal.json();
-
-                    const tipoIngester = dadosMediaOriginal['o:ingester'];
-                    const urlOrigem = dadosMediaOriginal['o:source'] || dadosMediaOriginal['o:original_url'];
-
-                    if (urlOrigem) {
-                        // Constrói o novo payload com a dupla garantia (ingest_url + o:source)
-                        const payloadMedia = {
-                            "o:ingester": tipoIngester,
-                            "file_index": 0,
-                            "o:item": { "o:id": novoItemId },
-                            "ingest_url": urlOrigem, // Para ingesters do tipo 'url' nativo
-                            "o:source": urlOrigem    // ⬅️ A CORREÇÃO: O módulo 'iiif' exige esta chave!
-                        };
-
-                        const urlCriarMedia = `${baseUrl}/media?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
-                        const respostaMedia = await fetch(urlCriarMedia, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payloadMedia)
-                        });
-
-                        if (!respostaMedia.ok) {
-                            console.warn(`⚠️ O Item foi criado, mas falhou ao clonar a media: ${await respostaMedia.text()}`);
-                        } else {
-                            console.log("🖼️ Multimédia clonada e associada com sucesso!");
+                        if (urlOrigem) {
+                            const payloadMedia = {
+                                "o:ingester": dadosMediaOriginal['o:ingester'],
+                                "file_index": 0,
+                                "o:item": { "o:id": novoItemId },
+                                "ingest_url": urlOrigem,
+                                "o:source": urlOrigem
+                            };
+                            await fetch(`${baseUrl}/media?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(payloadMedia)
+                            });
                         }
                     }
+                } catch (erroMedia) {
+                    console.error("❌ Erro ao clonar a multimédia:", erroMedia);
                 }
-            } catch (erroMedia) {
-                console.error("❌ Erro ao tentar clonar a multimédia:", erroMedia);
             }
-        }
 
-        return {
-            sucesso: true,
-            itemId: novoItemId,
-            mensagem: `Registo de animal criado com sucesso no Omeka S.`
-        };
+            return { sucesso: true, itemId: novoItemId, mensagem: `Registo de animal criado.` };
+        }
 
     } catch (erro) {
         console.error('Erro crítico ao submeter registo:', erro);
-
-        return {
-            sucesso: false,
-            erro: `Erro de rede ou configuração: ${erro.message}`,
-            detalhes: 'Confirma se o Omeka S está online e as chaves no config.js estão corretas.'
-        };
+        return { sucesso: false, erro: `Erro de rede ou configuração: ${erro.message}` };
     }
 }
 
@@ -379,31 +396,40 @@ export async function atualizarItemOriginal(itemOriginal, novaContagem, idColeca
     try {
         console.log(`🔄 A atualizar o Item Original ${itemOriginal['o:id']} (Validação: ${novaContagem}/5)...`);
 
-        // 1. Recupera o histórico anterior (se existir) para não apagar o trabalho de outros
-        // Utilizamos o 'dcterms:provenance' para albergar os blocos JSON privados
-        let historicoAtual = itemOriginal['dcterms:provenance'] || [];
+        // 1. Recupera o histórico anterior
+        let historicoAtual = itemOriginal['bibo:annotates'] || [];
 
-        // 2. Empacota a submissão atual em formato JSON com uma etiqueta de tempo
+        // 2. Empacota a submissão atual em formato JSON
         const pacote = {
             data: new Date().toISOString(),
             respostas: dadosSubmissao
         };
 
-        // 3. Adiciona o novo pacote ao final do histórico
+        // 3. Adiciona o novo pacote com o PROPERTY_ID 57 (bibo:annotates) obrigatório!
         historicoAtual.push({
             "type": "literal",
+            "property_id": 57,
             "@value": JSON.stringify(pacote)
         });
 
-        // 4. Constrói o Payload de Atualização (PATCH)
+        // 4. Constrói o Payload blindado
         const baseUrlApi = CONFIG.API_URL.replace(/\/$/, '');
         const payloadPatch = {
-            "@context": `${baseUrlApi}-context`,
+            "@context": `${baseUrlApi}/api-context`, // <- Correção vital na barra!
             "@type": "o:Item",
-            "o:item_set": [ { "o:id": idColecaoDestino } ], // Move a coleção se atingir 5
-            "dcterms:audience": [ { "type": "literal", "@value": String(novaContagem) } ], // Atualiza o contador
-            "dcterms:provenance": historicoAtual // Envia o histórico completo preservado
+            "o:item_set": [ { "o:id": idColecaoDestino } ], 
+            
+            // Injeção do PROPERTY_ID 16 (dcterms:audience)
+            "dcterms:audience": [ { 
+                "type": "literal", 
+                "property_id": 16, 
+                "@value": String(novaContagem) 
+            } ], 
+            
+            "bibo:annotates": historicoAtual
         };
+
+        console.log("📦 PAYLOAD DE ATUALIZAÇÃO BLINDADO:", JSON.stringify(payloadPatch, null, 2));
 
         const url = `${baseUrlApi}/items/${itemOriginal['o:id']}?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
 
