@@ -8,6 +8,15 @@ export const animalxConfig = {
         bonus_descricao: 10,
         multiplicador_especie_extra: 2
     },
+    // NOVO: Dicionário de siglas para as coleções
+    colecoes: {
+        'AZU': 'azulejaria',
+        'CER': 'ceramica',
+        'PIN': 'pintura',
+        'GRA': 'gravura',
+        'ESC': 'escultura',
+        'DES': 'desenho'
+    },
     niveis: [
         { titulo: "Curador Estagiário", limite: 0, imagem: "asset/img/selo_nivel1.png" },
         { titulo: "Investigador Assistente", limite: 100, imagem: "asset/img/selo_nivel2.png" },
@@ -62,7 +71,19 @@ export const GestorGamificacao = {
 
         progresso.pontos += pontosGanhos;
         progresso.registosAnalisados += 1;
-        if (colecaoSubmetida && progresso.colecoes[colecaoSubmetida] !== undefined) {
+
+        if (colecaoSubmetida) {
+            // Se o progresso.colecoes não existir, cria-o
+            if (!progresso.colecoes) {
+                progresso.colecoes = {};
+            }
+            
+            // Se a coleção específica (ex: 'ceramica') ainda não existir na memória, inicializa a 0
+            if (progresso.colecoes[colecaoSubmetida] === undefined) {
+                progresso.colecoes[colecaoSubmetida] = 0;
+            }
+            
+            // Soma +1 ao registo tratado!
             progresso.colecoes[colecaoSubmetida] += 1;
         }
 

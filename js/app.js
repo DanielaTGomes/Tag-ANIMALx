@@ -10,6 +10,8 @@ import {
 
 import { GestorGamificacao, animalxConfig } from './gamification.js';
 
+import { CONFIG } from './config.js';
+
 
 let itemAtivo = null;
 let visualizadorIIIF = null;
@@ -57,6 +59,28 @@ function inicializarImagemIIIF(item) {
     }
 }
 
+// Descobre a qual coleção o item pertence com base no código
+
+function identificarColecaoDoItem(item) {
+    if (!item) return null;
+    
+    // 1. Puxa o código formatado usando a tua função existente
+    const codigoFormatado = extrairCodigoMedia(item); 
+    if (!codigoFormatado) return null;
+    
+    // 2. Lê o dicionário de siglas da nossa configuração
+    const mapaSiglas = animalxConfig.colecoes;
+    
+    // 3. Procura qual das siglas existe no código da imagem
+    for (const sigla in mapaSiglas) {
+        if (codigoFormatado.includes(sigla)) {
+            return mapaSiglas[sigla]; // Devolve 'azulejaria', 'ceramica', etc.
+        }
+    }
+    
+    return null; // Caso não encontre nenhuma das siglas esperadas
+}
+
 function injetarLegendaDinamica(item) {
     const elementoLegenda = document.getElementById('legenda-dinamica');
     if (!elementoLegenda) return;
@@ -90,10 +114,76 @@ async function carregarEApresentarItem() {
     itemAtivo = item;
     inicializarImagemIIIF(item);
     injetarLegendaDinamica(item);
+    darBoasVindasEstagiario();
 }
 
 // O TRUQUE: Tornamos a função global para que o index.html a consiga chamar!
 window.carregarItemANIMALx = carregarEApresentarItem;
+
+// ==========================================
+// LEITURA GLOBAL DE TOTAIS DAS COLEÇÕES
+// ==========================================
+window.totaisColecoes = { azulejaria: 0, ceramica: 0, pintura: 0, gravura: 0, escultura: 0, desenho: 0 };
+
+async function calcularTotaisColecoes() {
+    // Para não atrasar o jogo, verificamos se já contámos nesta sessão
+    const totaisGuardados = sessionStorage.getItem('animalx_totais_colecoes');
+    if (totaisGuardados) {
+        window.totaisColecoes = JSON.parse(totaisGuardados);
+        console.log("📊 Totais de coleções carregados da memória:", window.totaisColecoes);
+        return;
+    }
+
+    console.log("🔍 A varrer o Conjunto de Itens 1 para contar coleções...");
+    
+    // Faz o pedido ao Omeka S pelos itens do ID 1
+    const url = `${CONFIG.API_URL}/items?item_set_id=1&per_page=2000&key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
+    
+    try {
+        const resposta = await fetch(url);
+        if (resposta.ok) {
+            const itens = await resposta.json();
+            
+            // Conta os itens um a um
+            itens.forEach(item => {
+                const colecao = identificarColecaoDoItem(item);
+                if (colecao && window.totaisColecoes[colecao] !== undefined) {
+                    window.totaisColecoes[colecao] += 1;
+                }
+            });
+            
+            // Guarda na sessão para ser mais rápido nas próximas aberturas
+            sessionStorage.setItem('animalx_totais_colecoes', JSON.stringify(window.totaisColecoes));
+            console.log("📊 Contagem global finalizada:", window.totaisColecoes);
+        }
+    } catch (erro) {
+        console.error("❌ Erro ao tentar contar as coleções globais:", erro);
+    }
+}
+
+// ==========================================
+// ACOLHIMENTO: CURADOR ESTAGIÁRIO
+// ==========================================
+function darBoasVindasEstagiario() {
+    const progresso = GestorGamificacao.carregarProgresso();
+    const jaDeuBoasVindas = sessionStorage.getItem('animalx_boas_vindas');
+
+    // Só dispara se tiver 0 pontos E se ainda não tiver visto a modal nesta sessão
+    if (progresso.pontos === 0 && !jaDeuBoasVindas) {
+        const nivelEstagiario = animalxConfig.niveis[0];
+        
+        // Os textos de acolhimento que definimos para o primeiro nível
+        const titulo = "O teu primeiro passo na História!";
+        const texto = "Acabaste de entrar no arquivo do Museu de Lisboa como Curador Estagiário. Começa a explorar as coleções e ajuda-nos a desvendar as primeiras representações de animais.";
+        
+        if (typeof abrirModalNivel === 'function') {
+            abrirModalNivel(titulo, texto, nivelEstagiario.imagem);
+        }
+        
+        // Regista na memória curta para não voltar a abrir enquanto o navegador estiver aberto
+        sessionStorage.setItem('animalx_boas_vindas', 'sim');
+    }
+}
 /**
  * Submete o formulário preenchido pelo utilizador para a REST API do Omeka S.
  * 
@@ -267,9 +357,11 @@ window.carregarItemANIMALx = carregarEApresentarItem;
             const descricao = dadosFormulario['dcterms:description'] || '';
             const teveDescricao = descricao.trim().length > 0;
 
-            const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, 0, null);
+            const colecaoItem = identificarColecaoDoItem(itemAtivo);
+
+            const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, 0, colecaoItem);
             
-            console.log(`🏆 Pontos: +${infoJogo.pontosGanhos} (Total: ${infoJogo.progressoAtual.pontos})`);
+            console.log(`🏆 Pontos: +${infoJogo.pontosGanhos} | Coleção: ${colecaoItem}`);
 
             // SE SUBIU DE NÍVEL, CHAMA O MODAL DO TEU INDEX.HTML
             if (infoJogo.subiuDeNivel) {
@@ -282,6 +374,7 @@ window.carregarItemANIMALx = carregarEApresentarItem;
                 }
             }
         }
+         return resultado;
     } catch (erro) {
         console.error('❌ Erro ao submeter o formulário:', erro);
 
@@ -291,7 +384,7 @@ window.carregarItemANIMALx = carregarEApresentarItem;
         };
     }
 
-    return resultado;
+   
 }
 
 // Torna a função acessível globalmente para o HTML e outras funções
@@ -356,4 +449,53 @@ window.atualizarCadernoDeCampo = function() {
     }
 
     console.log(`📊 Nível: ${nivelAtual.titulo} | Faltam ${pontosFaltam}pts para subir | Barra a ${percentagemBarra}%`);
+
+    // ==========================================
+    // 4. ATUALIZAR AS BARRAS DE COLEÇÃO
+    // ==========================================
+
+    const totaisGlobais = window.totaisColecoes || {};
+    const colecoesProgresso = progresso.colecoes || {};
+
+    // Dicionário com TODAS as 6 tipologias!
+    const mapeamentoColecoes = {
+        'azulejaria': 'Azulejaria',
+        'ceramica': 'Ceramica',
+        'escultura': 'Escultura',
+        'pintura': 'Pintura',
+        'gravura': 'Gravura',
+        'desenho': 'Desenho'
+    };
+
+    for (const [chaveApi, sufixoHtml] of Object.entries(mapeamentoColecoes)) {
+        const totalNoServidor = totaisGlobais[chaveApi] || 0;
+        const totalVistoPeloUser = colecoesProgresso[chaveApi] || 0;
+        
+        // 1. Injeta os números
+        const elTratados = document.querySelector(`[data-api-field="tratados${sufixoHtml}"]`);
+        const elTotal = document.querySelector(`[data-api-field="total${sufixoHtml}"]`);
+        
+        if (elTratados) elTratados.innerText = totalVistoPeloUser;
+        if (elTotal) elTotal.innerText = totalNoServidor;
+
+        // 2. Atualiza a barra
+        const elBarraProgresso = document.getElementById(`barra-progresso-${chaveApi}`);
+        if (elBarraProgresso) {
+            let percentagem = 0;
+            if (totalNoServidor > 0) {
+                percentagem = (totalVistoPeloUser / totalNoServidor) * 100;
+            }
+            elBarraProgresso.style.width = `${percentagem}%`;
+        }
+    }
 };
+
+// ==========================================
+// INICIALIZAÇÃO GERAL DO JOGO
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    // Liga a contagem global mal a página termina de carregar
+    if (typeof calcularTotaisColecoes === 'function') {
+        calcularTotaisColecoes();
+    }
+});

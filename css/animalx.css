@@ -1386,8 +1386,8 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     background: transparent;
     border: none;
     padding: 0;
-    width: 86px;  /* O tamanho exato que estava no teu Figma */
-    height: 86px;
+    width: 120px;  /* O tamanho exato que estava no teu Figma */
+    height: 120px;
     cursor: pointer;
     z-index: 10;  /* Garante que o botão fica acima da moldura */
     transition: transform 0.2s ease;
