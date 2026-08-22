@@ -1,7 +1,8 @@
 import {
     carregarItemAleatorio,
     submeterRegistoAnimal,
-    obterValorMetadado
+    obterValorMetadado,
+    atualizarItemOriginal
 } from './api.js';
 
 import {
@@ -184,6 +185,23 @@ function darBoasVindasEstagiario() {
         sessionStorage.setItem('animalx_boas_vindas', 'sim');
     }
 }
+
+// ==========================================
+// VALIDAÇÃO CRUZADA (MULTI-PEER REVIEW)
+// ==========================================
+function obterContagemValidacoes(item) {
+    // 1. Se o item não tiver o campo audience (é a primeira vez que é analisado), começa no 0
+    if (!item || !item['dcterms:audience']) {
+        return 0;
+    }
+
+    // 2. O Omeka S guarda os valores estruturados. Vamos extrair o valor real.
+    const valorBruto = item['dcterms:audience'][0]['@value'];
+    const contagem = parseInt(valorBruto, 10);
+
+    // 3. Se por algum erro o valor não for um número válido, devolve 0 por segurança
+    return isNaN(contagem) ? 0 : contagem;
+}
 /**
  * Submete o formulário preenchido pelo utilizador para a REST API do Omeka S.
  * 
@@ -331,6 +349,16 @@ function darBoasVindasEstagiario() {
         const p6Resposta = document.querySelector('#opcoes-p6 .selecionado')?.innerText || "NÃO";
 
         // ----------------------------------------------------
+        // VALIDAÇÃO CRUZADA (A Regra dos 5 Votos)
+        // ----------------------------------------------------
+        const contagemAtual = obterContagemValidacoes(itemAtivo);
+        const novaContagem = contagemAtual + 1;
+        
+        // Define o Item Set de destino. 
+        // 2 = Tag AnimalX (Em análise). 3 = Substitui pelo ID real da tua coleção "Registos analisados"
+        const idColecaoDestino = novaContagem >= 5 ? 22 : 2;
+
+        // ----------------------------------------------------
         // CONSTRUÇÃO DO OBJETO PARA O OMEKA S
         // ----------------------------------------------------
         const dadosFormulario = {
@@ -341,7 +369,8 @@ function darBoasVindasEstagiario() {
             'dwc:organismScope': quantidadeSelecionada, // Pergunta 3
             'dcterms:type': funcaoSelecionada, // Pergunta 4
             'dcterms:description': descricaoPreenchida, // Pergunta 5
-            'dcterms:audience': "1", // Contador de avaliações (inicia a 1)
+            'dcterms:audience': novaContagem.toString(), // O novo número de validações
+            'animalx_colecao_destino': idColecaoDestino, // Contador de avaliações (inicia a 1)
             'dcterms:contributor': nomeUtilizador
         };
 
@@ -353,6 +382,9 @@ function darBoasVindasEstagiario() {
         const resultado = await submeterRegistoAnimal(dadosFormulario, itemAtivo);
 
         if (resultado && resultado.sucesso) {
+
+            await atualizarItemOriginal(itemAtivo, novaContagem, idColecaoDestino, dadosFormulario);
+            
             const teveAnimal = dadosFormulario['dcterms:subject'] === 'SIM';
             const descricao = dadosFormulario['dcterms:description'] || '';
             const teveDescricao = descricao.trim().length > 0;

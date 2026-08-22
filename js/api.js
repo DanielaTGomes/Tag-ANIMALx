@@ -246,12 +246,20 @@ async function submeterRegistoAnimal(dadosFormulario, itemOriginal) {
         const baseUrl = String(CONFIG.API_URL || '').replace(/\/+$/, '');
         
         const idModeloRecursos = 2;
+
+        // Extrai o ID da coleção que o app.js calculou (ou assume 22 por defeito)
+        const colecaoId = dadosFormulario['animalx_colecao_destino'] || 22;
+        
+        // Apaga esta variável do objeto para ela não ser enviada como metadado por engano
+        delete dadosFormulario['animalx_colecao_destino'];
+
+       
         // Inicializa o Payload - ATENÇÃO: Confirma se o item_set id é 22 ou 2
         const payload = {
             '@context': `${baseUrl}/api-context`,
             '@type': 'o:Item',
             'o:is_public': false,
-            'o:item_set': [ { 'o:id': 22 } ],
+            'o:item_set': [ { "o:id": colecaoId } ],
             'o:resource_template': { 'o:id': idModeloRecursos }
         };
 
@@ -363,3 +371,58 @@ export {
     prepararDadosDoItem,
     submeterRegistoAnimal
 };
+
+// =========================================
+// ATUALIZAÇÃO DO ITEM ORIGINAL (PATCH)
+// =========================================
+export async function atualizarItemOriginal(itemOriginal, novaContagem, idColecaoDestino, dadosSubmissao) {
+    try {
+        console.log(`🔄 A atualizar o Item Original ${itemOriginal['o:id']} (Validação: ${novaContagem}/5)...`);
+
+        // 1. Recupera o histórico anterior (se existir) para não apagar o trabalho de outros
+        // Utilizamos o 'dcterms:provenance' para albergar os blocos JSON privados
+        let historicoAtual = itemOriginal['dcterms:provenance'] || [];
+
+        // 2. Empacota a submissão atual em formato JSON com uma etiqueta de tempo
+        const pacote = {
+            data: new Date().toISOString(),
+            respostas: dadosSubmissao
+        };
+
+        // 3. Adiciona o novo pacote ao final do histórico
+        historicoAtual.push({
+            "type": "literal",
+            "@value": JSON.stringify(pacote)
+        });
+
+        // 4. Constrói o Payload de Atualização (PATCH)
+        const baseUrlApi = CONFIG.API_URL.replace(/\/$/, '');
+        const payloadPatch = {
+            "@context": `${baseUrlApi}-context`,
+            "@type": "o:Item",
+            "o:item_set": [ { "o:id": idColecaoDestino } ], // Move a coleção se atingir 5
+            "dcterms:audience": [ { "type": "literal", "@value": String(novaContagem) } ], // Atualiza o contador
+            "dcterms:provenance": historicoAtual // Envia o histórico completo preservado
+        };
+
+        const url = `${baseUrlApi}/items/${itemOriginal['o:id']}?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
+
+        // Envia o pedido de atualização
+        const resposta = await fetch(url, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payloadPatch)
+        });
+
+        if (!resposta.ok) {
+            throw new Error(`Falha no PATCH (Status ${resposta.status})`);
+        }
+
+        console.log(`✅ Item Original ${itemOriginal['o:id']} atualizado com sucesso!`);
+        return true;
+
+    } catch (erro) {
+        console.error('❌ Erro ao atualizar o item original:', erro);
+        return false;
+    }
+}
