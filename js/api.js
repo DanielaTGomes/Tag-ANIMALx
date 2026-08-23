@@ -1,4 +1,4 @@
-import { CONFIG } from './config.js';
+
 
 /**
  * Constrói o URL autenticado da coleção de itens do Omeka S.
@@ -17,29 +17,22 @@ function construirUrlItens() {
  */
 async function carregarItemAleatorio() {
     try {
-        const resposta = await fetch(construirUrlItens());
+        // Pedido seguro à Netlify Functions (sem chaves!)
+        const resposta = await fetch('/.netlify/functions/obter-item');
         
-        // 1. Se o Omeka rejeitar a ligação (ex: Chave errada)
-        if (!resposta.ok) {
-            return { erroCritico: `O Omeka S rejeitou o pedido (Erro HTTP ${resposta.status}). Confirma se as chaves no config.js estão corretas e se o teu utilizador tem permissões.` };
-        }
+        if (!resposta.ok) return { erroCritico: `Falha no servidor intermédio (HTTP ${resposta.status}).` };
 
         const items = await resposta.json();
         
-        // 2. Se a resposta chegar bem, mas a coleção não tiver itens
         if (!Array.isArray(items) || items.length === 0) {
-            return { erroCritico: `O Omeka S respondeu bem, mas a coleção está vazia! Confirma se o 'item_set_id=1' no api.js é o ID correto da coleção "Por Classificar".` };
+            return { erroCritico: `A coleção está vazia ou não foi encontrada.` };
         }
 
-        // Tudo correu bem! Devolve um item ao calhas
         return items[Math.floor(Math.random() * items.length)];
         
     } catch (erro) {
-        // 3. Se o browser bloquear o pedido (ex: erro de CORS ou XAMPP desligado)
-        return { erroCritico: `Falha de rede (${erro.message}). Isto acontece geralmente se o XAMPP estiver desligado ou devido a um bloqueio de CORS (estás a usar o Live Server no VS Code?).` };
+        return { erroCritico: `Falha de rede (${erro.message}).` };
     }
-
-    
 }
 
 
@@ -96,41 +89,8 @@ function prepararDadosDoItem(item) {
     };
 }
 
-// =========================================
-// MAPEAMENTO DE PROPERTY_IDs DO OMEKA S
-// =========================================
-// Este mapa associa os nomes das propriedades aos seus IDs numéricos no Omeka S.
-// IMPORTANTE: Confirma que estes IDs correspondem à tua instalação do Omeka S!
-// Para obter os IDs corretos, faz um pedido GET a: /api/properties?key_identity=...&key_credential=...
-const MAPA_PROPRIEDADES = {
-    // Metadados obtidos através do formulário
-    'dcterms:title': 1,
-    'dcterms:subject': 3,
-    'dcterms:description': 4,
-    'dcterms:contributor': 6,
-    'dcterms:type': 8,
-    'dcterms:isReferencedBy':35,
-    'dcterms:audience': 16,
-    'dwc:scientificName': 419,
-    'dwc:taxonRank': 439,
-    'dwc:organismScope': 372,
-    // Metadados a recuperar do item original
-    'dcterms:relation': 13,
-    'dcterms:format':9,
-    'dcterms:medium':26,
-    'dcterms:coverage':14,
-    'dcterms:spatial':40,
-    'dcterms:identifier':10,
-    'dcterms:date':7,
-    'dcterms:available':22,
-    'dcterms:provenance':51,
-    'dcterms:bibliographicCitation':48,
-    'bibo:uri':121,
-    'bibo:annotates':57,
-    'dcterms:creator':2,
-    'dcterms:created':20,
 
-};
+
 
 /**
  * Converte um valor simples para o formato JSON-LD do Omeka S.
@@ -141,21 +101,7 @@ const MAPA_PROPRIEDADES = {
  * @returns {Array<Object>} Array com objeto no formato JSON-LD completo
  * @private
  */
-function converterParaFormatolOmekaS(valor, nomePropiedade) {
-    const propertyId = MAPA_PROPRIEDADES[nomePropiedade];
-    
-    if (!propertyId) {
-        console.warn(`⚠️ Aviso: Propriedade "${nomePropiedade}" não encontrada no mapa de IDs. Verifica o MAPA_PROPRIEDADES.`);
-    }
-    
-    return [
-        {
-            "type": "literal",
-            "property_id": propertyId || 0,  // 0 causará erro no Omeka S, alertando para o problema
-            "@value": String(valor)
-        }
-    ];
-}
+
 
 /**
  * Submete um novo registo de animal para o Omeka S.
@@ -202,27 +148,7 @@ function converterParaFormatolOmekaS(valor, nomePropiedade) {
  * }
  */
 
-// =========================================
-// EXTRAÇÃO DE METADADOS DO ITEM ORIGINAL
-// =========================================
-function extrairMetadadosOriginais(itemOriginal) {
-    const metadadosExtraidos = {};
-    const termosARecuperar = [
-        'dcterms:relation', 'dcterms:format', 'dcterms:medium', 
-        'dcterms:coverage', 'dcterms:spatial', 'dcterms:identifier', 
-        'dcterms:date', 'dcterms:available', 'dcterms:provenance', 
-        'dcterms:bibliographicCitation', 'bibo:uri', 'bibo:annotates', 
-        'dcterms:creator', 'dcterms:created'
-    ];
 
-    termosARecuperar.forEach(termo => {
-        if (itemOriginal && itemOriginal[termo]) {
-            metadadosExtraidos[termo] = itemOriginal[termo][0]['@value'];
-        }
-    });
-
-    return metadadosExtraidos;
-}
 
 // =========================================
 // GERADOR DO LINK IIIF
@@ -239,146 +165,23 @@ function gerarUrlIiif(itemOriginal) {
 // =========================================
 async function submeterRegistoAnimal(dadosFormulario, itemOriginal) {
     try {
-        if (!dadosFormulario || typeof dadosFormulario !== 'object') {
-            return { sucesso: false, erro: 'Dados do formulário inválidos' };
+        const resposta = await fetch('/.netlify/functions/criar-rascunho', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dadosFormulario, itemOriginal })
+        });
+
+        const resultado = await resposta.json();
+        
+        if (!resposta.ok || !resultado.sucesso) {
+            throw new Error(resultado.erro || "Falha no servidor intermédio.");
         }
 
-        const baseUrl = String(CONFIG.API_URL || '').replace(/\/+$/, '');
-        const idModeloRecursos = 2; // Confirma se este é o ID do teu modelo
-        const colecaoIdIntermedia = 141; 
-        
-        delete dadosFormulario['animalx_colecao_destino'];
-
-        const pacoteAnotacao = {
-            data: new Date().toISOString(),
-            respostas: dadosFormulario
-        };
-        const novaAnotacaoFormatada = converterParaFormatolOmekaS(JSON.stringify(pacoteAnotacao), 'bibo:annotates')[0];
-
-        // ==========================================
-        // PASSO 1: VERIFICAR SE JÁ EXISTE CÓPIA
-        // ==========================================
-        const urlBusca = `${baseUrl}/items?item_set_id=${colecaoIdIntermedia}&property[0][property]=35&property[0][type]=eq&property[0][text]=${itemOriginal['o:id']}&key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
-        
-        const respostaBusca = await fetch(urlBusca);
-        const itensEncontrados = await respostaBusca.json();
-
-        if (itensEncontrados && itensEncontrados.length > 0) {
-            // ==========================================
-            // CASO A: JÁ EXISTE CÓPIA (PATCH SEGURO)
-            // ==========================================
-            const copiaExistente = itensEncontrados[0];
-            const copiaId = copiaExistente['o:id'];
-            console.log(`🔍 Cópia já existe (ID: ${copiaId}). A agrupar avaliação e preservar metadados...`);
-
-            const payloadPatch = {
-                '@context': `${baseUrl}/api-context`,
-                '@type': 'o:Item'
-            };
-
-            // 1. Preserva as configurações base
-            if (copiaExistente['o:item_set']) payloadPatch['o:item_set'] = copiaExistente['o:item_set'];
-            if (copiaExistente['o:resource_template']) payloadPatch['o:resource_template'] = copiaExistente['o:resource_template'];
-
-            // 2. O TRUQUE: Copia TODOS os metadados antigos para o novo envio!
-            for (const chave in copiaExistente) {
-                // Ignora as chaves internas do Omeka (começam com @ ou o:)
-                if (!chave.startsWith('@') && !chave.startsWith('o:')) {
-                    payloadPatch[chave] = copiaExistente[chave];
-                }
-            }
-
-            // 3. Adiciona a nova anotação ao histórico que acabámos de salvar
-            let historicoAtual = payloadPatch['bibo:annotates'] || [];
-            historicoAtual.push(novaAnotacaoFormatada);
-            payloadPatch['bibo:annotates'] = historicoAtual;
-
-            const urlPatch = `${baseUrl}/items/${copiaId}?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
-            const respostaPatch = await fetch(urlPatch, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payloadPatch)
-            });
-
-            if (!respostaPatch.ok) throw new Error(`Falha ao atualizar cópia: ${await respostaPatch.text()}`);
-
-            return { sucesso: true, itemId: copiaId, mensagem: `Avaliação agrupada na cópia existente.` };
-
-        } else {
-            // ==========================================
-            // CASO B: PRIMEIRA AVALIAÇÃO (CRIAR CÓPIA)
-            // ==========================================
-            console.log("🆕 Nenhuma cópia encontrada. A criar nova cópia intermédia...");
-            
-            const payload = {
-                '@context': `${baseUrl}/api-context`,
-                '@type': 'o:Item',
-                'o:is_public': false,
-                'o:item_set': [ { "o:id": colecaoIdIntermedia } ],
-                'o:resource_template': { 'o:id': idModeloRecursos }
-            };
-
-            const metadadosOriginais = extrairMetadadosOriginais(itemOriginal);
-            for (const [termo, valor] of Object.entries(metadadosOriginais)) {
-                if (valor && valor !== "") {
-                    payload[termo] = converterParaFormatolOmekaS(valor, termo);
-                }
-            }
-
-            payload['bibo:annotates'] = [ novaAnotacaoFormatada ];
-            if (itemOriginal && itemOriginal['o:id']) {
-                payload['dcterms:isReferencedBy'] = converterParaFormatolOmekaS(itemOriginal['o:id'], 'dcterms:isReferencedBy');
-            }
-
-            const urlItem = `${baseUrl}/items?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
-            const respostaItem = await fetch(urlItem, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!respostaItem.ok) throw new Error(`Falha ao criar o Item: ${await respostaItem.text()}`);
-
-            const novoItem = await respostaItem.json();
-            const novoItemId = novoItem['o:id'];
-            console.log(`✅ Sucesso! Cópia Base criada com ID: ${novoItemId}`);
-
-            // Clonagem da Multimédia original
-            if (itemOriginal['o:media'] && itemOriginal['o:media'].length > 0) {
-                try {
-                    const urlMediaOriginal = itemOriginal['o:media'][0]['@id'];
-                    const respostaMediaOriginal = await fetch(`${urlMediaOriginal}?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`);
-                    
-                    if (respostaMediaOriginal.ok) {
-                        const dadosMediaOriginal = await respostaMediaOriginal.json();
-                        const urlOrigem = dadosMediaOriginal['o:source'] || dadosMediaOriginal['o:original_url'];
-
-                        if (urlOrigem) {
-                            const payloadMedia = {
-                                "o:ingester": dadosMediaOriginal['o:ingester'],
-                                "file_index": 0,
-                                "o:item": { "o:id": novoItemId },
-                                "ingest_url": urlOrigem,
-                                "o:source": urlOrigem
-                            };
-                            await fetch(`${baseUrl}/media?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(payloadMedia)
-                            });
-                        }
-                    }
-                } catch (erroMedia) {
-                    console.error("❌ Erro ao clonar a multimédia:", erroMedia);
-                }
-            }
-
-            return { sucesso: true, itemId: novoItemId, mensagem: `Registo de animal criado.` };
-        }
+        return resultado;
 
     } catch (erro) {
-        console.error('Erro crítico ao submeter registo:', erro);
-        return { sucesso: false, erro: `Erro de rede ou configuração: ${erro.message}` };
+        console.error('Erro de rede:', erro);
+        return { sucesso: false, erro: erro.message };
     }
 }
 

@@ -5,3 +5,5 @@ js/config.js
 # Ignorar ficheiros de sistema operativo
 .DS_Store
 Thumbs.db
+# Local Netlify folder
+.netlify

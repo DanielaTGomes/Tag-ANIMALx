@@ -10,7 +10,7 @@ import {
 
 import { GestorGamificacao, animalxConfig } from './gamification.js';
 
-import { CONFIG } from './config.js';
+
 
 
 let itemAtivo = null;
@@ -126,25 +126,20 @@ window.carregarItemANIMALx = carregarEApresentarItem;
 window.totaisColecoes = { azulejaria: 0, ceramica: 0, pintura: 0, gravura: 0, escultura: 0, desenho: 0 };
 
 async function calcularTotaisColecoes() {
-    // Para não atrasar o jogo, verificamos se já contámos nesta sessão
     const totaisGuardados = sessionStorage.getItem('animalx_totais_colecoes');
     if (totaisGuardados) {
         window.totaisColecoes = JSON.parse(totaisGuardados);
-        console.log("📊 Totais de coleções carregados da memória:", window.totaisColecoes);
         return;
     }
 
-    console.log("🔍 A varrer o Conjunto de Itens 1 para contar coleções...");
-    
-    // Faz o pedido ao Omeka S pelos itens do ID 1
-    const url = `${CONFIG.API_URL}/items?item_set_id=1&per_page=2000&key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
+    console.log("🔍 A varrer o Conjunto de Itens 1 via Serverless...");
     
     try {
-        const resposta = await fetch(url);
+        // Pede os 2000 itens à função da Netlify
+        const resposta = await fetch('/.netlify/functions/obter-item?per_page=2000');
         if (resposta.ok) {
             const itens = await resposta.json();
             
-            // Conta os itens um a um
             itens.forEach(item => {
                 const colecao = identificarColecaoDoItem(item);
                 if (colecao && window.totaisColecoes[colecao] !== undefined) {
@@ -152,12 +147,11 @@ async function calcularTotaisColecoes() {
                 }
             });
             
-            // Guarda na sessão para ser mais rápido nas próximas aberturas
             sessionStorage.setItem('animalx_totais_colecoes', JSON.stringify(window.totaisColecoes));
             console.log("📊 Contagem global finalizada:", window.totaisColecoes);
         }
     } catch (erro) {
-        console.error("❌ Erro ao tentar contar as coleções globais:", erro);
+        console.error("❌ Erro ao tentar contar as coleções:", erro);
     }
 }
 
