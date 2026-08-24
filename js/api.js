@@ -5,9 +5,6 @@
  *
  * @returns {string} URL da API
  */
-function construirUrlItens() {
-    return `${CONFIG.API_URL}/items?item_set_id=1&key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
-}
 
 /**
  * Carrega um item aleatório da coleção configurada.
@@ -185,73 +182,37 @@ async function submeterRegistoAnimal(dadosFormulario, itemOriginal) {
     }
 }
 
-export {
-    carregarItemAleatorio,
-    obterValorMetadado,
-    prepararDadosDoItem,
-    submeterRegistoAnimal
-};
 
 // =========================================
 // ATUALIZAÇÃO DO ITEM ORIGINAL (PATCH)
 // =========================================
-export async function atualizarItemOriginal(itemOriginal, novaContagem, idColecaoDestino, dadosSubmissao) {
+async function atualizarItemOriginal(itemOriginal, novaContagem, idColecaoDestino, dadosSubmissao) {
     try {
-        console.log(`🔄 A atualizar o Item Original ${itemOriginal['o:id']} (Validação: ${novaContagem}/5)...`);
-
-        // 1. Recupera o histórico anterior
-        let historicoAtual = itemOriginal['bibo:annotates'] || [];
-
-        // 2. Empacota a submissão atual em formato JSON
-        const pacote = {
-            data: new Date().toISOString(),
-            respostas: dadosSubmissao
-        };
-
-        // 3. Adiciona o novo pacote com o PROPERTY_ID 57 (bibo:annotates) obrigatório!
-        historicoAtual.push({
-            "type": "literal",
-            "property_id": 57,
-            "@value": JSON.stringify(pacote)
-        });
-
-        // 4. Constrói o Payload blindado
-        const baseUrlApi = CONFIG.API_URL.replace(/\/$/, '');
-        const payloadPatch = {
-            "@context": `${baseUrlApi}/api-context`, // <- Correção vital na barra!
-            "@type": "o:Item",
-            "o:item_set": [ { "o:id": idColecaoDestino } ], 
-            
-            // Injeção do PROPERTY_ID 16 (dcterms:audience)
-            "dcterms:audience": [ { 
-                "type": "literal", 
-                "property_id": 16, 
-                "@value": String(novaContagem) 
-            } ], 
-            
-            "bibo:annotates": historicoAtual
-        };
-
-        console.log("📦 PAYLOAD DE ATUALIZAÇÃO BLINDADO:", JSON.stringify(payloadPatch, null, 2));
-
-        const url = `${baseUrlApi}/items/${itemOriginal['o:id']}?key_identity=${CONFIG.KEY_IDENTITY}&key_credential=${CONFIG.KEY_CREDENTIAL}`;
-
-        // Envia o pedido de atualização
-        const resposta = await fetch(url, {
-            method: 'PATCH',
+        console.log(`🔄 A pedir à nuvem para atualizar o Item Original ${itemOriginal['o:id']}...`);
+        
+        const resposta = await fetch('/.netlify/functions/atualizar-original', {
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payloadPatch)
+            body: JSON.stringify({ itemOriginal, novaContagem, idColecaoDestino, dadosSubmissao })
         });
 
-        if (!resposta.ok) {
-            throw new Error(`Falha no PATCH (Status ${resposta.status})`);
+        const resultado = await resposta.json();
+        if (resultado.sucesso) {
+            console.log(`✅ Item Original ${itemOriginal['o:id']} atualizado com sucesso!`);
+            return true;
+        } else {
+            throw new Error("O servidor intermédio rejeitou a atualização.");
         }
-
-        console.log(`✅ Item Original ${itemOriginal['o:id']} atualizado com sucesso!`);
-        return true;
-
     } catch (erro) {
         console.error('❌ Erro ao atualizar o item original:', erro);
         return false;
     }
 }
+
+export {
+    carregarItemAleatorio,
+    obterValorMetadado,
+    prepararDadosDoItem,
+    submeterRegistoAnimal,
+    atualizarItemOriginal
+};
