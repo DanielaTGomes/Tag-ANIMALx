@@ -12,12 +12,13 @@
  *
  * @returns {Promise<Object|null>} Item carregado ou null em caso de erro
  */
-async function carregarItemAleatorio() {
+ async function carregarItemAleatorio() {
     try {
-        // Pedido seguro à Netlify Functions (sem chaves!)
         const resposta = await fetch('/.netlify/functions/obter-item');
         
-        if (!resposta.ok) return { erroCritico: `Falha no servidor intermédio (HTTP ${resposta.status}).` };
+        if (!resposta.ok) {
+            return { erroCritico: `O Omeka S rejeitou o pedido (Erro HTTP ${resposta.status}).` };
+        }
 
         const items = await resposta.json();
         
@@ -25,8 +26,27 @@ async function carregarItemAleatorio() {
             return { erroCritico: `A coleção está vazia ou não foi encontrada.` };
         }
 
-        return items[Math.floor(Math.random() * items.length)];
+        // 1. LER A LISTA DE ITENS JÁ VISTOS NESTA SESSÃO
+        let vistosStr = sessionStorage.getItem('animalx_vistos');
+        let itensVistos = vistosStr ? JSON.parse(vistosStr) : [];
+
+        // 2. FILTRAR OS ITENS (Manter apenas os que NÃO estão na lista de vistos)
+        const itensDisponiveis = items.filter(item => !itensVistos.includes(item['o:id']));
+
+        // 3. SE NÃO HOUVER MAIS ITENS, AVISA O APP.JS
+        if (itensDisponiveis.length === 0) {
+            return { fimDeRegistos: true }; 
+        }
+
+        // 4. ESCOLHE UM ITEM ALEATÓRIO DOS QUE SOBRARAM
+        const itemAleatorio = itensDisponiveis[Math.floor(Math.random() * itensDisponiveis.length)];
         
+        // 5. REGISTA ESTE ITEM COMO "VISTO" PARA A PRÓXIMA VEZ
+        itensVistos.push(itemAleatorio['o:id']);
+        sessionStorage.setItem('animalx_vistos', JSON.stringify(itensVistos));
+
+        return itemAleatorio;
+
     } catch (erro) {
         return { erroCritico: `Falha de rede (${erro.message}).` };
     }

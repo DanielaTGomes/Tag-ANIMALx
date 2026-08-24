@@ -40,18 +40,20 @@ exports.handler = async function(event, context) {
                 }
             }
 
-            if (dadosFinais['Animal (Comum)']) payloadNovoItem['dcterms:title'] = formatarSeguro(dadosFinais['Animal (Comum)'], 'dcterms:title');
+            // Injeta as características usando o formatador seguro com as NOVAS CHAVES
+            if (dadosFinais['Nome Comum']) payloadNovoItem['dcterms:title'] = formatarSeguro(dadosFinais['Nome Comum'], 'dcterms:title');
             if (dadosFinais['Tem animal?']) payloadNovoItem['dcterms:subject'] = formatarSeguro(dadosFinais['Tem animal?'], 'dcterms:subject');
             if (dadosFinais['Nome Científico']) payloadNovoItem['dwc:scientificName'] = formatarSeguro(dadosFinais['Nome Científico'], 'dwc:scientificName');
-            if (dadosFinais['Categoria']) payloadNovoItem['dwc:taxonRank'] = formatarSeguro(dadosFinais['Categoria'], 'dwc:taxonRank');
+            if (dadosFinais['Categoria Taxonómica']) payloadNovoItem['dwc:taxonRank'] = formatarSeguro(dadosFinais['Categoria Taxonómica'], 'dwc:taxonRank');
             if (dadosFinais['Quantidade']) payloadNovoItem['dwc:organismScope'] = formatarSeguro(dadosFinais['Quantidade'], 'dwc:organismScope');
-            if (dadosFinais['Função']) payloadNovoItem['dcterms:type'] = formatarSeguro(dadosFinais['Função'], 'dcterms:type');
+            if (dadosFinais['Tipologia']) payloadNovoItem['dcterms:type'] = formatarSeguro(dadosFinais['Tipologia'], 'dcterms:type');
             if (dadosFinais['Descrição']) payloadNovoItem['dcterms:description'] = formatarSeguro(dadosFinais['Descrição'], 'dcterms:description');
             if (dadosFinais['Curador']) payloadNovoItem['dcterms:contributor'] = formatarSeguro(dadosFinais['Curador'], 'dcterms:contributor');
 
             if (dadosFinais['Nota Curatorial']) {
                 payloadNovoItem['bibo:annotates'] = formatarSeguro(dadosFinais['Nota Curatorial'], 'bibo:annotates');
             }
+        
 
             const resNovoItem = await fetch(`${baseUrl}/items?${auth}`, {
                 method: 'POST',

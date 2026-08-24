@@ -15,6 +15,8 @@ async function carregarPainelCuradoria() {
             encontrouAlgum = true;
             const titulo = item['o:title'] || 'Item sem título';
             
+// ... (dentro do teu map / forEach do curadoria.js) ...
+            
             let htmlItem = `
                 <div class="item-curadoria">
                     <h2>${titulo} (ID: ${item['o:id']})</h2>
@@ -22,6 +24,7 @@ async function carregarPainelCuradoria() {
                     <div class="grid-respostas">
             `;
 
+            // 3. Desempacota o JSON de cada utilizador
             historico.forEach((anotacao, index) => {
                 try {
                     const pacote = JSON.parse(anotacao['@value']);
@@ -35,10 +38,22 @@ async function carregarPainelCuradoria() {
                             const valorLimpo = Array.isArray(valor) ? valor[0]['@value'] : valor;
                             const nomeGrupo = `selecao_${idUnicoItem}_${chave.replace(/\s+/g, '')}`;
                             
+                            // TRADUÇÕES VISUAIS: Altera o que aparece no ecrã sem estragar os dados originais
+                            let chaveVisivel = chave;
+                            if (chave === 'Função') chaveVisivel = 'Tipologia';
+                            if (chave === 'Animal (Comum)') chaveVisivel = 'Nome Comum';
+                            if (chave === 'Categoria') chaveVisivel = 'Categoria Taxonómica';
+                            
                             htmlRespostas += `
-                                <label style="cursor: pointer; display: flex; gap: 10px; align-items: start;">
-                                    <input type="radio" name="${nomeGrupo}" value="${valorLimpo}" data-chave="${chave}">
-                                    <span><strong>${chave}:</strong> ${valorLimpo}</span>
+                                <label class="curadoria-checkbox-label">
+                                    <input type="checkbox" 
+                                           name="${nomeGrupo}" 
+                                           value="${valorLimpo}" 
+                                           data-chave="${chave}"
+                                           class="vol_${idUnicoItem}_${index}" 
+                                           onchange="garantirSelecaoUnica(this)">
+                                    <span class="curadoria-custom-checkbox"></span>
+                                    <span><strong>${chaveVisivel}:</strong> ${valorLimpo}</span>
                                 </label>
                             `;
                         }
@@ -47,7 +62,13 @@ async function carregarPainelCuradoria() {
 
                     htmlItem += `
                         <div class="cartao-resposta">
-                            <h3>Voluntário ${index + 1}</h3>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <!-- MUDANÇA DE NOME: De Voluntário para Resposta -->
+                                <h3>Resposta ${index + 1}</h3>
+                                <button onclick="selecionarTudo('${idUnicoItem}', ${index})" class="btn-selecionar-tudo">
+                                    Selecionar Registo
+                                </button>
+                            </div>
                             <small>📅 ${dataFormatada}</small>
                             ${htmlRespostas}
                         </div>
@@ -61,25 +82,30 @@ async function carregarPainelCuradoria() {
 
             htmlItem += `
                     </div>
-                    <div style="margin-top: 20px; padding-top: 15px; border-top: 2px dashed #5C2D91;">
-                        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Edição Manual (Opcional):</label>
-                        <textarea id="manual_${item['o:id']}" rows="3" style="width: 100%; padding: 10px; border-radius: 5px;" placeholder="Escreve aqui a versão final..."></textarea>
+                    <div class="curadoria-edicao-area">
+                        <label class="curadoria-label">Edição Manual (Opcional):</label>
+                        <textarea id="manual_${item['o:id']}" rows="3" class="curadoria-textarea" placeholder="Escreve aqui a versão final..."></textarea>
                         
-                        <div style="display: flex; gap: 10px; margin-top: 15px;">
-                            <button onclick="extrairAnimal(${item['o:id']}, ${idOriginal})" style="background-color: #5C2D91; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; flex: 2;">
-                                ➕ Extrair Animal Selecionado
+                        <div class="curadoria-acoes">
+                            <button onclick="extrairAnimal(${item['o:id']}, ${idOriginal})" class="btn-curadoria btn-extrair">
+                                 Extrair Animal Selecionado
                             </button>
                             
-                            <button onclick="concluirCuradoria(${item['o:id']}, ${idOriginal})" style="background-color: #494949; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; flex: 1;">
-                                ✅ Concluir e Arquivar
+                            <button onclick="concluirCuradoria(${item['o:id']}, ${idOriginal})" class="btn-curadoria btn-concluir">
+                                Concluir e Arquivar Registo
                             </button>
                         </div>
-                        <div id="feedback_${item['o:id']}" style="margin-top: 10px; font-weight: bold; color: #5C2D91; font-size: 14px; text-align: center;"></div>
+                        <div id="feedback_${item['o:id']}" class="curadoria-feedback"></div>
                     </div>
                 </div>
             `;
+
             painel.innerHTML += htmlItem;
         });
+
+        // Remove o texto "A carregar..." do HTML depois de terminar
+        const textoCarregamento = document.querySelector('#area-curadoria p');
+        if (textoCarregamento) textoCarregamento.style.display = 'none';
 
         if (!encontrouAlgum) {
             painel.innerHTML = "<p>Nenhum item com validações encontrado até ao momento.</p>";
@@ -153,4 +179,29 @@ window.concluirCuradoria = async function(idCopia, idOriginal) {
         console.error("❌ Erro:", erro);
         divFeedback.innerHTML = `❌ Erro a arquivar.`;
     }
+};
+
+// ==========================================
+// FUNÇÕES DE ASSISTÊNCIA À SELEÇÃO
+// ==========================================
+
+// 1. Garante que só há uma checkbox marcada por cada campo (ex: só uma "Categoria")
+window.garantirSelecaoUnica = function(elemento) {
+    if (elemento.checked) {
+        const grupo = document.querySelectorAll(`input[name="${elemento.name}"]`);
+        grupo.forEach(chk => {
+            if (chk !== elemento) chk.checked = false;
+        });
+    }
+};
+
+// 2. Seleciona o registo inteiro de um voluntário de uma só vez
+window.selecionarTudo = function(idItem, indexVoluntario) {
+    // Primeiro, limpa TODAS as seleções atuais deste Item
+    const todasDoItem = document.querySelectorAll(`input[name^="selecao_${idItem}_"]`);
+    todasDoItem.forEach(chk => chk.checked = false);
+
+    // Depois, marca apenas as do voluntário escolhido
+    const todasDoVoluntario = document.querySelectorAll(`.vol_${idItem}_${indexVoluntario}`);
+    todasDoVoluntario.forEach(chk => chk.checked = true);
 };

@@ -4,69 +4,47 @@
     <meta charset="UTF-8">
     <title>Painel de Curadoria - Tag ANIMALx</title>
     
-    <!-- 1. O Widget Oficial da Netlify Identity -->
+    <!-- Widget da Netlify Identity -->
     <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     
-    <style>
-        body { font-family: 'Nohemi', sans-serif; padding: 2rem; background-color: #ede8e9; color: #494949; }
-        h1 { color: #5C2D91; }
-        .item-curadoria { background: #ffffff; border: 2px solid #5C2D91; border-radius: 8px; margin-bottom: 2rem; padding: 1.5rem; }
-        .grid-respostas { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
-        .cartao-resposta { background: #f4f4f4; padding: 1rem; border-radius: 5px; border-left: 4px solid #5C2D91; }
-        ul { padding-left: 20px; margin-top: 10px; }
-        li { margin-bottom: 5px; }
-    </style>
+    <!-- Conectar ao CSS da curadoria (e ao principal, se as fontes/variáveis estiverem lá) -->
+    <link rel="stylesheet" href="css/animalx.css">
+    <link rel="stylesheet" href="css/curadoria.css">
 </head>
-<body>
+<body class="curadoria-body">
     
-    <!-- ========================================== -->
-    <!-- ECRÃ DE LOGIN (Visível por defeito)        -->
-    <!-- ========================================== -->
-    <div id="area-login" style="text-align: center; margin-top: 100px;">
-        <h2 style="color: #5C2D91;">Acesso Reservado à Equipa de Curadoria</h2>
-        <button onclick="netlifyIdentity.open()" style="background-color: #5C2D91; color: white; padding: 15px 30px; border-radius: 5px; cursor: pointer; border: none; font-size: 18px; margin-top: 20px;">
+    <!-- ECRÃ DE LOGIN -->
+    <div id="area-login" class="area-login">
+        <h2 class="curadoria-titulo">Acesso Reservado à Equipa de Curadoria</h2>
+        <button onclick="netlifyIdentity.open()" class="btn-curadoria btn-login">
             Entrar no Painel
         </button>
     </div>
 
-    <!-- ========================================== -->
-    <!-- PAINEL DE CURADORIA (Escondido por defeito)-->
-    <!-- ========================================== -->
+    <!-- PAINEL DE CURADORIA -->
     <div id="area-curadoria" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h1>🔬 Painel de Curadoria (Regra dos 5 Votos)</h1>
-            
-            <!-- Botão de Sair (Logout) -->
-            <button onclick="netlifyIdentity.logout()" style="background-color: #494949; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; border: none;">
+            <h1 class="curadoria-titulo"> Tag ANIMALx: Painel de Curadoria </h1>
+            <button onclick="netlifyIdentity.logout()" class="btn-curadoria btn-logout">
                 Sair
             </button>
         </div>
         <p>A carregar os registos analisados pela comunidade...</p>
         
-        <!-- Onde o curadoria.js vai injetar os itens -->
         <div id="painel-resultados"></div>
     </div>
 
-    <!-- O teu script original da curadoria -->
     <script type="module" src="js/curadoria.js"></script>
 
-    <!-- ========================================== -->
-    <!-- LÓGICA DE FRONTEIRA (Controlo de Acessos)  -->
-    <!-- ========================================== -->
     <script>
-        // Quando o Identity inicializa, verifica se há alguém logado
         netlifyIdentity.on('init', user => {
             if (!user) {
-                // Se NÃO houver utilizador, recarrega a página ao fazer login com sucesso
                 netlifyIdentity.on('login', () => document.location.reload());
             } else {
-                // Se HOUVER utilizador, esconde o ecrã de login e mostra o painel
                 document.getElementById('area-login').style.display = 'none';
                 document.getElementById('area-curadoria').style.display = 'block';
             }
         });
-
-        // Quando o utilizador clica em sair, recarrega a página para trancar tudo novamente
         netlifyIdentity.on('logout', () => document.location.reload());
     </script>
 </body>

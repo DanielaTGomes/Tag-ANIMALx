@@ -878,6 +878,28 @@
         </div>
     </div>
 
+    <!-- ==========================================
+        MODAL DE AVISO: FIM DOS REGISTOS
+    =========================================== -->
+    <div id="modal-fim-registos" class="animalx-modal-overlay" style="display: none;">
+        <div class="animalx-modal-caixa">
+            
+            <h2 class="animalx-modal-titulo" style="margin-top: 10px;">MISSÃO CUMPRIDA! </h2>
+            
+            <p class="animalx-modal-texto">
+                Excelente trabalho! Analisaste todos os registos disponíveis para ti nesta sessão.<br><br>
+                O teu contributo para a investigação está guardado. Podes rever o teu progresso no Caderno de Campo ou terminar a sessão.
+            </p>
+
+            <div class="animalx-modal-botoes">
+                <!-- Botões reaproveitados das tuas funções já existentes -->
+                <button class="animalx-btn-modal" onclick="abrirCaderno()">Ver Caderno</button>
+                <button class="animalx-btn-modal" onclick="confirmarSaida()">Terminar Sessão</button>
+            </div>
+
+        </div>
+    </div>
+
     <!-- Formulário Nativo do Omeka S -->
     <div id="content" role="main" style="display: none;">
         <div id="animalx-api-form" data-api-form-container></div>
@@ -1369,14 +1391,15 @@ function selecionarNaoSeiP5() {
 
     // Função para confirmar a saída
     function confirmarSaida() {
-        // 1. Esconde a modal de saída
-        fecharModalSair();
+        fecharModalSair(); // Esconde a modal se estiver aberta
         
-        // 2. A MAGIA: Apagar os dados da sessão atual do navegador
-        localStorage.removeItem('animalx_progresso'); // Apaga os pontos, animais e coleções
-        sessionStorage.removeItem('animalx_utilizador'); // Apaga o nome do utilizador
+        // Apaga os dados da sessão atual do navegador
+        localStorage.removeItem('animalx_progresso'); 
+        sessionStorage.removeItem('animalx_utilizador'); 
+        sessionStorage.removeItem('animalx_vistos'); 
+        sessionStorage.removeItem('animalx_boas_vindas');
         
-        // 3. Recarrega a página para devolver o sistema ao estado "Zero"
+        // Recarrega a página
         window.location.reload();
     }
     

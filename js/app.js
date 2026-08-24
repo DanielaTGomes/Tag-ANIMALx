@@ -98,12 +98,18 @@ function injetarLegendaDinamica(item) {
 
 async function carregarEApresentarItem() {
     const elementoLegenda = document.getElementById('legenda-dinamica');
-    
     if (elementoLegenda) elementoLegenda.innerHTML = "<em>A carregar dados do Omeka S...</em>";
 
     const item = await carregarItemAleatorio();
 
-    // Se a API devolveu um erro em vez de um item, mostra-o no ecrã!
+    // 1. Verifica se os registos acabaram (O Novo Gatilho)
+    if (item && item.fimDeRegistos) {
+        if (elementoLegenda) elementoLegenda.innerHTML = "<b>Sem mais registos disponíveis.</b>";
+        document.getElementById('modal-fim-registos').style.setProperty('display', 'flex', 'important');
+        return;
+    }
+
+    // 2. Verifica se houve um erro crítico
     if (item && item.erroCritico) {
         if (elementoLegenda) elementoLegenda.innerHTML = `<span style='color:red;'><b>DIAGNÓSTICO:</b> ${item.erroCritico}</span>`;
         return;
@@ -114,9 +120,7 @@ async function carregarEApresentarItem() {
     itemAtivo = item;
     inicializarImagemIIIF(item);
     injetarLegendaDinamica(item);
-    darBoasVindasEstagiario();
 }
-
 // O TRUQUE: Tornamos a função global para que o index.html a consiga chamar!
 window.carregarItemANIMALx = carregarEApresentarItem;
 

@@ -1,0 +1,172 @@
+/* =========================================
+   PAINEL DE CURADORIA - TAG ANIMALx
+========================================= */
+
+/* Fundo e Tipografia Base */
+body.curadoria-body { 
+    font-family: var(--animalx-primary-font, 'Nohemi', sans-serif); 
+    padding: 2rem; 
+    background-color: var(--animalx-secondary-background-color, #ede8e9); 
+    color: var(--animalx-text-color, #494949); 
+}
+
+h1.curadoria-titulo, .item-curadoria h2 { 
+    color: var(--animalx-primary-color, #6c75b7); 
+}
+
+/* Cartões de Curadoria */
+.item-curadoria { 
+    background: #ffffff; 
+    border: 2px solid var(--animalx-primary-color, #6c75b7); 
+    border-radius: 8px; 
+    margin-bottom: 2rem; 
+    padding: 1.5rem; 
+}
+
+.grid-respostas { 
+    display: grid; 
+    /* Força exatamente 3 colunas de tamanho igual */
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 1.5rem; 
+    margin-top: 1.5rem; 
+}
+
+/* Responsividade: Ecrãs médios (Laptops/Tablets) passam para 2 colunas */
+@media (max-width: 1200px) {
+    .grid-respostas {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Responsividade: Ecrãs pequenos (Telemóveis) passam para 1 coluna */
+@media (max-width: 768px) {
+    .grid-respostas {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cartao-resposta { 
+    background: #f4f4f4; 
+    padding: 1rem; 
+    border-radius: 5px; 
+    border-left: 4px solid var(--animalx-primary-color, #6c75b7); 
+}
+
+/* Listas de Rádio / Opções */
+.curadoria-radio-label {
+    cursor: pointer; 
+    display: flex; 
+    gap: 10px; 
+    align-items: start;
+}
+
+/* Área de Edição e Ações Finais */
+.curadoria-edicao-area {
+    margin-top: 20px; 
+    padding-top: 15px; 
+    border-top: 2px dashed var(--animalx-primary-color, #6c75b7);
+}
+
+.curadoria-label {
+    display: block; 
+    font-weight: bold; 
+    margin-bottom: 5px;
+}
+
+.curadoria-textarea {
+    width: 100%; 
+    padding: 10px; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: var(--animalx-primary-font, 'Nohemi', sans-serif);
+}
+
+.curadoria-acoes {
+    display: flex; 
+    gap: 10px; 
+    margin-top: 15px;
+}
+
+.curadoria-feedback {
+    margin-top: 10px; 
+    font-weight: bold; 
+    color: var(--animalx-primary-color, #6c75b7); 
+    font-size: 14px; 
+    text-align: center;
+}
+
+/* Botões do Painel */
+.btn-curadoria {
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-size: 16px; 
+    font-family: var(--animalx-primary-font, 'Nohemi', sans-serif);
+    transition: opacity 0.2s ease;
+}
+
+.btn-curadoria:hover { opacity: 0.9; }
+
+.btn-extrair { background-color: var(--animalx-primary-color, #6c75b7); color: white; flex: 2; }
+.btn-concluir { background-color: #494949; color: white; flex: 1; }
+.btn-logout { background-color: #494949; color: white; }
+.btn-login { background-color: var(--animalx-primary-color, #6c75b7); color: white; padding: 15px 30px; font-size: 18px; margin-top: 20px; }
+
+.area-login { text-align: center; margin-top: 100px; }
+
+/* --- CHECKBOXES ESTILO ANIMALX --- */
+.curadoria-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+    gap: 10px;
+}
+
+.curadoria-checkbox-label input {
+    display: none;
+}
+
+.curadoria-custom-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #6c75b7;
+    border-radius: 50%;
+    margin-top: 3px;
+    flex-shrink: 0;
+    background-color: #FFF;
+    display: inline-block;
+}
+
+/* O ponto selecionado */
+.curadoria-checkbox-label input:checked + .curadoria-custom-checkbox {
+    background-color: #6c75b7;
+    border-color: #6c75b7;
+}
+
+/* --- TIPOGRAFIA SEMIBOLD --- */
+.item-curadoria h2, 
+.cartao-resposta h3 {
+    font-weight: 600; /* Peso SemiBold da Nohemi */
+}
+.cartao-resposta strong {
+    font-weight: 600;
+}
+
+/* --- BOTÃO SELECIONAR TUDO --- */
+.btn-selecionar-tudo {
+    background: transparent;
+    border: 1px solid #6c75b7;
+    color: #6c75b7;
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: var(--animalx-primary-font, 'Nohemi', sans-serif);
+    transition: all 0.2s ease;
+}
+
+.btn-selecionar-tudo:hover {
+    background: #6c75b7;
+    color: white;
+}

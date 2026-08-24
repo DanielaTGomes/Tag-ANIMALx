@@ -1435,7 +1435,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     background-color: #6c75b7;
     color: white;
     font-family: 'Nohemi', sans-serif;
-    font-size: 20px;
+    font-size: 17px;
     border: 2px solid white; /* Um pequeno contorno branco para destacar do fundo */
     border-radius: 15px;
     padding: 15px 40px;
@@ -1446,6 +1446,10 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 .animalx-btn-modal:hover {
     background-color: #5a629e;
     transform: translateY(-2px);
+}
+
+#modal-caderno-campo {
+    z-index: 10000 !important; 
 }
 
 /* =========================================
