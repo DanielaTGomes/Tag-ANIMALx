@@ -543,6 +543,13 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     border-radius: 0.5rem;
 }
 
+.animalx-disclaimer-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+}
+
 .animalx-disclaimer-footer {
     display: flex;
     justify-content: flex-end;
@@ -606,8 +613,17 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 .animalx-coluna-direita {
     flex: 1; /* Ocupa o restante espaço */
     display: flex;
-    align-items: flex-start;
-    justify-content: center;
+    flex-direction: column; /* NOVO: Obriga os elementos a ficarem um por baixo do outro */
+    align-items: center;    /* NOVO: Centra as imagens horizontalmente */
+    justify-content: flex-start;
+    gap: 30px; /* NOVO: Cria um espaçamento respirável entre o caderno e o post-it */
+}
+
+/* NOVO: Regra para controlar o tamanho e aspeto do post-it */
+.animalx-nota-postit {
+    max-width: 85%; /* Garante que o post-it é ligeiramente mais pequeno que a área total, dando destaque ao caderno */
+    height: auto;
+    object-fit: contain;
 }
 
 .animalx-texto-base {
@@ -1819,6 +1835,49 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     background: transparent !important; 
 }
 
+/* =========================================
+   IMAGENS DO GUIA DE INSTRUÇÕES
+========================================= */
+/* Coluna esquerda com scroll */
+.animalx-guia-col-esq {
+    flex: 1.1;
+    display: flex;
+    flex-direction: column;
+    max-height: 420px; /* Tranca a altura máxima da caixa de texto */
+    overflow-y: auto;  /* Liga a barra de scroll se o texto for comprido */
+    padding-right: 20px; /* Dá uma margem para o texto não colar à barra */
+}
+
+/* Estilização da barra de scroll para ficar com a identidade do Tag ANIMALx */
+.animalx-guia-col-esq::-webkit-scrollbar {
+    width: 6px;
+}
+.animalx-guia-col-esq::-webkit-scrollbar-track {
+    background: rgba(217, 217, 217, 0.3); /* Fundo da calha subtil */
+    border-radius: 10px;
+}
+.animalx-guia-col-esq::-webkit-scrollbar-thumb {
+    background-color: #6c75b7; /* A tua cor roxa */
+    border-radius: 10px;
+}
+
+.animalx-guia-col-dir {
+    flex: 1; background-color: #d9d9d9; 
+    border-radius: 4px;
+     min-height: 350px; 
+     margin-top: 15px; 
+     overflow: hidden;
+    overflow: hidden !important; 
+    position: relative;
+}
+
+
+.animalx-guia-col-dir img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+}
 
 
 /* =========================================

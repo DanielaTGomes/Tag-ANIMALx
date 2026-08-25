@@ -43,30 +43,43 @@
             <div id="screen-explanation" class="animalx-screen">
               <div class="animalx-disclaimer-card">
                   
-                  <h2 class="animalx-disclaimer-title">O PROJETO</h2>
+                  <h2 class="animalx-disclaimer-title">Bem-vindo ao Tag ANIMALx</h2>
                   
                   <div class="animalx-disclaimer-grid">
                       <!-- COLUNA ESQUERDA: Texto -->
                       <div class="animalx-disclaimer-content">
-                          <p class="animalx-disclaimer-text">
-                              <strong>Bem-vindo ao Tag ANIMALx!</strong> Como sabemos, os animais estão por toda a parte da história de Lisboa. Nesta iniciativa de Ciência Cidadã, os utilizadores podem ajudar a equipa do projeto Animais de Lisboa (ANIMALx) a identificar os animais presentes nos objetos e representações na coleção do Museu de Lisboa.
+                        <p class="animalx-disclaimer-text">
+                              Ao longo dos séculos, os animais partilharam o espaço urbano e a vida quotidiana. Hoje, existem inúmeras representações animais "escondidas" no património da cidade de Lisboa.
                           </p>
-                          <p class="animalx-disclaimer-alert">
-                              <strong>DISCLAIMER:</strong> O software do Tag ANIMALx ainda está em desenvolvimento. Neste momento ainda não conseguimos guardar os pontos de cada sessão, para registar o progresso dos jogadores. No entanto, podes tirar uma foto e partilhar com a #TagANIMALx, a equipa do projeto estará atenta às redes sociais!
+                          <p class="animalx-disclaimer-text">
+                              Como <strong>detetive historiador</strong>, a tua missão é identificar os animais presentes no acervo do Museu de Lisboa. Com cada descoberta, irás desvendar a presença de animais espécies ao longo da História da cidade.
+                          </p>
+                          <p class="animalx-disclaimer-text">
+                              Nesta iniciativa de Ciência Cidadã, o teu esforço é recompensado! Ao analisar os registos e ganhar pontos, vais progredindo de nível na tua carreira de investigação. Começarás a tua jornada como Curador Estagiário e, com dedicação, poderás alcançar o prestigiado título de Curador Catedrático.
+                          </p>
+                          <p class="animalx-disclaimer-text">
+                            <strong>Ajuda-nos a encontrar os animais de Lisboa!</strong>
                           </p>
                       </div>
                       
                       <!-- COLUNA DIREITA: Caixa Cinzenta -->
-                      <div class="animalx-disclaimer-media"></div>
+                      <div class="animalx-disclaimer-media">
+                         <img src="asset/img/introducao.png" alt="Painel de Introdução Tag ANIMALx">
+                      </div>
                   </div>
 
-                  <!-- RODAPÉ: Botão Seguinte -->
-                  <div class="animalx-disclaimer-footer">
-                      <button class="animalx-btn-next"onclick="irParaTela('screen-registo')">
-                          <span>SEGUINTE</span>
-                          <img src="asset/img/seta_bege_direita.png" alt="Seta Direita">
-                      </button>
-                  </div>  
+                  <!-- RODAPÉ -->
+                 <div class="animalx-navegacao">
+                    <button class="animalx-btn-prev" onclick="irParaTela('homescreen')">
+                        <img src="asset/img/seta_bege_esquerda.png" alt="Seta Esquerda">
+                        <span>ANTERIOR</span>
+                    </button>
+
+                    <button class="animalx-btn-next" onclick="irParaTela('screen-registo')">
+                        <span>SEGUINTE</span>
+                        <img src="asset/img/seta_bege_direita.png" alt="Seta Direita">
+                    </button>
+                </div>  
               </div>
           </div>
 
@@ -116,6 +129,7 @@
                     <!-- Coluna da Direita (Imagem do Caderno) -->
                     <div class="animalx-coluna-direita">
                         <img class="animalx-imagem-caderno" src="asset/img/ilustracao_1.png" alt="Caderno de Campo ANIMALx">
+                        <img class="animalx-nota-postit" src="asset/img/nota_caderno_de_campo.png" alt="Nota sobre o caderno de campo">
                     </div>
                     
                 </div>
@@ -131,7 +145,7 @@
                         <input type="checkbox" id="consentimento-dados">
                         <span class="animalx-custom-checkbox"></span>
                         <span class="animalx-texto-consentimento">
-                            Li o Formulário de Consentimento e Privacidade e autorizo a que o projeto ANIMALx guarde e reutilize os meus dados para reconhecer as minhas descobertas no âmbito da iniciativa Tag ANIMALx.
+                            Li a <a href="asset/pdf/nota_de_privacidade.pdf" target="_blank" style="color: #6c75b7; text-decoration: underline; font-weight: 500;">Nota de Privacidade</a> e autorizo a que o projeto ANIMALx guarde e reutilize os meus dados para reconhecer as minhas descobertas no âmbito da iniciativa Tag ANIMALx.
                         </span>
                     </label>
                 </div>
@@ -554,7 +568,7 @@
         MODAL DE INSTRUÇÕES (GUIA TAG ANIMALx)
     =========================================== -->
     <div id="modal-guia" class="animalx-modal-overlay">
-        <div class="animalx-guia-caixa" style="background-color: #ede8e9; border: 35px solid #6c75b7; width: 90%; max-width: 1200px; min-height: 650px; padding: 60px; box-sizing: border-box; position: relative; display: flex; flex-direction: column; box-shadow: 0 15px 30px rgba(0,0,0,0.3);">
+        <div class="animalx-guia-caixa" style="background-color: #ede8e9; border: 35px solid #6c75b7; width: 90%; max-width: 1200px; min-height: 650px; padding: 60px 60px 10px 60px; box-sizing: border-box; position: relative; display: flex; flex-direction: column; box-shadow: 0 15px 30px rgba(0,0,0,0.3);">
             
             <!-- Botão Fechar -->
             <button class="animalx-btn-fechar" style="position: absolute !important; top: -10px !important; right: -10px !important;" onclick="fecharGuia()">
@@ -566,64 +580,144 @@
                 <div class="animalx-guia-col-esq" style="flex: 1.1; display: flex; flex-direction: column;">
                     <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; color: #000; margin-top: 0; margin-bottom: 30px;">GUIA – TAG ANIMALx</h2>
                     <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
-                        Bem-vindo ao Tag ANIMALx! Como sabemos, os animais estão por toda a parte da história de Lisboa. Nesta iniciativa de Ciência Cidadã, os utilizadores podem ajudar a equipa do projeto Animais de Lisboa (ANIMALx) a identificar os animais presentes nos objetos e representações na coleção do Museu de Lisboa.
+                    <strong>Este guia é o teu manual de investigação!</strong>
                     </p>
                     <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
-                        <strong style="color: #6c75b7;">DISCLAIMER:</strong> O software do Tag ANIMALx ainda está em desenvolvimento. Neste momento ainda não conseguimos guardar os pontos de cada sessão...
+                        Durante a análise de um registo, o formulário vai fazer-te 6 perguntas chave sobre o que vês na representação. Sabemos que a História nem sempre é clara e as representações podem ser difíceis de interpretar.
                     </p>
-                </div>
-                <div class="animalx-guia-col-dir" style="flex: 1; background-color: #d9d9d9; border-radius: 4px; min-height: 350px; margin-top: 15px;"></div>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        Navega pelos próximos passos para descobrires dicas úteis e exemplos práticos de como deves observar a imagem e classificar cada um dos campos.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px; color: #6c75b7;">
+                        <strong>DICA:</strong> Podes voltar a consultar este guia em qualquer altura durante a sessão clicando no botão de Ajuda no topo do ecrã!
+                    </p>
+                    </div>
+                    <div class="animalx-guia-col-dir">
+                        <img src="asset/img/painel_1.png" alt="Instruções da Pergunta 1">
+                    </div>
             </div>
 
             <div id="guia-passo-2" class="animalx-guia-passo" style="display: none; flex-direction: row; gap: 60px; flex-grow: 1;">
                 <div class="animalx-guia-col-esq" style="flex: 1.1; display: flex; flex-direction: column;">
-                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 2</h2>
-                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300;">Espaço reservado para a explicação da pergunta 1.</p>
+                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 1: A primeira análise</h2>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        A tua primeira tarefa é observar a imagem com a máxima atenção. Nem todos os animais estão em grande destaque! Eles podem estar escondidos na paisagem, esculpidos num pequeno detalhe ou camuflados num padrão decorativo.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        <strong>E se não encontrares nenhum? Não faz mal!</strong><br>
+                        Nem todos os registos do acervo vão ter animais. Se analisares a imagem e tiveres a certeza de que não há nenhuma representação animal, basta selecionares a opção <strong>"NÃO"</strong>.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px; color: #6c75b7;">
+                        <strong>A TUA PONTUAÇÃO:</strong> Ao confirmares que uma imagem não tem animais, estás a ajudar-nos a limpar a base de dados. O sistema recompensa este rigor com <strong>10 Pontos</strong>! 
+                    </p>
                 </div>
-                <div class="animalx-guia-col-dir" style="flex: 1; background-color: #d9d9d9; border-radius: 4px; min-height: 350px; margin-top: 15px;"></div>
+                <div class="animalx-guia-col-dir">
+                    <img src="asset/img/painel_2.png" alt="Instruções da Pergunta 1">
+                </div>
             </div>
 
             <div id="guia-passo-3" class="animalx-guia-passo" style="display: none; flex-direction: row; gap: 60px; flex-grow: 1;">
                 <div class="animalx-guia-col-esq" style="flex: 1.1; display: flex; flex-direction: column;">
-                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 3</h2>
-                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300;">Espaço reservado para a explicação da pergunta 2.</p>
+                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 2 e 3: Identificar e contar</h2>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                    O próximo passo é identificar o animal! Para isso, basta começares a <strong>escrever o nome do animal</strong> na barra de pesquisa e as opções correspondentes vão aparecer automaticamente.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        <strong>O animal não está na lista ou tens dúvidas?</strong><br>
+                         Se não tens a certeza sobre o animal que identificaste ou a opção que queres não aparece, seleciona a opção <strong>"Outro/Não sei"</strong>.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        <strong>Quantos animais da mesma espécie vês?</strong><br>
+                        Na pergunta seguinte, terás de indicar se a imagem mostra apenas um animal (Indivíduo) ou vários (Grupo). </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px; color: #6c75b7;">
+                        <strong>ATENÇÃO:</strong> Esta contagem refere-se <strong>apenas à espécie que acabaste de identificar!</strong>  Se a imagem tiver também um cão e um gato, não te preocupes: terás a oportunidade de os identificar mais à frente.
+                    </p>
                 </div>
-                <div class="animalx-guia-col-dir" style="flex: 1; background-color: #d9d9d9; border-radius: 4px; min-height: 350px; margin-top: 15px;"></div>
+                <div class="animalx-guia-col-dir">
+                    <img src="asset/img/painel_3.png" alt="Instruções da Pergunta 1">
+                </div>
             </div>
 
             <div id="guia-passo-4" class="animalx-guia-passo" style="display: none; flex-direction: row; gap: 60px; flex-grow: 1;">
                 <div class="animalx-guia-col-esq" style="flex: 1.1; display: flex; flex-direction: column;">
-                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 4</h2>
-                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300;">Espaço reservado para a explicação da pergunta 3 e 4.</p>
+                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 4: Tipologias </h2>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                    Neste passo, queremos saber <strong>como</strong> o animal se relaciona com o contexto representado. Nem todos os animais da mesma espécie têm a mesma tipologia! Por exemplo: um cão pode ser de <strong>Companhia</strong> se for um animal doméstico, de <strong>Trabalho</strong> se for um cão de caça, ou <strong>Selvagem</strong> se for um cão errante na rua.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        <strong>As tuas opções de classificação:</strong><br>
+                        <strong>Companhia:</strong> Animais que acompanham o ser humano.<br>
+                        <strong>Selvagem:</strong> Animais não-domesticados, ou representados livremente na natureza.<br>
+                        <strong>Consumo:</strong> Contextos em que a interação com o ser humano se destina à obtenção de matérias-primas animais (caça abatida, pastorícia, pesca, peles, etc.).<br>
+                        <strong>Trabalho:</strong> Animais utilizados para tração, transporte, caça ou guarda.<br>
+                        <strong>Exposição/Espetáculo:</strong> Presença animal empregue em espetáculos ou exibições exóticas.<br>
+                        <strong>Simbólico/Mítico:</strong> Sempre que a representação animal funciona como símbolo de algum conceito (brazões de família, elemento decoratico, etc.).<br>
+                        <strong>Conhecimento/Saúde:</strong> Animais empregues na investigação científica, medicinal ou boticária.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px; color: #6c75b7;">
+                        <strong>DICA:</strong> Se nenhuma destas categorias se aplicar ou a tipologia for impossível de determinar, seleciona "Não sei".
+                    </p>
                 </div>
-                <div class="animalx-guia-col-dir" style="flex: 1; background-color: #d9d9d9; border-radius: 4px; min-height: 350px; margin-top: 15px;"></div>
+                <div class="animalx-guia-col-dir">
+                    <img src="asset/img/painel_4.png" alt="Instruções da Pergunta 1">
+                </div>
             </div>
 
             <div id="guia-passo-5" class="animalx-guia-passo" style="display: none; flex-direction: row; gap: 60px; flex-grow: 1;">
                 <div class="animalx-guia-col-esq" style="flex: 1.1; display: flex; flex-direction: column;">
-                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 5</h2>
-                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300;">Espaço reservado para a explicação final.</p>
+                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 5: A Descrição</h2>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        Nesta pergunta, pedimos-te que faças uma <strong>breve descrição</strong> da representação do animal que estás a observar.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        Para nos ajudares a compreender melhor o contexto, deves descrever aspetos como a <strong>posição do animal</strong> na imagem ou no objeto, a sua <strong>relação com outros elementos</strong> da composição, ou até referir algum <strong>comportamento</strong> ou ação que o animal esteja a realizar.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px; color: #6c75b7;">
+                        <strong>BÓNUS DE PONTUAÇÃO:</strong> As perguntas de identificação que acabaste de responder garantem-te um total de <strong>15 pontos base</strong>. Se preencheres a descrição e nos ajudares a enriquecer o registo com estes detalhes, recebes <strong> 10 pontos extra</strong>!
+                    </p>
                 </div>
-                <div class="animalx-guia-col-dir" style="flex: 1; background-color: #d9d9d9; border-radius: 4px; min-height: 350px; margin-top: 15px;"></div>
+                <div class="animalx-guia-col-dir">
+                    <img src="asset/img/painel_5.png" alt="Instruções da Pergunta 1">
+                </div>
+            </div>
+
+            <div id="guia-passo-6" class="animalx-guia-passo" style="display: none; flex-direction: row; gap: 60px; flex-grow: 1;">
+                <div class="animalx-guia-col-esq" style="flex: 1.1; display: flex; flex-direction: column;">
+                    <h2 style="font-family: 'Nohemi', sans-serif; font-size: 42px; font-weight: 500; margin-top: 0; margin-bottom: 30px;">Passo 6: Últimos detalhes</h2>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        Encontraste mais do que um animal na mesma representação? Perfeito! Na <strong>Pergunta 6</strong>, deves indicar se existe outra espécie presente na imagem.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px; color: #6c75b7;">
+                        <strong>DUPLICA OS TEUS PONTOS:</strong> Se escolheres "SIM", o sistema guarda o animal anterior, mantém a imagem de base e <strong>duplica toda a pontuação acumulada</strong> a cada nova espécie identificada!
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        <strong>O Caderno de Campo:</strong> A qualquer momento, podes consultar a tua evolução, os pontos totais e o número de animais identificados nas várias coleções através do teu <strong>Caderno de Campo</strong>.
+                    </p>
+                    <p style="font-family: 'Nohemi', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; margin-bottom: 25px;">
+                        <strong>Terminar Sessão:</strong> Tem em atenção que, ao terminares a sessão, a atividade regressa ao estado inicial, limpando os teus pontos e o caderno de campo para o próximo investigador.
+                    </p>
+                </div>
+                <div class="animalx-guia-col-dir">
+                    <img src="asset/img/painel_6.png" alt="Instruções da Pergunta 1">
+                </div>
             </div>
 
             <!-- ==========================================
-                Navegação Reaproveitada do Caderno 
-                (Ajustes de posição absoluta e cor da fonte via style)
+                Navegação 
             =========================================== -->
-           <div style="position: absolute; bottom: -40px; left: 0; width: 100%; height: 65px; z-index: 10;">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: auto; padding-top: 20px; z-index: 10;">
     
-            <button id="btn-guia-prev" class="animalx-btn-prev" style="visibility: hidden; position: absolute; left: 5px; bottom: 0; margin: 0 !important;" onclick="mudarPassoGuia(-1)">
-                <img src="asset/img/seta_bege_esquerda.png" alt="Seta Esquerda" style="width: 65px; height: 65px; margin-right: -12px;">
-                <span style="color: #6c75b7; font-size: 18px;">ANTERIOR</span>
-            </button>
+                <button id="btn-guia-prev" class="animalx-btn-prev" style="visibility: hidden; margin: 0 !important; cursor: pointer;" onclick="mudarPassoGuia(-1)">
+                    <img src="asset/img/seta_bege_esquerda.png" alt="Seta Esquerda" style="width: 65px; height: 65px; margin-right: -12px;">
+                    <span style="color: #6c75b7; font-size: 18px; font-weight: bold;">ANTERIOR</span>
+                </button>
 
-            <button id="btn-guia-next" class="animalx-btn-next" style="position: absolute; right: 15px; bottom: 0; margin: 0 !important;" onclick="mudarPassoGuia(1)">
-                <span style="color: #6c75b7; font-size: 18px;">SEGUINTE</span>
-                <img src="asset/img/seta_bege_direita.png" alt="Seta Direita" style="width: 65px; height: 65px; margin-left: -12px;">
-            </button>
+                <button id="btn-guia-next" class="animalx-btn-next" style="margin: 0 !important; cursor: pointer;" onclick="mudarPassoGuia(1)">
+                    <span style="color: #6c75b7; font-size: 18px; font-weight: bold;">SEGUINTE</span>
+                    <img src="asset/img/seta_bege_direita.png" alt="Seta Direita" style="width: 65px; height: 65px; margin-left: -12px;">
+                </button>
 
-        </div>
+            </div>
 
         </div>
     </div>
@@ -1335,8 +1429,18 @@ function selecionarNaoSeiP5() {
         let modal = document.getElementById("modal-guia");
         if (modal) {
             modal.style.setProperty('display', 'flex', 'important');
-            // Inicializa o passo do guia para 1
-            mudarPassoGuia(0); // Passo inicial
+            
+            // 1. Esconde o passo onde o utilizador parou da última vez
+            document.getElementById(`guia-passo-${passoAtualGuia}`).style.display = "none";
+            
+            // 2. Repõe o contador no passo 1
+            passoAtualGuia = 1;
+            
+            // 3. Mostra o Passo 1
+            document.getElementById(`guia-passo-1`).style.display = "flex";
+            
+            // 4. Atualiza a visibilidade das setas (para esconder a seta "Anterior")
+            atualizarBotoesNavegacaoGuia();
         }
     }
 
@@ -1349,7 +1453,7 @@ function selecionarNaoSeiP5() {
     }
 
     let passoAtualGuia = 1;
-    const totalPassosGuia = 5;
+    const totalPassosGuia = 6;
 
     function mudarPassoGuia(direcao) {
         let novaPasso = passoAtualGuia + direcao;
