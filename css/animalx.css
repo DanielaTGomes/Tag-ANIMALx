@@ -1,4 +1,5 @@
 /* Omeka S override */
+/* NOTA: Verificar valor/designação no servidor Omeka */
 #content > form {
     display: none !important;
 }
@@ -9,11 +10,10 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Varta:wght@300..700&display=swap');
 
-/* =========================================
-   FONTE: NOHEMI 
-========================================= */
+/* FONTE: NOHEMI */
+/* NOTA: Verificar valor/designação no servidor Omeka */
 
-/* 100 - Thin */
+/* Nohemi 100 */
 @font-face {
     font-family: 'Nohemi';
     src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Thin.ttf') format('truetype');
@@ -21,7 +21,7 @@
     font-style: normal;
 }
 
-/* 200 - ExtraLight */
+/* Nohemi 200 */
 @font-face {
     font-family: 'Nohemi';
     src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-ExtraLight.ttf') format('truetype');
@@ -29,7 +29,7 @@
     font-style: normal;
 }
 
-/* 300 - Light */
+/* Nohemi 300 */
 @font-face {
     font-family: 'Nohemi';
     src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Light.ttf') format('truetype');
@@ -37,15 +37,15 @@
     font-style: normal;
 }
 
-/* 400 - Regular (Normal) */
+/* Nohemi 400 */
 @font-face {
     font-family: 'Nohemi';
     src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Regular.ttf') format('truetype');
-    font-weight: 400; /* Pode ser escrito como 'normal' */
+    font-weight: 400;
     font-style: normal;
 }
 
-/* 500 - Medium */
+/* Nohemi 500 */
 @font-face {
     font-family: 'Nohemi';
     src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Medium.ttf') format('truetype');
@@ -53,7 +53,7 @@
     font-style: normal;
 }
 
-/* 600 - SemiBold */
+/* Nohemi 600 */
 @font-face {
     font-family: 'Nohemi';
     src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-SemiBold.ttf') format('truetype');
@@ -61,15 +61,15 @@
     font-style: normal;
 }
 
-/* 700 - Bold */
+/* Nohemi 700 */
 @font-face {
     font-family: 'Nohemi';
     src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Bold.ttf') format('truetype');
-    font-weight: 700; /* Pode ser escrito como 'bold' */
+    font-weight: 700;
     font-style: normal;
 }
 
-/* 800 - ExtraBold */
+/* Nohemi 800 */
 @font-face {
     font-family: 'Nohemi';
     src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-ExtraBold.ttf') format('truetype');
@@ -77,7 +77,7 @@
     font-style: normal;
 }
 
-/* 900 - Black */
+/* Nohemi 900 */
 @font-face {
     font-family: 'Nohemi';
     src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Black.ttf') format('truetype');
@@ -114,7 +114,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     color: var(--animalx-text-color);
     font-family: var(--animalx-primary-font);
     border-radius: 1rem;
-    overflow-y: auto !important; /* A BARRA DE SCROLL MÁGICA */
+    overflow-y: auto !important;
     overflow-x: hidden;
     box-sizing: border-box;
     zoom: 0.85; /* Mantém o teu zoom para caber melhor */
@@ -158,7 +158,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 .animalx-screen {
     padding: 40px !important; /* Margem roxa perfeitamente igual a toda a volta */
     align-items: flex-start !important; /* Alinha pelo topo para o scroll fluir bem para baixo */
-    min-height: 100%; /* Garante que a tela ocupa toda a janela fixa */
+    min-height: 100%;
     box-sizing: border-box;
     display: none;
 }
@@ -169,7 +169,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 .animalx-conteiner-perguntas {
     width: 100% !important;
     max-width: 1100px !important; /* Todas terão a mesma largura */
-    margin: 0 auto !important; /* Centra perfeitamente e anula margens marotas */
+    margin: 0 auto !important;
     height: auto !important;
 }
 
@@ -193,20 +193,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     width: fit-content;
 }
 
-.animalx-btn-outline {
-    background: transparent;
-    border-color: var(--animalx-primary-color);
-    color: var(--animalx-primary-color);
-}
-
-.animalx-btn-filled {
-    background: var(--animalx-primary-color);
-    color: var(--animalx-background-color);
-    border-color: var(--animalx-primary-color);
-}
-
-
-
 .animalx-nav-circle {
     display: inline-flex;
     align-items: center;
@@ -217,23 +203,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     background: var(--animalx-secondary-color);
     color: var(--animalx-primary-color);
     border: 1px solid var(--animalx-primary-color);
-}
-
-/* Progress */
-.animalx-progress-bar {
-    width: 100%;
-    height: 0.6rem;
-    background: var(--animalx-secondary-background-color);
-    border-radius: 999px;
-    overflow: hidden;
-}
-
-.animalx-progress-fill {
-    display: block;
-    height: 100%;
-    width: 0;
-    background: var(--animalx-primary-color);
-    border-radius: inherit;
 }
 
 /* Image container */
@@ -258,9 +227,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 /* =========================================
    MODO FULL SCREEN
 ========================================= */
-/* =========================================
-   MODO ECRÃ INTEIRO (Perfeitamente Centrado)
-========================================= */
+
 #animalx-gamification-wrapper:fullscreen,
 #animalx-gamification-wrapper:-webkit-full-screen,
 #animalx-gamification-wrapper:-moz-full-screen,
@@ -380,7 +347,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     box-sizing: border-box !important;
     margin: 0 !important;
     
-    /* AS DUAS LINHAS MÁGICAS PARA A INTERATIVIDADE: */
     z-index: 999 !important; /* Coloca os botões à frente de todas as folhas */
     pointer-events: auto !important; /* Garante que os cliques passam */
 }
@@ -425,7 +391,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     text-align: center;
     width: 100%;
     height: 100%;
-    min-height: auto !important; /* Anula o cálculo antigo que forçava o scroll */
+    min-height: auto !important; 
     margin-top: 3rem;
 }
 
@@ -457,7 +423,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     align-items: center;
 }
 
-/* Estilização específica dos botões do ecrã inicial baseada no design */
+/* Estilização dos botões do ecrã inicial */
 .animalx-btn-home {
     background-color: var(--animalx-secondary-color); /* Bege */
     color: var(--animalx-primary-color); /* Letra Roxa/Azul */
@@ -465,7 +431,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     padding: 1.5rem 4rem;
     width: 420px;
     border-radius: 2rem;
-    /* Recria a borda dupla do Figma usando box-shadow e border */
     border: 2px solid var(--animalx-primary-color);
     box-shadow: 0 0 0 6px var(--animalx-secondary-color);
 }
@@ -523,18 +488,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     margin: 0;
 }
 
-.animalx-disclaimer-alert {
-    font-size: 1.25rem;
-    line-height: 1.6;
-    /* Cor roxa para o alerta conforme o design */
-    color: var(--animalx-primary-color, #6c75b7); 
-    margin: 0;
-}
-
-.animalx-disclaimer-alert strong {
-    font-weight: 700;
-}
-
 .animalx-disclaimer-media {
     background-color: #d9d9d9;
     width: 100%;
@@ -549,15 +502,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     object-fit: cover; 
     display: block;
 }
-
-.animalx-disclaimer-footer {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-top: 3rem;
-}
-
-
 
 /* Responsivo para ecrãs mais pequenos */
 @media (max-width: 768px) {
@@ -613,13 +557,12 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 .animalx-coluna-direita {
     flex: 1; /* Ocupa o restante espaço */
     display: flex;
-    flex-direction: column; /* NOVO: Obriga os elementos a ficarem um por baixo do outro */
-    align-items: center;    /* NOVO: Centra as imagens horizontalmente */
+    flex-direction: column;
+    align-items: center;
     justify-content: flex-start;
-    gap: 30px; /* NOVO: Cria um espaçamento respirável entre o caderno e o post-it */
+    gap: 30px;
 }
 
-/* NOVO: Regra para controlar o tamanho e aspeto do post-it */
 .animalx-nota-postit {
     max-width: 85%; /* Garante que o post-it é ligeiramente mais pequeno que a área total, dando destaque ao caderno */
     height: auto;
@@ -755,12 +698,12 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     display: none;
 }
 
-/* O pequeno círculo branco do consentimento */
+/* Checkbox consentimento */
 .animalx-custom-checkbox {
     width: 18px;
     height: 18px;
     border: 1px solid #666;
-    border-radius: 50%; /* Mantém o aspeto redondo pedido */
+    border-radius: 50%; 
     margin-right: 12px;
     margin-top: 3px;
     flex-shrink: 0;
@@ -784,28 +727,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     display: flex;
     justify-content: space-between;
     margin-top: 60px;
-}
-
-.animalx-btn-nav {
-    background: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #6c75b7;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    padding: 0;
-}
-
-.animalx-icone-seta {
-    width: 60px;
-    height: 60px;
-}
-
-.roda-seta {
-    transform: rotate(180deg);
 }
 
 /* --- RESPONSIVIDADE (ECRÃS MAIS PEQUENOS) --- */
@@ -871,15 +792,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     display: flex !important;
     flex-direction: column !important;
     margin-bottom: 0 !important;
-}
-
-.animalx-conteiner-perguntas .animalx-visualizador-imagem {
-    width: 100%;
-    max-width: 1000px;
-    height: 300px;
-    background-color: #f5f5f5; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    margin-bottom: 0.5rem;
 }
 
 .animalx-conteiner-perguntas .animalx-imagem-legenda {
@@ -1305,14 +1217,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 }
 
 /* O pequeno título "Descrição" */
-.animalx-label-simples {
-    font-family: 'Nohemi', sans-serif;
-    font-size: 16px;
-    color: #494949;
-    font-weight: 500;
-    margin-left: 5px;
-}
-
 /* A caixa branca onde o utilizador escreve */
 .animalx-textarea-branca {
     width: 100%;
@@ -1346,11 +1250,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 .animalx-conteiner-perguntas {
     margin: 0 auto !important; /* Remove as margens de 3rem antigas para aproveitar o espaço */
     padding: 1.5rem 4rem !important; /* Reduz ligeiramente o preenchimento de topo/fundo */
-}
-
-.animalx-conteiner-perguntas .animalx-visualizador-imagem {
-    height: 330px !important; /* Reduz a imagem de 450px para 330px */
-    margin-bottom: 0.5rem !important;
 }
 
 .animalx-conteiner-perguntas .animalx-imagem-legenda {
@@ -1978,9 +1877,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     .animalx-conteiner-perguntas {
         padding: 1rem !important;
     }
-    .animalx-visualizador-imagem {
-        height: 250px !important;
-    }
     .animalx-pergunta-row {
         flex-direction: column !important;
         text-align: center;
@@ -1993,4 +1889,201 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     .animalx-modal-caixa img#imagem-novo-nivel {
         width: 150px !important;
     }
+}
+
+/* Estilos extraidos do HTML */
+.animalx-wizard-container {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.animalx-link-privacidade {
+    color: #6c75b7;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.animalx-passo-inicial {
+    display: flex;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.animalx-progresso-inicial {
+    width: 15%;
+    border-radius: 15px 0 0 15px;
+}
+
+.animalx-modal-fechar-superior {
+    position: absolute !important;
+    top: -10px !important;
+    right: -10px !important;
+}
+
+.animalx-modal-fechar-lateral {
+    position: absolute !important;
+    top: -20px !important;
+    right: -10px !important;
+}
+
+.animalx-modal-fechar-grande img {
+    width: 80px !important;
+    height: 80px !important;
+}
+
+.animalx-modal-fechar-grande {
+    width: 80px !important;
+    height: 80px !important;
+}
+
+.animalx-modal-fechar-65 {
+    width: 65px !important;
+    height: 65px !important;
+}
+
+.animalx-modal-caixa-nivel {
+    padding: 50px 60px;
+    max-width: 800px;
+}
+
+.animalx-modal-nivel-layout {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    text-align: left;
+}
+
+.animalx-modal-nivel-texto {
+    flex: 1;
+}
+
+.animalx-modal-nivel-titulo {
+    font-family: 'Nohemi', sans-serif;
+    font-size: 38px;
+    font-weight: 500;
+    color: #494949;
+    margin-top: 0;
+    margin-bottom: 20px;
+    line-height: 1.1;
+}
+
+.animalx-modal-nivel-descricao {
+    font-family: 'Nohemi', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: #494949;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.animalx-modal-nivel-selo {
+    flex-shrink: 0;
+}
+
+.animalx-modal-nivel-selo img {
+    width: 220px;
+    height: auto;
+    object-fit: contain;
+}
+
+.animalx-modal-consentimento {
+    min-height: 165% !important;
+}
+
+.animalx-guia-caixa-inline {
+    background-color: #ede8e9;
+    border: 35px solid #6c75b7;
+    width: 90%;
+    max-width: 1200px;
+    min-height: 650px;
+    padding: 60px 60px 10px;
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.animalx-guia-passo-inline {
+    flex-direction: row;
+    gap: 60px;
+    flex-grow: 1;
+}
+
+.animalx-guia-coluna-inline {
+    flex: 1.1;
+    display: flex;
+    flex-direction: column;
+}
+
+.animalx-guia-titulo-inline {
+    font-family: 'Nohemi', sans-serif;
+    font-size: 42px;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+.animalx-guia-titulo-principal {
+    color: #000;
+}
+
+.animalx-guia-texto-inline {
+    font-family: 'Nohemi', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.animalx-guia-dica-inline {
+    color: #6c75b7;
+}
+
+.animalx-guia-navegacao-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: auto;
+    padding-top: 20px;
+    z-index: 10;
+}
+
+.animalx-guia-botao-prev {
+    visibility: hidden;
+    margin: 0 !important;
+    cursor: pointer;
+}
+
+.animalx-guia-botao-next {
+    margin: 0 !important;
+    cursor: pointer;
+}
+
+.animalx-guia-seta {
+    width: 65px;
+    height: 65px;
+}
+
+.animalx-guia-seta-esquerda {
+    margin-right: -12px;
+}
+
+.animalx-guia-seta-direita {
+    margin-left: -12px;
+}
+
+.animalx-guia-legenda-seta {
+    color: #6c75b7;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.animalx-mesa-fundo-imagem {
+    background-image: url('../asset/img/fundo_cc.jpg');
+}
+
+.animalx-livro-aberto-imagem {
+    background-image: url('../asset/img/caderno.png');
 }

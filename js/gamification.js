@@ -53,53 +53,80 @@ export const GestorGamificacao = {
         return animalxConfig.niveis[0];
     },
 
-    registarSubmissao: function(teveAnimal, teveDescricao, especiesExtras = 0, colecaoSubmetida = null) {
-        let progresso = this.carregarProgresso();
+registarSubmissao(teveAnimal, teveDescricao, multiplicadorEspecie, colecaoSubmetida, itemId = null) {
         
-        // 1. Memoriza o nível ANTES de somar
-        let nivelAntigo = this.obterNivelAtual(progresso.pontos);
-
         let pontosGanhos = 0;
-        if (!teveAnimal) {
-            pontosGanhos = animalxConfig.pontos.registo_sem_animal;
-        } else {
-            pontosGanhos = animalxConfig.pontos.base_identificacao;
-            if (teveDescricao) pontosGanhos += animalxConfig.pontos.bonus_descricao;
-            if (especiesExtras > 0) pontosGanhos *= (animalxConfig.pontos.multiplicador_especie_extra * especiesExtras);
-            progresso.animaisIdentificados += (1 + especiesExtras);
-        }
-
-        progresso.pontos += pontosGanhos;
-        progresso.registosAnalisados += 1;
-
-        if (colecaoSubmetida) {
-            // Se o progresso.colecoes não existir, cria-o
-            if (!progresso.colecoes) {
-                progresso.colecoes = {};
-            }
-            
-            // Se a coleção específica (ex: 'ceramica') ainda não existir na memória, inicializa a 0
-            if (progresso.colecoes[colecaoSubmetida] === undefined) {
-                progresso.colecoes[colecaoSubmetida] = 0;
-            }
-            
-            // Soma +1 ao registo tratado!
-            progresso.colecoes[colecaoSubmetida] += 1;
-        }
-
-        this.guardarProgresso(progresso);
-
-        // 2. Verifica o nível DEPOIS de somar
-        let nivelNovo = this.obterNivelAtual(progresso.pontos);
+        let progresso = this.carregarProgresso(); // Carrega o progresso logo aqui
         
-        // 3. O "Gatilho" (Verdadeiro se subiu de patamar)
-        let subiuDeNivel = nivelAntigo.limite < nivelNovo.limite;
+        // 1. CALCULAR PONTOS E SOMAR ANIMAIS
+        if (!teveAnimal) {
+            pontosGanhos = 10; // Triagem Negativa
+        } else {
+            pontosGanhos = 15; // Identificação Base
+            if (teveDescricao) {
+                pontosGanhos += 10; // Bónus de Descrição
+            }
+            
+            // ==========================================
+            // A LINHA RESTAURADA: Soma +1 Animal Identificado!
+            // ==========================================
+            progresso.animaisIdentificados = (progresso.animaisIdentificados || 0) + 1;
+        }
 
-        return { 
-            pontosGanhos, 
-            progressoAtual: progresso, 
+        // Aplica a duplicação se for espécie extra (O "Combo")
+        if (multiplicadorEspecie > 0) {
+            pontosGanhos = pontosGanhos * (2 ** multiplicadorEspecie); 
+        }
+
+        // 2. ATUALIZAR A MEMÓRIA DO JOGADOR
+        // O utilizador ganha SEMPRE os pontos pelo esforço
+        progresso.pontos += pontosGanhos;
+
+        // 3. VERIFICAÇÃO DE ID: Este item já subiu a barra de coleção nesta sessão?
+        if (!progresso.idsItensTratados) {
+            progresso.idsItensTratados = []; // Cria a lista de memória se não existir
+        }
+
+        let itemJaFoiContado = false;
+        if (itemId) {
+            if (progresso.idsItensTratados.includes(itemId)) {
+                itemJaFoiContado = true; // Já vimos este item
+            } else {
+                progresso.idsItensTratados.push(itemId); // Memoriza o item novo
+            }
+        }
+
+        // 4. ESTATÍSTICAS: Só soma +1 nas coleções se o item for novo!
+        if (!itemJaFoiContado) {
+            progresso.registosAnalisados = (progresso.registosAnalisados || 0) + 1;
+            
+            if (colecaoSubmetida) {
+                if (!progresso.colecoes) progresso.colecoes = {};
+                if (progresso.colecoes[colecaoSubmetida] === undefined) {
+                    progresso.colecoes[colecaoSubmetida] = 0;
+                }
+                
+                // Soma +1 ao registo tratado daquela tipologia
+                progresso.colecoes[colecaoSubmetida] += 1;
+            }
+        }
+
+        // 5. GUARDAR E VERIFICAR CARREIRA
+        this.guardarProgresso(progresso);
+        let nivelNovo = this.obterNivelAtual(progresso.pontos);
+        let subiuDeNivel = false;
+
+        if (progresso.nivelAtual !== nivelNovo.titulo) {
+            progresso.nivelAtual = nivelNovo.titulo;
+            this.guardarProgresso(progresso);
+            subiuDeNivel = true;
+        }
+
+        return {
+            pontosGanhos: pontosGanhos,
+            totalPontos: progresso.pontos,
             nivelAtual: nivelNovo,
-            subiuDeNivel // <- Exporta a informação de subida
+            subiuDeNivel: subiuDeNivel
         };
     }
 };

@@ -316,7 +316,7 @@ export async function submeterFormularioReal() {
             const colecaoItem = typeof identificarColecaoDoItem === 'function' ? identificarColecaoDoItem(itemAtivo) : "Desconhecida";
 
             // Aplica os pontos
-            const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, 0, colecaoItem);
+            const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, 0, colecaoItem, itemAtivo['o:id']);
             console.log(`🏆 Pontos: +${infoJogo.pontosGanhos} | Coleção: ${colecaoItem}`);
 
             // Dispara a Modal de Nível (se aplicável)
