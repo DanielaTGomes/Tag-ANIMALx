@@ -129,7 +129,7 @@ A arquitetura de dados garante a mitigação de erros estatísticos do crowdsour
 * **Ação Condicional:** Se a cópia existir, executa um pedido `PATCH` para acrescentar o novo voto comunitário ao histórico do mesmo item. Se não existir, gera um pedido `POST` criando um contentor e clonando a multimédia associada.
 
 
-* **A Regra dos 5 Votos:** Um script cronológico avalia o número de entradas no histórico (através da leitura da array originada na propriedade de anotações).
+* **A Validação por Múltiplos Utilizadores:** Um script cronológico avalia o número de entradas no histórico (através da leitura da array originada na propriedade de anotações).
 
 
 * **Automação de Transição:** Ao reunir cinco avaliações independentes, o sistema procede à transição do Item Set, enviando o registo para o painel de curadoria restrito para revisão pela equipa do projeto, sendo posteriormente agregado à coleção de itens analisados.
@@ -154,3 +154,121 @@ O desenho técnico da plataforma obedece estritamente ao Regulamento Geral sobre
 
 
 * **Limpeza Local:** Toda a gestão mecânica de gamificação e sessão é mantida na cache temporal do navegador (`localStorage` e `sessionStorage`), sendo totalmente destruída pela invocação do comando `localStorage.removeItem('animalx_progresso')` mediante clique na opção de "Terminar Sessão".
+
+
+
+---
+
+
+# TAG ANIMALx: Architecture, Data Engineering, and Methodological Documentation
+
+Official repository for technical documentation, data structuring, and source code of the Tag ANIMALx project, developed as part of the non-teaching component of the Master's in Curation and Digital Humanities (NOVA FCSH).
+
+Tag ANIMALx materializes as a gamified Citizen Science interface, designed to operate over an Omeka S institutional repository. The platform invites the community to act as researchers, promoting the identification, classification, and contextualization of animal representations in the Museum of Lisbon's collection.
+
+Moving away from traditional models of passive metadata submission, this project implements a distributed curation architecture (*crowdsourcing*), supported by a gamified interface, strict semantic ontologies, and a rigorous double validation system (multiple peer review).
+
+---
+
+## I. Software Architecture and Serverless Infrastructure
+
+To safeguard the integrity of the API access credentials associated with the server it interacts with, the project adopted a Decoupled Architecture based on Serverless solutions.
+
+* **Frontend Isolation:** The public interface built in HTML5, CSS3, and Vanilla JavaScript (`index.html`, `animalx.css`, `api.js`, `app.js`) operates exclusively in the user's browser, containing no API keys or sensitive credentials.
+
+
+* **Credential Management (Digital Vault):** The Omeka S administrator keys (`KEY_IDENTITY` and `KEY_CREDENTIAL`) are stored remotely in Environment Variables via the Netlify platform.
+
+
+* **Repository Concealment:** The project structure uses the `.gitignore` file to explicitly block the sharing of local configuration files and hidden operating system files, preventing the exposure of sensitive data on GitHub.
+* **Communication via Intermediary Functions:** Calls to the Omeka S REST API are mediated by the `netlify/functions/` directory.
+
+
+* **Secure Requests:** The frontend issues simple JSON requests to the Serverless functions (e.g., `/.netlify/functions/criar-rascunho`), which, in turn, construct the final JSON-LD payload, cryptographically sign it, and submit the data (`POST`, `PATCH`) to the Omeka S server.
+
+
+
+---
+
+## II. Data Modeling and Semantic Ontologies
+
+Curatorial consistency and long-term interoperability are ensured by adopting the Linked Open Data philosophy, merging and mapping native Omeka S controlled vocabularies.
+
+* **Direct Numeric Mapping:** Communication with Omeka S requires the exact declaration of the numeric `property_id` of each field to prevent the database from discarding the information.
+
+
+* **Dublin Core Integration:** Contextual data uses the standard ontology, including, for example, the animal designation (`dcterms:title`), typology (`dcterms:type`, ID 8), description (`dcterms:description`), and cross-reference of related items (`dcterms:relation`).
+
+
+* **Darwin Core Integration:** Zoological normalization is governed by scientific vocabularies, injecting the scientific name (`dwc:scientificName`, ID 419), the taxonomic category (`dwc:taxonRank`, ID 439), and the quantity of representations of the same species (`dwc:organismScope`, ID 372).
+
+
+* **Dynamic Taxonomy:** A backend function intersects the animal's common name, filled in by the user, with a static dictionary aligned by the ITIS (Integrated Taxonomic Information System) (`nomes_itis.csv`), translating it into precise scientific nomenclature to obtain the scientific name and taxonomic category of the identified animal.
+
+
+* **Association with Resource Templates:** The new items created through multiple validation are forced to inherit the official Resource Template (`o:resource_template`), ensuring the correct formatting of curatorial fields in the administrative panel.
+
+
+
+---
+
+## III. Interface, User Experience, and Gamification
+
+The interface aims to reduce the volunteer's cognitive load, transforming scientific analysis into a playful and rewarding process.
+
+* **Progressive Form (Wizard):** The form divides the analysis into six modular steps (Questions 1 to 6) through the manipulation of the Document Object Model (DOM) in JavaScript.
+
+
+* **IIIF Visual Integration:** The grid layout is based on a fixed visualization panel that integrates the OpenSeadragon library (via CDN), ensuring high-resolution exploration through IIIF Manifests.
+
+
+* **Interactive Field Notebook:** The volunteer's personal dashboard assumes the aesthetics of a scientific diary, allowing the user to track their progress throughout the initiative.
+* **Collection Monitoring:** The system reads the identifiers of the submitted items and generates mathematical progress bars associated with specific museum collections (Tiles, Ceramics, Sculpture, Drawing, Painting, and Engraving).
+* **Specimen Counting:** The software logic safeguards each individually validated animal (variable `animaisIdentificados`), reporting it in the Field Notebook.
+
+### Exponential Logic and Taxonomic Duplication
+
+* **Null Records:** In records where no animal representation is found, the interface prompts for its submission right at question 1, not advancing to the rest of the form.
+* **Zoological Iteration:** If the user indicates the presence of other species in the same artwork, the interface preserves the base image and clears only the variables for questions 2 to 6 (`limparCamposP2aP6`), creating multiple entries in the database.
+
+
+
+### Algorithmic Credit Economy (Scoring)
+
+The gamification engine assigns merit values weighted by effort:
+
+* **Negative Triage:** 10 points for indicating that the current representation does not contain fauna elements (database cleaning).
+* **Base Validation:** 15 points for the mandatory mapping of the animal identification, the quantity of animals of the same species, and the typology associated with its contextual representation.
+* **Qualitative Enrichment:** 10 bonus points for submitting the qualitative description of the animal representation.
+* **Exponential Multiplier:** The accumulated score is mathematically duplicated for each new species identified in the same item, generating an incentive for user observation.
+
+The conversion of these points translates into academic progression reflected through the dynamic injection of seals and titles in the interface modals: *Intern Curator* (0+ points), *Assistant Researcher* (100+ points), *Specialist Historian* (400+ points), and *Full Curator* (1000+ points).
+
+---
+
+## IV. Curatorial Flow and Multiple Validation Rule
+
+The data architecture ensures the mitigation of statistical crowdsourcing errors through a quarantine mechanism.
+
+* **Silent and Grouped Annotations:** Instead of modifying public metadata, each user's responses are packaged into a JSON block and inscribed as private metadata (`bibo:annotates`) in a provisional item.
+
+
+* **Smart Grouping:** The backend system first verifies through the API if a copy of the item already exists with the `dcterms:isReferencedBy` field pointing to the original artwork.
+
+
+* **Conditional Action:** If the copy exists, it executes a `PATCH` request to add the new community vote to the history of the same item. If it does not exist, it generates a `POST` request creating a container and cloning the associated media.
+
+
+* **The Multi-peer Validation:** A chronological script evaluates the number of entries in the history (by reading the array originated in the annotations property).
+* **Transition Automation:** Upon gathering five independent evaluations, the system proceeds to transition the Item Set, sending the record to the restricted curation panel for review by the project team, subsequently aggregating it into the collection of analyzed items.
+
+---
+
+## V. Privacy and Data Ethics
+
+The technical design of the platform strictly complies with the General Data Protection Regulation (GDPR).
+
+* **Minimization Principle:** The form strictly collects the variables required for investigative authorship recognition (First and Last Name).
+* **Authorization Mechanics:** The interface presents functional locks (`abrirModalConsentimento()`), preventing progression in the flow if the Consent and Privacy Terms validation box is not activated after reading the Privacy Notice in PDF.
+* **Volatile Storage:** The interface forgoes trackable cookies.
+* **Local Clearing:** All mechanical gamification and session management is kept in the browser's temporary cache (`localStorage` and `sessionStorage`), being completely destroyed by invoking the command `localStorage.removeItem('animalx_progresso')` upon clicking the "End Session" option.
