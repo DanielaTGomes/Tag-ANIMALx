@@ -748,6 +748,63 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 /* =========================================
    FORMULÁRIO ANIMALX - ESTILOS GERAIS
 ========================================= */
+/* TELA DE CARREGAMENTO */
+#modal-carregamento {
+    background-color: #6c75b7 !important; 
+    padding: 40px !important;          
+    box-sizing: border-box !important; 
+    align-items: stretch !important;      
+    z-index: 99999 !important;
+}
+
+#modal-carregamento .animalx-loading-container {
+    background-color: #ede8e9;            
+    width: 100%;
+    height: 100%;
+    max-width: 1100px;                    
+    margin: 0 auto;
+    border-radius: 1rem;                  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+}
+
+/* ÍCONE DE CARREGAMENTO*/
+.animalx-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 25px; 
+}
+
+
+.animalx-spinner {
+    width: 65px;
+    height: 65px;
+    border: 7px solid #ede8e9; 
+    border-top: 7px solid #6c75b7; 
+    border-radius: 50%;
+    animation: rodar 1s linear infinite;
+}
+
+/* TEXTO DE CARREGAMENTO */
+.animalx-loading-texto {
+    font-family: var(--animalx-primary-font, 'Nohemi', sans-serif);
+    font-size: 20px;
+    color: #6c75b7;
+    font-weight: 600;
+    margin: 0;
+}
+
+@keyframes rodar {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
 
 /* Esta classe afeta APENAS o ecrã das perguntas */
 .animalx-conteiner-perguntas {
@@ -1464,7 +1521,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     font-weight: 700 !important;
     text-align: left !important; /* Centra o texto como na Imagem 1 */
     color: #4a3b32 !important; /* Tom castanho escuro idêntico ao protótipo */
-    margin-top: 1rem !important;
+    margin-top: 0rem !important;
     margin-bottom: 0.5rem !important;
     line-height: 1.2 !important;
 }

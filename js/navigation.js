@@ -37,9 +37,18 @@ function irParaTela(idTela) {
     
     destino.classList.add('active');
     
-    if (idTela === 'screen-formulario' && typeof window.carregarItemANIMALx === 'function') {
-        window.carregarItemANIMALx();
-    }
+    if (idTela === 'screen-formulario') {
+            
+            if (typeof window.carregarItemANIMALx === 'function') {
+                window.carregarItemANIMALx();
+            }
+            
+
+            if (typeof window.darBoasVindasEstagiario === 'function') {
+                window.darBoasVindasEstagiario();
+            }
+        }
+
 }
 
 // =========================================
@@ -152,7 +161,15 @@ function abrirGuia() {
     passoAtualGuia = 1; 
     atualizarBotoesNavegacaoGuia(); 
 }
-function fecharGuia() { document.getElementById('modal-guia')?.style.setProperty('display', 'none', 'important'); }
+function fecharGuia() {
+    let modal = document.getElementById("modal-guia");
+    if (modal) {modal.style.setProperty('display', 'none', 'important');}
+    for (let i = 1; i <= 6; i++) {
+        let passo = document.getElementById(`guia-passo-${i}`);
+        if (passo) {passo.style.display = (i === 1) ? 'flex' : 'none'}}
+    if (typeof passoGuiaAtual !== 'undefined') {passoGuiaAtual = 1;} else if (typeof window.passoGuiaAtual !== 'undefined') {
+        window.passoGuiaAtual = 1;}
+}
 
 function mudarPassoGuia(direcao) { 
     const novo = passoAtualGuia + direcao; 
@@ -251,6 +268,15 @@ function limparFormulario() {
 
 async function confirmarSubmissao() {
     fecharModal();
+
+    const modalLoading = document.getElementById('modal-carregamento');
+        if (modalLoading) {
+            modalLoading.style.setProperty('display', 'flex', 'important');
+            const textoLoading = modalLoading.querySelector('.animalx-loading-texto');
+            if (textoLoading) textoLoading.innerText = "A guardar a tua descoberta...";
+        }
+
+
     console.log("⏳ A enviar dados para o Omeka S...");
     
     const resultado = await window.submeterFormularioReal();
@@ -265,11 +291,21 @@ async function confirmarSubmissao() {
             console.log("-> [FINALIZADO]: A limpar formulário e a carregar novo registo do Omeka S.");
             limparFormulario();
             irParaPasso(1);
+
+
+    if (modalLoading) {
+                const textoLoading = modalLoading.querySelector('.animalx-loading-texto');
+                if (textoLoading) textoLoading.innerText = "A procurar representações no arquivo...";
+            }
+
             if (typeof window.carregarItemANIMALx === 'function') {
                 await window.carregarItemANIMALx();
+                // A função carregarItemANIMALx já desliga o modal no fim!
             }
         }
     } else {
+        // Se houver erro, desliga o loading para mostrar o alerta
+        if (modalLoading) modalLoading.style.setProperty('display', 'none', 'important');
         alert("Atenção: Houve uma falha ao enviar o registo. Verifica a tua ligação e tenta novamente.");
     }
 }

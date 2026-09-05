@@ -170,3 +170,16 @@ h1.curadoria-titulo, .item-curadoria h2 {
     background: #6c75b7;
     color: white;
 }
+
+/* =========================================
+   IMAGEM DE TOPO NO CARTÃO DE CURADORIA
+========================================= */
+.curadoria-img-topo {
+    width: 100%;
+    max-height: 400px; /* Limita a altura para não ocupar o ecrã todo */
+    object-fit: contain; /* Garante que a imagem não é cortada nem deformada */
+    background-color: #f4f4f4; /* Fundo cinza suave caso a imagem seja estreita */
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+    border: 1px solid #ddd;
+}

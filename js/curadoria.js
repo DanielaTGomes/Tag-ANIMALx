@@ -8,17 +8,33 @@ async function carregarPainelCuradoria() {
         painel.innerHTML = "";
         let encontrouAlgum = false;
 
-        itens.forEach(item => {
+    itens.forEach(item => {
             const historico = item['bibo:annotates'];
+            
             if (!historico || historico.length === 0) return;
             
-            encontrouAlgum = true;
+            encontrouAlgum = true; 
             const titulo = item['o:title'] || 'Item sem título';
             
-// ... (dentro do teu map / forEach do curadoria.js) ...
-            
+           // =========================================
+            // EXTRAÇÃO IIIF MAGNÉTICA (Via OpenSeadragon)
+            // =========================================
+            let identificador = item['dcterms:identifier'] ? item['dcterms:identifier'][0]['@value'] : '';
+            let tagImagem = '';
+
+            if (identificador) {
+                let codigoLimpo = identificador.replaceAll('.', '_').trim();
+                let urlInfoJson = `https://DanielaTGomes.github.io/imagens_omeka/resultado/${codigoLimpo}/info.json`;
+                
+                // Em vez de <img>, criamos uma <div> vazia com um ID único (baseado no ID do item)
+                let idProjetor = `osd-curadoria-${item['o:id']}`;
+                
+                tagImagem = `<div id="${idProjetor}" data-infojson="${urlInfoJson}" class="curadoria-img-topo" style="height: 350px; width: 100%; background-color: #333; border-radius: 4px; margin-bottom: 1.5rem;"></div>`;
+            }
+
             let htmlItem = `
                 <div class="item-curadoria">
+                    ${tagImagem}
                     <h2>${titulo} (ID: ${item['o:id']})</h2>
                     <p><strong>Avaliações comunitárias:</strong> ${historico.length}/5</p>
                     <div class="grid-respostas">
@@ -111,11 +127,17 @@ async function carregarPainelCuradoria() {
             painel.innerHTML = "<p>Nenhum item com validações encontrado até ao momento.</p>";
         }
 
+        if(typeof window.carregarVisualizadoresIIIF === 'function') {
+            window.carregarVisualizadoresIIIF();
+        }
+
     } catch (erro) {
         console.error("Erro ao carregar curadoria:", erro);
         painel.innerHTML = "<p style='color:red;'>Erro ao comunicar com o servidor.</p>";
     }
 }
+
+
 
 document.addEventListener('DOMContentLoaded', carregarPainelCuradoria);
 
@@ -204,4 +226,32 @@ window.selecionarTudo = function(idItem, indexVoluntario) {
     // Depois, marca apenas as do voluntário escolhido
     const todasDoVoluntario = document.querySelectorAll(`.vol_${idItem}_${indexVoluntario}`);
     todasDoVoluntario.forEach(chk => chk.checked = true);
+};
+
+// ==========================================
+// INICIALIZADOR DE PROJETORES IIIF (OPENSEADRAGON)
+// ==========================================
+window.carregarVisualizadoresIIIF = function() {
+    const projetores = document.querySelectorAll('.curadoria-img-topo');
+
+    if (typeof window.OpenSeadragon !== 'function') {
+        console.error("A biblioteca OpenSeadragon não está carregada no curadoria.html!");
+        return;
+    }
+
+    projetores.forEach(projetor => {
+        const urlInfo = projetor.getAttribute('data-infojson');
+        if (!urlInfo) return;
+
+        try {
+            window.OpenSeadragon({
+                id: projetor.id, // O ID único que criámos no HTML
+                prefixUrl: 'https://cdn.jsdelivr.net/npm/openseadragon@4.1/build/openseadragon/images/',
+                tileSources: urlInfo,
+                showNavigationControl: true // Mantém a true se quiseres os botões de zoom no painel!
+            });
+        } catch (erro) {
+            console.warn(`Aviso: Falha ao iniciar OpenSeadragon para ${urlInfo}`, erro);
+        }
+    });
 };

@@ -1,29 +1,16 @@
-
-
-/**
- * Constrói o URL autenticado da coleção de itens do Omeka S.
- *
- * @returns {string} URL da API
- */
+import { ANIMALX_MOCK_DB } from './animalx_mock_db.js';
 
 /**
- * Carrega um item aleatório da coleção configurada.
- * Esta função não conhece nem manipula o DOM.
- *
- * @returns {Promise<Object|null>} Item carregado ou null em caso de erro
+ * Carrega um item aleatório da base de dados simulada.
+ * Substitui o pedido Netlify por uma leitura do Mock DB local.
  */
- async function carregarItemAleatorio() {
+async function carregarItemAleatorio() {
     try {
-        const resposta = await fetch('/.netlify/functions/obter-item');
-        
-        if (!resposta.ok) {
-            return { erroCritico: `O Omeka S rejeitou o pedido (Erro HTTP ${resposta.status}).` };
-        }
+        console.log("🛠️ Simulação: A carregar a lista de imagens locais...");
+        const items = ANIMALX_MOCK_DB;
 
-        const items = await resposta.json();
-        
         if (!Array.isArray(items) || items.length === 0) {
-            return { erroCritico: `A coleção está vazia ou não foi encontrada.` };
+            return { erroCritico: `A base de dados simulada está vazia.` };
         }
 
         // 1. LER A LISTA DE ITENS JÁ VISTOS NESTA SESSÃO
@@ -45,20 +32,18 @@
         itensVistos.push(itemAleatorio['o:id']);
         sessionStorage.setItem('animalx_vistos', JSON.stringify(itensVistos));
 
+        // Simula o tempo de rede para ativar a animação roxa
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         return itemAleatorio;
 
     } catch (erro) {
-        return { erroCritico: `Falha de rede (${erro.message}).` };
+        return { erroCritico: `Falha na simulação (${erro.message}).` };
     }
 }
 
-
 /**
  * Obtém o primeiro valor legível de um campo de metadados do Omeka S.
- *
- * @param {Object} item - Item retornado pela API
- * @param {string} propriedade - Nome da propriedade
- * @returns {string} Valor do campo ou string vazia
  */
 function obterValorMetadado(item, propriedade) {
     const metadado = item?.[propriedade];
@@ -77,10 +62,6 @@ function obterValorMetadado(item, propriedade) {
 
 /**
  * Prepara os dados que o controlador precisa para renderizar um item.
- * O código da imagem é sempre convertido para string e normalizado.
- *
- * @param {Object} item - Item retornado pela API
- * @returns {Object} Dados tratados para a interface
  */
 function prepararDadosDoItem(item) {
     const codigoOriginal = obterValorMetadado(item, 'dcterms:identifier')
@@ -106,67 +87,6 @@ function prepararDadosDoItem(item) {
     };
 }
 
-
-
-
-/**
- * Converte um valor simples para o formato JSON-LD do Omeka S.
- * O Omeka S exige que as propriedades sejam arrays de objetos com type, @value E property_id.
- *
- * @param {string|number} valor - O valor a converter
- * @param {string} nomePropiedade - Nome da propriedade (ex: 'dcterms:title')
- * @returns {Array<Object>} Array com objeto no formato JSON-LD completo
- * @private
- */
-
-
-/**
- * Submete um novo registo de animal para o Omeka S.
- * 
- * Esta função cria um novo "Item" no Omeka S com todos os metadados
- * recolhidos do formulário da aplicação TAG ANIMALx, mapeados para os
- * padrões Dublin Core (dcterms) e Darwin Core (dwc). O item é automaticamente
- * associado ao Item Set com ID 2.
- *
- * @param {Object} dadosFormulario - Objeto com os dados do formulário preenchido
- *        Esperado com as propriedades (caso existam):
- *        - dcterms:title: Nome comum do animal
- *        - dwc:scientificName: Nome científico
- *        - dwc:taxonRank: Categoria taxonómica
- *        - dcterms:subject: Presença de animal (SIM/NÃO)
- *        - dwc:organismScope: Quantidade/âmbito
- *        - dcterms:type: Função/contexto do animal
- *        - dcterms:description: Notas e observações
- *        - dcterms:contributor: Nome do utilizador (opcional, usará "Curador Anónimo" se não fornecido)
- * 
- * @param {string|number} itemOriginalId - ID ou URL do item original que foi anotado
- * 
- * @returns {Promise<Object>} Objeto com resultado da submissão:
- *          - Se sucesso: { sucesso: true, itemId: <ID do novo item>, mensagem: <descrição> }
- *          - Se erro: { sucesso: false, erro: <mensagem de erro>, detalhes: <resposta do servidor> }
- * 
- * @throws {Error} Relança erros críticos da rede ou configuração
- * 
- * @example
- * // Uso básico
- * const dados = {
- *     'dcterms:title': 'Abelha',
- *     'dwc:scientificName': 'Apidae',
- *     'dwc:taxonRank': 'Família',
- *     'dcterms:subject': 'SIM',
- *     'dwc:organismScope': 'Um animal',
- *     'dcterms:type': 'Motivo decorativo',
- *     'dcterms:description': 'Abelha na moldura do quadro'
- * };
- * 
- * const resultado = await submeterRegistoAnimal(dados, 12345);
- * if (resultado.sucesso) {
- *     console.log(`Item criado com ID: ${resultado.itemId}`);
- * }
- */
-
-
-
 // =========================================
 // GERADOR DO LINK IIIF
 // =========================================
@@ -178,55 +98,45 @@ function gerarUrlIiif(itemOriginal) {
 }
 
 // =========================================
-// SUBMISSÃO DUPLA (ITEM + MULTIMÉDIA)
+// SUBMISSÃO DUPLA (ITEM + MULTIMÉDIA) - MODO SIMULAÇÃO
 // =========================================
 async function submeterRegistoAnimal(dadosFormulario, itemOriginal) {
     try {
-        const resposta = await fetch('/.netlify/functions/criar-rascunho', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ dadosFormulario, itemOriginal })
-        });
+        console.log("🛠️ Simulação: A empacotar dados para o localStorage...");
+        const nomeUtilizador = sessionStorage.getItem('animalx_utilizador') || 'Curador Anónimo';
 
-        const resultado = await resposta.json();
-        
-        if (!resposta.ok || !resultado.sucesso) {
-            throw new Error(resultado.erro || "Falha no servidor intermédio.");
-        }
+        // Tempo de espera artificial para a barra "A guardar a tua descoberta..."
+        await new Promise(resolve => setTimeout(resolve, 1500));
 
-        return resultado;
+        const novoRegisto = {
+            id: `simulacao-${Date.now()}`,
+            dataSubmissao: new Date().toISOString(),
+            autor: nomeUtilizador,
+            dadosOriginais: itemOriginal,
+            avaliacao: dadosFormulario,
+            estado: "pendente"
+        };
+
+        // Gravação segura no navegador
+        let dbSimulacao = JSON.parse(localStorage.getItem('animalx_mock_database')) || [];
+        dbSimulacao.push(novoRegisto);
+        localStorage.setItem('animalx_mock_database', JSON.stringify(dbSimulacao));
+
+        console.log("✅ Registo arquivado na memória local!", novoRegisto);
+        return { sucesso: true, itemId: novoRegisto.id };
 
     } catch (erro) {
-        console.error('Erro de rede:', erro);
+        console.error('❌ Erro na simulação de submissão:', erro);
         return { sucesso: false, erro: erro.message };
     }
 }
 
-
 // =========================================
-// ATUALIZAÇÃO DO ITEM ORIGINAL (PATCH)
+// ATUALIZAÇÃO DO ITEM ORIGINAL (PATCH) - MODO SIMULAÇÃO
 // =========================================
 async function atualizarItemOriginal(itemOriginal, novaContagem, idColecaoDestino, dadosSubmissao) {
-    try {
-        console.log(`🔄 A pedir à nuvem para atualizar o Item Original ${itemOriginal['o:id']}...`);
-        
-        const resposta = await fetch('/.netlify/functions/atualizar-original', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ itemOriginal, novaContagem, idColecaoDestino, dadosSubmissao })
-        });
-
-        const resultado = await resposta.json();
-        if (resultado.sucesso) {
-            console.log(`✅ Item Original ${itemOriginal['o:id']} atualizado com sucesso!`);
-            return true;
-        } else {
-            throw new Error("O servidor intermédio rejeitou a atualização.");
-        }
-    } catch (erro) {
-        console.error('❌ Erro ao atualizar o item original:', erro);
-        return false;
-    }
+    console.log(`🛠️ Simulação: A ignorar o PATCH ao Item Original ${itemOriginal?.['o:id']} para não gerar erros de rede.`);
+    return true;
 }
 
 export {
