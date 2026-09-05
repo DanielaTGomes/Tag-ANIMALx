@@ -98,11 +98,14 @@ function injetarLegendaDinamica(item) {
 
 async function carregarEApresentarItem() {
     const elementoLegenda = document.getElementById('legenda-dinamica');
+    const modalLoading = document.getElementById('modal-carregamento');
+
+    if (modalLoading) modalLoading.style.setProperty('display', 'flex', 'important');
     if (elementoLegenda) elementoLegenda.innerHTML = "<em>A carregar dados do Omeka S...</em>";
 
     const item = await carregarItemAleatorio();
 
-    // 1. Verifica se os registos acabaram (O Novo Gatilho)
+
     if (item && item.fimDeRegistos) {
         if (elementoLegenda) elementoLegenda.innerHTML = "<b>Sem mais registos disponíveis.</b>";
         document.getElementById('modal-fim-registos').style.setProperty('display', 'flex', 'important');
@@ -112,16 +115,22 @@ async function carregarEApresentarItem() {
     // 2. Verifica se houve um erro crítico
     if (item && item.erroCritico) {
         if (elementoLegenda) elementoLegenda.innerHTML = `<span style='color:red;'><b>DIAGNÓSTICO:</b> ${item.erroCritico}</span>`;
+        if (modalLoading) modalLoading.style.setProperty('display', 'none', 'important');
         return;
     }
 
-    if (!item) return;
+    if (!item) {
+        if (modalLoading) modalLoading.style.setProperty('display', 'none', 'important');
+        return;
+    }
 
     itemAtivo = item;
     inicializarImagemIIIF(item);
     injetarLegendaDinamica(item);
+
+    if (modalLoading) modalLoading.style.setProperty('display', 'none', 'important');
 }
-// O TRUQUE: Tornamos a função global para que o index.html a consiga chamar!
+
 window.carregarItemANIMALx = carregarEApresentarItem;
 
 // ==========================================
@@ -170,7 +179,7 @@ function darBoasVindasEstagiario() {
     if (progresso.pontos === 0 && !jaDeuBoasVindas) {
         const nivelEstagiario = animalxConfig.niveis[0];
         
-        // Os textos de acolhimento que definimos para o primeiro nível
+        // OS TEUS NOVOS TEXTOS PERSONALIZADOS
         const titulo = "O teu primeiro passo na História!";
         const texto = "Acabaste de entrar no arquivo do Museu de Lisboa como Curador Estagiário. Começa a explorar as coleções e ajuda-nos a desvendar as primeiras representações de animais.";
         
@@ -178,10 +187,11 @@ function darBoasVindasEstagiario() {
             abrirModalNivel(titulo, texto, nivelEstagiario.imagem);
         }
         
-        // Regista na memória curta para não voltar a abrir enquanto o navegador estiver aberto
         sessionStorage.setItem('animalx_boas_vindas', 'sim');
     }
 }
+
+window.darBoasVindasEstagiario = darBoasVindasEstagiario;
 
 // ==========================================
 // VALIDAÇÃO CRUZADA (MULTI-PEER REVIEW)
@@ -235,7 +245,7 @@ function obterContagemValidacoes(item) {
  */
 export async function submeterFormularioReal() {
     try {
-        console.log('🚀 Iniciando submissão do formulário (Cópia Intermédia)...');
+        console.log(' Iniciando submissão do formulário (Cópia Intermédia)...');
         
         // ============================================
         // PASSO 1: RECOLHA DO NOME DO UTILIZADOR
@@ -309,7 +319,7 @@ export async function submeterFormularioReal() {
         const resultado = await submeterRegistoAnimal(dadosParaPainel, itemAtivo);
 
         if (resultado && resultado.sucesso) {
-            console.log(`✅ Sucesso! Cópia criada. A processar gamificação...`);
+            console.log(` Sucesso! Cópia criada. A processar gamificação...`);
 
             const teveAnimal = p1Resposta === 'SIM';
             const teveDescricao = descricaoPreenchida.trim().length > 0 && !isDescricaoNaoSei;
@@ -317,12 +327,39 @@ export async function submeterFormularioReal() {
 
             // Aplica os pontos
             const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, 0, colecaoItem, itemAtivo['o:id']);
-            console.log(`🏆 Pontos: +${infoJogo.pontosGanhos} | Coleção: ${colecaoItem}`);
+            console.log(` Pontos: +${infoJogo.pontosGanhos} | Coleção: ${colecaoItem}`);
 
-            // Dispara a Modal de Nível (se aplicável)
-            if (infoJogo.subiuDeNivel && typeof abrirModalNivel === 'function') {
-                let titulo = `Novo Nível Alcançado!`;
-                let texto = `Parabéns! Alcançaste os ${infoJogo.nivelAtual.limite} pontos e és agora um ${infoJogo.nivelAtual.titulo}.`;
+
+            if (infoJogo.nivelAtual.titulo === "Curador Estagiário") {
+                    console.log("Subida para Estagiário ignorada (já mostrada no onboarding).");
+                } else {
+                    let titulo = "";
+                    let texto = "";
+
+                
+                switch (infoJogo.nivelAtual.titulo) {
+                    case "Curador Estagiário":
+                        titulo = "O teu primeiro passo na História!";
+                        texto = "Acabaste de entrar no arquivo do Museu de Lisboa como Curador Estagiário. Começa a explorar as coleções e ajuda-nos a desvendar as primeiras representações de animais.";
+                        break;
+                    case "Investigador Assistente":
+                        titulo = "Foste promovido a Investigador Assistente!";
+                        texto = "Com um “olfato de detetive” cada vez mais apurado, estás a ajudar a reescrever a história da cidade, uma representação animal de cada vez. Continua o excelente trabalho!";
+                        break;
+                    case "Historiador Especialista":
+                        titulo = "Nenhum animal passa despercebido.";
+                        texto = "O estatuto de Historiador Especialista é mais que merecido. O teu trabalho de catalogação é agora uma peça fundamental para reconstituir o passado animal na cidade de Lisboa.";
+                        break;
+                    case "Curador Catedrático":
+                        titulo = "Um verdadeiro perito em História Animal!";
+                        texto = "Atingiste o grau máximo de Curador Catedrático. O teu nome ficará para sempre ligado às maiores descobertas sobre a História Animal de Lisboa.";
+                        break;
+                    default:
+                        titulo = `Novo Nível Alcançado!`;
+                        texto = `Parabéns! És agora um ${infoJogo.nivelAtual.titulo}.`;
+                }
+                
+                // Chama a função que desenha a modal no ecrã com os dados corretos
                 abrirModalNivel(titulo, texto, infoJogo.nivelAtual.imagem);
             }
 
@@ -332,7 +369,7 @@ export async function submeterFormularioReal() {
         }
 
     } catch (erro) {
-        console.error('❌ Erro ao submeter o formulário:', erro);
+        console.error('Erro ao submeter o formulário:', erro);
         return { sucesso: false, erro: erro.message || 'Erro inesperado ao submeter o formulário.' };
     }
 }

@@ -114,7 +114,7 @@
                                 <label class="option-card">
                                     <input type="radio" name="modo_participacao" value="registar" checked>
                                     <span class="custom-radio"></span>
-                                    <span class="option-text">Registar e Assinar as<br>minhas Descobertas</span>
+                                    <span class="option-text">Registar as<br>minhas Descobertas</span>
                                 </label>
 
                                 <label class="option-card">
@@ -219,14 +219,14 @@
                                     </p>
                                 </div>
                                 
-                                <!-- Coluna da Direita: Dropdown e Não Sei -->
+                                <!-- Coluna da Direita -->
                                 <div class="animalx-coluna-interacao">
                                     
                                     <div class="animalx-dropdown-pesquisa">
-                                        <!-- O input pesquisável com as tuas cores -->
+                                        <!-- O input pesquisável -->
                                         <input type="text" id="input-animal" class="animalx-input-roxo" placeholder="Selecionar" onkeyup="filtrarAnimais()" onclick="mostrarLista()">
                                         
-                                        <!-- A lista que construímos (podes colar aqui a tua lista completa de <li>) -->
+                                        <!-- Lista de opções -->
                                         <ul id="lista-animais" class="animalx-lista-opcoes">
                                             <li onclick="selecionarAnimal(this)">Abelha</li>
                                             <li onclick="selecionarAnimal(this)">Açor</li>
@@ -382,7 +382,7 @@
                                     <label class="animalx-radio-label">
                                         <input type="radio" name="animal_desconhecido" id="check-nao-sei" onclick="selecionarNaoSei()">
                                         <span class="animalx-radio-custom"></span>
-                                        Não sei
+                                        Outro/Não sei
                                     </label>
 
                                 </div>
@@ -544,6 +544,13 @@
 
         </div>
 
+    <div id="modal-carregamento" class="animalx-modal-overlay" style="display: none;">
+        <div class="animalx-loading-container">
+            <div class="animalx-spinner"></div>
+            <p class="animalx-loading-texto">A procurar representações no arquivo...</p>
+        </div>
+    </div>
+
     <div id="modal-submissao" class="animalx-modal-overlay" style="display: none;">
         <div class="animalx-modal-caixa">
             
@@ -554,7 +561,7 @@
             <h2 class="animalx-modal-titulo">Tens a certeza que desejas submeter o registo atual?</h2>
             
             <p class="animalx-modal-texto">
-                Não há respostas certas ou erradas! No entanto, para melhor apoiar o projeto na sua investigação, as respostas devem ser revistas antes de submeter o registo.
+                Não há respostas certas ou erradas! No entanto, para garantir a qualidade da tua investigação, deves rever as respostas antes de submeter o registo.
             </p>
 
             <div class="animalx-modal-botoes">
@@ -564,9 +571,7 @@
 
         </div>
     </div>
-    <!-- ==========================================
-        MODAL DE INSTRUÇÕES (GUIA TAG ANIMALx)
-    =========================================== -->
+
     <div id="modal-guia" class="animalx-modal-overlay">
         <div class="animalx-guia-caixa animalx-guia-caixa-inline">
             
@@ -583,7 +588,7 @@
                     <strong>Este guia é o teu manual de investigação!</strong>
                     </p>
                     <p class="animalx-guia-texto-inline">
-                        Durante a análise de um registo, o formulário vai fazer-te 6 perguntas chave sobre o que vês na representação. Sabemos que a História nem sempre é clara e as representações podem ser difíceis de interpretar.
+                        Em cada registo, vais encontrar 6 perguntas sobre o que vês na representação. Sabemos que a História nem sempre é clara e as representações de animais podem ser difíceis de interpretar.
                     </p>
                     <p class="animalx-guia-texto-inline">
                         Navega pelos próximos passos para descobrires dicas úteis e exemplos práticos de como deves observar a imagem e classificar cada um dos campos.
@@ -601,14 +606,14 @@
                 <div class="animalx-guia-col-esq animalx-guia-coluna-inline">
                     <h2 class="animalx-guia-titulo-inline">Passo 1: A primeira análise</h2>
                     <p class="animalx-guia-texto-inline">
-                        A tua primeira tarefa é observar a imagem com a máxima atenção. Nem todos os animais estão em grande destaque! Eles podem estar escondidos na paisagem, esculpidos num pequeno detalhe ou camuflados num padrão decorativo.
+                        A tua primeira tarefa é observar a imagem com a máxima atenção. Nem todos os animais estão em grande destaque! Podem estar escondidos na paisagem, esculpidos num pequeno detalhe ou camuflados num padrão decorativo.
                     </p>
                     <p class="animalx-guia-texto-inline">
                         <strong>E se não encontrares nenhum? Não faz mal!</strong><br>
-                        Nem todos os registos do acervo vão ter animais. Se analisares a imagem e tiveres a certeza de que não há nenhuma representação animal, basta selecionares a opção <strong>"NÃO"</strong>.
+                        Nem todos os registos do acervo têm animais. Se analisares a imagem e tiveres a certeza de que não há nenhuma representação animal, seleciona a opção <strong>"NÃO"</strong> na primeira pergunta.
                     </p>
                     <p class="animalx-guia-texto-inline animalx-guia-dica-inline">
-                        <strong>A TUA PONTUAÇÃO:</strong> Ao confirmares que uma imagem não tem animais, estás a ajudar-nos a limpar a base de dados. O sistema recompensa este rigor com <strong>10 Pontos</strong>! 
+                        <strong>A TUA PONTUAÇÃO:</strong> Ao confirmares que uma imagem não tem animais, estás a ajudar-nos a limpar a base de dados. O sistema recompensa este rigor com <strong>10 Pontos</strong>! Por outro lado, se identificares e caraterizares um animal representado, recebes a pontuação base de <strong>15 Pontos</strong>.
                     </p>
                 </div>
                 <div class="animalx-guia-col-dir">
@@ -618,17 +623,17 @@
 
             <div id="guia-passo-3" class="animalx-guia-passo animalx-guia-passo-inline" style="display: none;">
                 <div class="animalx-guia-col-esq animalx-guia-coluna-inline">
-                    <h2 class="animalx-guia-titulo-inline">Passo 2 e 3: Identificar e contar</h2>
+                    <h2 class="animalx-guia-titulo-inline">Passos 2 e 3: Identificar e contar</h2>
                     <p class="animalx-guia-texto-inline">
-                    O próximo passo é identificar o animal! Para isso, basta começares a <strong>escrever o nome do animal</strong> na barra de pesquisa e as opções correspondentes vão aparecer automaticamente.
+                    O próximo passo é identificar o animal! Basta começares a <strong>escrever o nome do animal</strong> na barra de pesquisa e as opções correspondentes vão aparecer automaticamente.
                     </p>
                     <p class="animalx-guia-texto-inline">
-                        <strong>O animal não está na lista ou tens dúvidas?</strong><br>
-                         Se não tens a certeza sobre o animal que identificaste ou a opção que queres não aparece, seleciona a opção <strong>"Outro/Não sei"</strong>.
+                        <strong>O animal que identificaste não está na lista ou tens dúvidas?</strong><br>
+                         Se o animal não aparece na lista ou não tens a certeza de que animal se trata, seleciona a opção <strong>"Outro/Não sei"</strong>.
                     </p>
                     <p class="animalx-guia-texto-inline">
                         <strong>Quantos animais da mesma espécie vês?</strong><br>
-                        Na pergunta seguinte, terás de indicar se a imagem mostra apenas um animal (Indivíduo) ou vários (Grupo). </p>
+                        Indica se a imagem contém apenas um animal (Indivíduo) ou vários (Grupo). </p>
                     <p class="animalx-guia-texto-inline animalx-guia-dica-inline">
                         <strong>ATENÇÃO:</strong> Esta contagem refere-se <strong>apenas à espécie que acabaste de identificar!</strong>  Se a imagem tiver também um cão e um gato, não te preocupes: terás a oportunidade de os identificar mais à frente.
                     </p>
@@ -642,10 +647,9 @@
                 <div class="animalx-guia-col-esq animalx-guia-coluna-inline">
                     <h2 class="animalx-guia-titulo-inline">Passo 4: Tipologias </h2>
                     <p class="animalx-guia-texto-inline">
-                    Neste passo, queremos saber <strong>como</strong> o animal se relaciona com o contexto representado. Nem todos os animais da mesma espécie têm a mesma tipologia! Por exemplo: um cão pode ser de <strong>Companhia</strong> se for um animal doméstico, de <strong>Trabalho</strong> se for um cão de caça, ou <strong>Selvagem</strong> se for um cão errante na rua.
-                    </p>
+                    Queremos saber <strong>como</strong> o animal se relaciona com o contexto representado. Para perceber a relação das pessoas com os outros animais criámos categorias de classificação que ajudam a nossa análise.
                     <p class="animalx-guia-texto-inline">
-                        <strong>As tuas opções de classificação:</strong><br>
+                        <strong>As tuas opções de classificação são:</strong><br>
                         <strong>Companhia:</strong> Animais que acompanham o ser humano.<br>
                         <strong>Selvagem:</strong> Animais não-domesticados, ou representados livremente na natureza.<br>
                         <strong>Consumo:</strong> Contextos em que a interação com o ser humano se destina à obtenção de matérias-primas animais (caça abatida, pastorícia, pesca, peles, etc.).<br>
@@ -655,7 +659,11 @@
                         <strong>Conhecimento/Saúde:</strong> Animais empregues na investigação científica, medicinal ou boticária.
                     </p>
                     <p class="animalx-guia-texto-inline animalx-guia-dica-inline">
-                        <strong>DICA:</strong> Se nenhuma destas categorias se aplicar ou a tipologia for impossível de determinar, seleciona "Não sei".
+                        <strong>DICA:</strong> Se nenhuma destas categorias se aplicar ou for difícil de determinar, seleciona "Não sei".
+                    </p>
+
+                     <p class="animalx-guia-texto-inline animalx-guia-dica-inline">
+                        <strong>NOTA:</strong> Nem todos os animais da mesma espécie têm a mesma tipologia! Por exemplo: um cão pode ser de <strong>Companhia</strong> se for um animal doméstico, de <strong>Trabalho</strong> se for um cão de caça, ou <strong>Selvagem</strong> se for um cão errante na rua.
                     </p>
                 </div>
                 <div class="animalx-guia-col-dir">
@@ -667,13 +675,13 @@
                 <div class="animalx-guia-col-esq animalx-guia-coluna-inline">
                     <h2 class="animalx-guia-titulo-inline">Passo 5: A Descrição</h2>
                     <p class="animalx-guia-texto-inline">
-                        Nesta pergunta, pedimos-te que faças uma <strong>breve descrição</strong> da representação do animal que estás a observar.
+                        Faz uma <strong>breve descrição</strong> da representação do animal que estás a observar.
                     </p>
                     <p class="animalx-guia-texto-inline">
                         Para nos ajudares a compreender melhor o contexto, deves descrever aspetos como a <strong>posição do animal</strong> na imagem ou no objeto, a sua <strong>relação com outros elementos</strong> da composição, ou até referir algum <strong>comportamento</strong> ou ação que o animal esteja a realizar.
                     </p>
                     <p class="animalx-guia-texto-inline animalx-guia-dica-inline">
-                        <strong>BÓNUS DE PONTUAÇÃO:</strong> As perguntas de identificação que acabaste de responder garantem-te um total de <strong>15 pontos base</strong>. Se preencheres a descrição e nos ajudares a enriquecer o registo com estes detalhes, recebes <strong> 10 pontos extra</strong>!
+                        <strong>BÓNUS DE PONTUAÇÃO:</strong> Ao preencheres a descrição estás a enriquecer oregisto com detalhes muito importantes para a investigação e recebes <strong> 10 pontos extra</strong>!
                     </p>
                 </div>
                 <div class="animalx-guia-col-dir">
@@ -685,16 +693,16 @@
                 <div class="animalx-guia-col-esq animalx-guia-coluna-inline">
                     <h2 class="animalx-guia-titulo-inline">Passo 6: Últimos detalhes</h2>
                     <p class="animalx-guia-texto-inline">
-                        Encontraste mais do que um animal na mesma representação? Perfeito! Na <strong>Pergunta 6</strong>, deves indicar se existe outra espécie presente na imagem.
+                        Encontraste mais do que um animal na mesma representação? Perfeito! Na <strong>Pergunta 6</strong>, deves indicar se existe outra espécie presente.
                     </p>
                     <p class="animalx-guia-texto-inline animalx-guia-dica-inline">
                         <strong>DUPLICA OS TEUS PONTOS:</strong> Se escolheres "SIM", o sistema guarda o animal anterior, mantém a imagem de base e <strong>duplica toda a pontuação acumulada</strong> a cada nova espécie identificada!
                     </p>
                     <p class="animalx-guia-texto-inline">
-                        <strong>O Caderno de Campo:</strong> A qualquer momento, podes consultar a tua evolução, os pontos totais e o número de animais identificados nas várias coleções através do teu <strong>Caderno de Campo</strong>.
+                        <strong>O Caderno de Campo:</strong> A qualquer momento, podes consultar a tua evolução, os pontos totais e o número de animais identificados nas várias coleções através do teu <strong>Caderno de Campo</strong>, no menu de navegação superior.
                     </p>
                     <p class="animalx-guia-texto-inline">
-                        <strong>Terminar Sessão:</strong> Tem em atenção que, ao terminares a sessão, a atividade regressa ao estado inicial, limpando os teus pontos e o caderno de campo para o próximo investigador.
+                        <strong>Terminar Sessão:</strong> Ao terminares a sessão, a atividade regressa ao estado inicial, os teus pontos são limpos e o caderno de campo abre de novopara o próximo jogador.
                     </p>
                 </div>
                 <div class="animalx-guia-col-dir">
@@ -733,9 +741,9 @@
             <h2 class="animalx-modal-titulo">SAIR DA SESSÃO TAG ANIMALx</h2>
             
             <p class="animalx-modal-texto">
-                Tem a certeza que quer terminar sessão?<br>
-                Após terminar sessão, a atividade volta ao estado inicial.<br>
-                Se quiseres guardar o registo desta sessão, deve fazê-lo<br>antes de terminar sessão.
+                Tens a certeza que queres terminar sessão?<br>
+                Após terminar sessão, a atividade volta ao estado inicial e perdes todos os dados do teu progresso.
+                
             </p>
 
             <div class="animalx-modal-botoes">
@@ -758,7 +766,7 @@
             <h2 class="animalx-modal-titulo" style="margin-bottom: 20px;">ATENÇÃO</h2>
             
             <p class="animalx-modal-texto" style="margin-bottom: 0;">
-                Campo por preencher.<br>
+                <STRONG>Campo por preencher</STRONG><br>
                 Deve selecionar pelo menos uma opção de resposta para continuar
             </p>
 
@@ -898,7 +906,7 @@
 
                         <!-- Lado Direito -->
                         <div class="animalx-pagina animalx-pagina-direita centralizada-em-breve">
-                            <h2 class="animalx-titulo-manuscrito grande">Mais coleções<br>em breve....</h2>
+                            <h2 class="animalx-titulo-manuscrito">Mais coleções<br>em breve....</h2>
                         </div>
                     </div>
                     <!-- Navegação do Caderno -->
@@ -966,7 +974,7 @@
             
             <p class="animalx-modal-texto" style="margin-bottom: 0;">
                 Campo por preencher.<br>
-                Para avançar deves autorizar a utilização das tuas respostas na iniciativa Tag Animalx após a leitura do Formulário de Consentimento e Privacidade.
+                Para avançar deves autorizar a utilização das tuas respostas na iniciativa Tag Animalx após a leitura da Nota de Privacidade.
             </p>
 
         </div>
@@ -986,7 +994,6 @@
             </p>
 
             <div class="animalx-modal-botoes">
-                <!-- Botões reaproveitados das tuas funções já existentes -->
                 <button class="animalx-btn-modal" onclick="abrirCaderno()">Ver Caderno</button>
                 <button class="animalx-btn-modal" onclick="confirmarSaida()">Terminar Sessão</button>
             </div>
