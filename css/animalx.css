@@ -1847,6 +1847,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 }
 
 
+
 /* =========================================
    MEDIA QUERIES (Responsividade Global)
 ========================================= */
@@ -1890,9 +1891,74 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 }
 
 /* 3. Mobile (até 768px) */
-/* =========================================
-   FORÇAR MODO PAISAGEM (Dispositivos Móveis)
-========================================= */
+@media screen and (max-width: 768px) {
+    /* Estrutura Global e Desativação do Zoom */
+    #animalx-gamification-wrapper {
+        padding: 1rem;
+        zoom: 1 !important;
+        transform: none !important;
+    }
+    .animalx-screen.active {
+        flex-direction: column;
+    }
+    .animalx-btn {
+        width: 100%;
+    }
+    .animalx-top-nav {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    h1 {
+        font-size: 1.5rem;
+    }
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    /* Homescreen */
+    .animalx-homescreen-content {
+        justify-content: flex-start;
+        padding-top: 2rem;
+    }
+    .animalx-logo-main {
+        max-width: 200px;
+    }
+    .animalx-title-main {
+        font-size: 2.5rem;
+    }
+    .animalx-subtitle-main {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .animalx-btn-home {
+        font-size: 2rem;
+        width: 100%;
+        max-width: 300px;
+        padding: 1rem 2rem;
+        border-radius: 1.5rem;
+    }
+
+    /* Formulário e Modais (Empilhamento) */
+    .animalx-conteiner-perguntas {
+        padding: 1rem !important;
+    }
+    .animalx-visualizador-imagem {
+        height: 250px !important;
+    }
+    .animalx-pergunta-row {
+        flex-direction: column !important;
+        text-align: center;
+        gap: 20px;
+    }
+    .animalx-modal-caixa > div {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+    .animalx-modal-caixa img#imagem-novo-nivel {
+        width: 150px !important;
+    }
+}
+/* 3. Mobile (até 768px) */
 
 /* Deteta telemóveis a ser usados na vertical (modo retrato) */
 @media screen and (max-width: 768px) and (orientation: portrait) {
@@ -1914,7 +1980,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
         overflow-y: auto !important;
     }
     
-    /* Podes opcionalmente mostrar um aviso a pedir para virar o telemóvel */
+    /* mostrar um aviso a pedir para virar o telemóvel */
     body::before {
         content: "Para jogar Tag ANIMALx, por favor vire o seu telemóvel na horizontal.";
         position: fixed;
