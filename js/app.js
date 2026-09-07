@@ -312,11 +312,13 @@ export async function submeterFormularioReal() {
             const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, 0, colecaoItem, itemAtivo['o:id']);
             console.log(` Pontos: +${infoJogo.pontosGanhos} | Coleção: ${colecaoItem}`);
 
+            
+
             if (typeof window.atualizarCadernoDeCampo === 'function') {
                 window.atualizarCadernoDeCampo();
             }
 
-
+        if (infoJogo.subiuDeNivel) {
             if (infoJogo.nivelAtual.titulo === "Curador Estagiário") {
                     console.log("Subida para Estagiário ignorada (já mostrada no onboarding).");
                 } else {
@@ -349,6 +351,7 @@ export async function submeterFormularioReal() {
                 // Chama a função que desenha a modal no ecrã com os dados corretos
                 abrirModalNivel(titulo, texto, infoJogo.nivelAtual.imagem);
             }
+        }
 
             return { sucesso: true, itemId: resultado.itemId };
         } else {
