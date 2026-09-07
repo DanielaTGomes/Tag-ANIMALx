@@ -1231,9 +1231,12 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 .animalx-conteiner-perguntas ul[class*="opcoes"],
 .animalx-conteiner-perguntas div[class*="dropdown"] > ul,
 .animalx-conteiner-perguntas .opcoes-dropdown {
-    max-height: 225px !important; 
+    max-height: 210px !important; 
     overflow-y: auto !important;  
-    z-index: 9999 !important; /* Garante que passa por cima de outros cartões */
+    z-index: 9999 !important;
+    position: absolute !important; 
+    width: 100% !important;
+    
 }
 /* =========================================
    RADIO BUTTON "NÃO SEI"
