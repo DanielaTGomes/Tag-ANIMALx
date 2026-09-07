@@ -267,67 +267,49 @@ function limparFormulario() {
 }
 
 async function confirmarSubmissao() {
-    fecharModal(); 
+    fecharModal();
 
-    // 1. RECOLHA DE DADOS E COLEÇÃO REAL
-    const temOutroAnimal = verificarRespostaSimP6();
-    const teveAnimal = !verificarRespostaNaoP1();
-    const descricao = document.getElementById('input-descricao')?.value || '';
-    const teveDescricao = descricao.trim().length > 0;
+    const modalLoading = document.getElementById('modal-carregamento');
+        if (modalLoading) {
+            modalLoading.style.setProperty('display', 'flex', 'important');
+            const textoLoading = modalLoading.querySelector('.animalx-loading-texto');
+            if (textoLoading) textoLoading.innerText = "A guardar a tua descoberta...";
+        }
+
+
+    console.log("⏳ A enviar dados para o Omeka S...");
     
-    // Testa o dobro dos pontos se houver mais animais
-    const multiplicador = temOutroAnimal ? 1 : 0;
-    
-    // Recupera a coleção real em vez de texto estático[cite: 4]
-    const colecaoItem = typeof identificarColecaoDoItem === 'function' && typeof window.itemAtivo !== 'undefined' 
-                        ? identificarColecaoDoItem(window.itemAtivo) 
-                        : null;
+    const resultado = await window.submeterFormularioReal();
 
-    if (typeof GestorGamificacao !== 'undefined') {
-        const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, multiplicador, colecaoItem);
-        
-        // 2. TEXTOS NARRATIVOS PERSONALIZADOS[cite: 5]
-        if (infoJogo.subiuDeNivel && typeof abrirModalNivel === 'function') {
-            let titulo = "";
-            let texto = "";
+    if (resultado && resultado.sucesso) {
+        const temOutroAnimal = verificarRespostaSimP6();
+        if (temOutroAnimal) {
+            console.log("-> [DUPLICAÇÃO]: A manter a imagem base e a regressar à Pergunta 2 para novo animal.");
+            limparCamposP2aP6();
+            irParaPasso(2);
+        } else {
+            console.log("-> [FINALIZADO]: A limpar formulário e a carregar novo registo do Omeka S.");
+            limparFormulario();
+            irParaPasso(1);
 
-            switch (infoJogo.nivelAtual.titulo) {
-                case "Investigador Assistente":
-                    titulo = "Foste promovido a Investigador Assistente!";
-                    texto = "Com um “olfato de detetive” cada vez mais apurado, estás a ajudar a reescrever a história da cidade, uma representação animal de cada vez. Continua o excelente trabalho!";
-                    break;
-                case "Historiador Especialista":
-                    titulo = "Nenhum animal passa despercebido.";
-                    texto = "O estatuto de Historiador Especialista é mais que merecido. O teu trabalho de catalogação é agora uma peça fundamental para reconstituir o passado animal na cidade de Lisboa.";
-                    break;
-                case "Curador Catedrático":
-                    titulo = "Um verdadeiro perito em História Animal!";
-                    texto = "Atingiste o grau máximo de Curador Catedrático. O teu nome ficará para sempre ligado às maiores descobertas sobre a História Animal de Lisboa.";
-                    break;
-                default:
-                    titulo = `Novo Nível Alcançado!`;
-                    texto = `Parabéns! És agora um ${infoJogo.nivelAtual.titulo}.`;
+
+    if (modalLoading) {
+                const textoLoading = modalLoading.querySelector('.animalx-loading-texto');
+                if (textoLoading) textoLoading.innerText = "A procurar representações no arquivo...";
             }
-            abrirModalNivel(titulo, texto, infoJogo.nivelAtual.imagem);
-        }
-    }
 
-    // 3. FLUXO DE NAVEGAÇÃO E CARREGAMENTO REAL[cite: 8]
-    if (temOutroAnimal) {
-        limparCamposP2aP6(); // Limpa P2 a P6 para o novo loop
-        irParaPasso(2);
-    } else {
-        limparFormulario(); // Limpa tudo
-        irParaPasso(1);
-        
-        // Aciona o carregamento real do sistema no fim do ciclo[cite: 8]
-        if (typeof window.carregarItemANIMALx === 'function') {
-            await window.carregarItemANIMALx();
-        } else if (typeof carregarEApresentarItem === 'function') {
-            await carregarEApresentarItem();
+            if (typeof window.carregarItemANIMALx === 'function') {
+                await window.carregarItemANIMALx();
+                // A função carregarItemANIMALx já desliga o modal no fim!
+            }
         }
+    } else {
+        // Se houver erro, desliga o loading para mostrar o alerta
+        if (modalLoading) modalLoading.style.setProperty('display', 'none', 'important');
+        alert("Atenção: Houve uma falha ao enviar o registo. Verifica a tua ligação e tenta novamente.");
     }
 }
+
 // =========================================
 // MODAIS DE RECOMPENSA E CONSENTIMENTO
 // =========================================
