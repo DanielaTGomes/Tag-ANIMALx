@@ -294,6 +294,27 @@ function limparCamposP2aP6() {
     document.querySelectorAll('.animalx-lista-opcoes').forEach(lista => lista.style.display = 'none');
 }
 
+
+function limparCamposP2aP6Simulacao() {
+    const idInputs = ['input-animal', 'input-quantidade', 'input-funcao', 'input-descricao'];
+    idInputs.forEach(id => {
+        let el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+
+    const idRadios = ['check-nao-sei', 'check-nao-sei-p3', 'check-nao-sei-p4', 'check-nao-sei-p5'];
+    idRadios.forEach(id => {
+        let radio = document.getElementById(id);
+        if (radio) radio.checked = false;
+    });
+
+    const containerP6 = document.getElementById('opcoes-p6');
+    if (containerP6) {
+        let btns = containerP6.querySelectorAll('.animalx-btn-opcao');
+        btns.forEach(btn => btn.classList.remove('selecionado'));
+    }
+}
+
 function limparFormulario() {
     limparCamposP2aP6();
     const containerP1 = document.getElementById('opcoes-p1');
@@ -303,47 +324,30 @@ function limparFormulario() {
     }
 }
 
+// Interceção da submissão na simulação
 async function confirmarSubmissao() {
-    fecharModal();
-
-    const modalLoading = document.getElementById('modal-carregamento');
-        if (modalLoading) {
-            modalLoading.style.setProperty('display', 'flex', 'important');
-            const textoLoading = modalLoading.querySelector('.animalx-loading-texto');
-            if (textoLoading) textoLoading.innerText = "A guardar a tua descoberta...";
-        }
-
-
-    console.log("⏳ A enviar dados para o Omeka S...");
+    fecharModal(); // Esconde o modal de segurança
     
-    const resultado = await window.submeterFormularioReal();
-
-    if (resultado && resultado.sucesso) {
-        const temOutroAnimal = verificarRespostaSimP6();
-        if (temOutroAnimal) {
-            console.log("-> [DUPLICAÇÃO]: A manter a imagem base e a regressar à Pergunta 2 para novo animal.");
-            limparCamposP2aP6();
-            irParaPasso(2);
-        } else {
-            console.log("-> [FINALIZADO]: A limpar formulário e a carregar novo registo do Omeka S.");
-            limparFormulario();
-            irParaPasso(1);
-
-
-    if (modalLoading) {
-                const textoLoading = modalLoading.querySelector('.animalx-loading-texto');
-                if (textoLoading) textoLoading.innerText = "A procurar representações no arquivo...";
-            }
-
-            if (typeof window.carregarItemANIMALx === 'function') {
-                await window.carregarItemANIMALx();
-                // A função carregarItemANIMALx já desliga o modal no fim!
-            }
-        }
+    // Verifica se o botão 'SIM' da Pergunta 6 está selecionado
+    const temOutroAnimal = verificarRespostaSimP6(); // (Usa a tua função existente ou cria uma similar)
+    
+    if (temOutroAnimal) {
+        console.log("-> [SIMULAÇÃO]: Manter a imagem base e regressar à Pergunta 2.");
+        
+        // Limpa os inputs antigos
+        limparCamposP2aP6Simulacao();
+        
+        // Força a navegação de volta para a identificação do novo animal
+        irParaPasso(2);
+        
     } else {
-        // Se houver erro, desliga o loading para mostrar o alerta
-        if (modalLoading) modalLoading.style.setProperty('display', 'none', 'important');
-        alert("Atenção: Houve uma falha ao enviar o registo. Verifica a tua ligação e tenta novamente.");
+        console.log("-> [SIMULAÇÃO]: Concluir e saltar para novo registo.");
+        
+        // Limpa tudo (Perguntas 1 a 6) e recomeça do início
+        limparFormulario();
+        irParaPasso(1);
+        
+        // (Aqui viria o carregamento de uma nova imagem)
     }
 }
 

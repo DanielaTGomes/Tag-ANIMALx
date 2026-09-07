@@ -456,6 +456,8 @@ window.atualizarCadernoDeCampo = function() {
     }
 };
 
+
+
 // ==========================================
 // INICIALIZAÇÃO GERAL DO JOGO
 // ==========================================
