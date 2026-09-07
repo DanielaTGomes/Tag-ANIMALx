@@ -46,57 +46,49 @@ export const GestorGamificacao = {
     },
 
     obterNivelAtual: function(pontosTotais) {
-        const niveisInvertidos = [...animalxConfig.niveis].reverse();
-        for (let nivel of niveisInvertidos) {
-            if (pontosTotais >= nivel.limite) return nivel;
-        }
-        return animalxConfig.niveis[0];
-    },
-
-registarSubmissao(teveAnimal, teveDescricao, multiplicadorEspecie, colecaoSubmetida, itemId = null) {
-        
-        let pontosGanhos = 0;
-        let progresso = this.carregarProgresso(); // Carrega o progresso logo aqui
-        
-        // 1. CALCULAR PONTOS E SOMAR ANIMAIS
-        if (!teveAnimal) {
-            pontosGanhos = 10; // Triagem Negativa
-        } else {
-            pontosGanhos = 15; // Identificação Base
-            if (teveDescricao) {
-                pontosGanhos += 10; // Bónus de Descrição
+    const niveisInvertidos = [...animalxConfig.niveis].sort((a, b) => b.limite - a.limite);
+            for (let nivel of niveisInvertidos) {
+                if (pontosTotais >= nivel.limite) return nivel;
             }
-            
-            // ==========================================
-            // A LINHA RESTAURADA: Soma +1 Animal Identificado!
-            // ==========================================
+            return animalxConfig.niveis[0];
+        },
+
+    // Substitui dentro do teu GestorGamificacao no gamification.js
+    registarSubmissao: function(teveAnimal, teveDescricao, multiplicadorEspecie, colecaoSubmetida, itemId = null) {
+        let progresso = this.carregarProgresso();
+        
+        // 1. O GATILHO INFALÍVEL: Memoriza o nível atual ANTES da matemática
+        let tituloNivelAntigo = this.obterNivelAtual(progresso.pontos).titulo;
+
+        let pontosGanhos = 0;
+        
+        // 2. MATEMÁTICA E GAMIFICAÇÃO
+        if (!teveAnimal) {
+            pontosGanhos = animalxConfig.pontos.registo_sem_animal;
+        } else {
+            pontosGanhos = animalxConfig.pontos.base_identificacao;
+            if (teveDescricao) pontosGanhos += animalxConfig.pontos.bonus_descricao;
             progresso.animaisIdentificados = (progresso.animaisIdentificados || 0) + 1;
         }
 
-        // Aplica a duplicação se for espécie extra (O "Combo")
         if (multiplicadorEspecie > 0) {
-            pontosGanhos = pontosGanhos * (2 ** multiplicadorEspecie); 
+            pontosGanhos = pontosGanhos * (animalxConfig.pontos.multiplicador_especie_extra ** multiplicadorEspecie); 
         }
 
-        // 2. ATUALIZAR A MEMÓRIA DO JOGADOR
-        // O utilizador ganha SEMPRE os pontos pelo esforço
         progresso.pontos += pontosGanhos;
 
-        // 3. VERIFICAÇÃO DE ID: Este item já subiu a barra de coleção nesta sessão?
-        if (!progresso.idsItensTratados) {
-            progresso.idsItensTratados = []; // Cria a lista de memória se não existir
-        }
+        // 3. ESTATÍSTICAS E COLEÇÕES (Totalmente Restaurado!)
+        if (!progresso.idsItensTratados) progresso.idsItensTratados = [];
 
         let itemJaFoiContado = false;
         if (itemId) {
             if (progresso.idsItensTratados.includes(itemId)) {
-                itemJaFoiContado = true; // Já vimos este item
+                itemJaFoiContado = true;
             } else {
-                progresso.idsItensTratados.push(itemId); // Memoriza o item novo
+                progresso.idsItensTratados.push(itemId);
             }
         }
 
-        // 4. ESTATÍSTICAS: Só soma +1 nas coleções se o item for novo!
         if (!itemJaFoiContado) {
             progresso.registosAnalisados = (progresso.registosAnalisados || 0) + 1;
             
@@ -105,22 +97,19 @@ registarSubmissao(teveAnimal, teveDescricao, multiplicadorEspecie, colecaoSubmet
                 if (progresso.colecoes[colecaoSubmetida] === undefined) {
                     progresso.colecoes[colecaoSubmetida] = 0;
                 }
-                
-                // Soma +1 ao registo tratado daquela tipologia
                 progresso.colecoes[colecaoSubmetida] += 1;
             }
         }
 
-        // 5. GUARDAR E VERIFICAR CARREIRA
-        this.guardarProgresso(progresso);
+        // 4. ATUALIZAÇÃO DE ESTADO
         let nivelNovo = this.obterNivelAtual(progresso.pontos);
-        let subiuDeNivel = false;
+        let subiuDeNivel = tituloNivelAntigo !== nivelNovo.titulo;
 
-        if (progresso.nivelAtual !== nivelNovo.titulo) {
+        if (subiuDeNivel) {
             progresso.nivelAtual = nivelNovo.titulo;
-            this.guardarProgresso(progresso);
-            subiuDeNivel = true;
         }
+
+        this.guardarProgresso(progresso);
 
         return {
             pontosGanhos: pontosGanhos,

@@ -327,28 +327,26 @@ function limparFormulario() {
 async function confirmarSubmissao() {
     fecharModal(); 
     
-    // 1. Delega a gravação e a gamificação para o app.js
+    // Aciona a lógica pesada que já tens no app.js (Taxonomia, Gravação Local)
     const resultado = await window.submeterFormularioReal();
     
     if (resultado && resultado.sucesso) {
         const temOutroAnimal = verificarRespostaSimP6(); 
         
         if (temOutroAnimal) {
-            console.log("-> [SIMULAÇÃO]: Manter a imagem base e regressar à Pergunta 2.");
             limparCamposP2aP6Simulacao();
             irParaPasso(2);
         } else {
-            console.log("-> [SIMULAÇÃO]: Fim de ciclo. Limpar e carregar nova imagem.");
             limparFormulario();
             irParaPasso(1);
             
-            // 2. Aciona o sorteio real do teu JSON mock
+            // Pede ao Controlador para sortear nova imagem, injetar legenda e inicializar o IIIF
             if (typeof window.carregarItemANIMALx === 'function') {
                 await window.carregarItemANIMALx();
             }
         }
     } else {
-        alert("Atenção: Houve uma falha ao simular a submissão. Tenta novamente.");
+        alert("Falha na submissão do simulador.");
     }
 }
 
