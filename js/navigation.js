@@ -295,7 +295,25 @@ function limparCamposP2aP6() {
 }
 
 
+function limparCamposP2aP6Simulacao() {
+    const idInputs = ['input-animal', 'input-quantidade', 'input-funcao', 'input-descricao'];
+    idInputs.forEach(id => {
+        let el = document.getElementById(id);
+        if (el) el.value = '';
+    });
 
+    const idRadios = ['check-nao-sei', 'check-nao-sei-p3', 'check-nao-sei-p4', 'check-nao-sei-p5'];
+    idRadios.forEach(id => {
+        let radio = document.getElementById(id);
+        if (radio) radio.checked = false;
+    });
+
+    const containerP6 = document.getElementById('opcoes-p6');
+    if (containerP6) {
+        let btns = containerP6.querySelectorAll('.animalx-btn-opcao');
+        btns.forEach(btn => btn.classList.remove('selecionado'));
+    }
+}
 
 function limparFormulario() {
     limparCamposP2aP6();
@@ -306,33 +324,73 @@ function limparFormulario() {
     }
 }
 
-
+// Interceção da submissão na simulação
 async function confirmarSubmissao() {
-    fecharModal(); 
+    fecharModal(); // Esconde o modal de segurança
+
+    // ==========================================
+    // 🏆 INJEÇÃO DE PONTOS NO SIMULADOR
+    // ==========================================
+    // Lê o estado das perguntas para atribuir os pontos do jogo
+    const temOutroAnimal = verificarRespostaSimP6();
+    const teveAnimal = !verificarRespostaNaoP1(); 
+    const descricao = document.getElementById('input-descricao')?.value || '';
+    const teveDescricao = descricao.trim().length > 0;
     
-    // 1. Invoca a recolha de dados e a gamificação no app.js
-    const resultado = await window.submeterFormularioReal();
+    // Na simulação, assumimos 1 animal extra se a P6 for SIM para testar o duplicador
+    const multiplicador = temOutroAnimal ? 1 : 0;
     
-    if (resultado && resultado.sucesso) {
-        const temOutroAnimal = verificarRespostaSimP6(); 
+    if (typeof GestorGamificacao !== 'undefined') {
+        const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, multiplicador, 'simulacao');
         
-        if (temOutroAnimal) {
-            console.log("-> [SIMULAÇÃO]: Manter a imagem base e regressar à Pergunta 2.");
-            limparCamposP2aP6Simulacao();
-            irParaPasso(2);
-        } else {
-            console.log("-> [SIMULAÇÃO]: Concluir e saltar para novo registo.");
-            limparFormulario();
-            irParaPasso(1);
-            
-            // 2. Dispara a rotação para uma nova imagem (via api.js)
-            if (typeof window.carregarItemANIMALx === 'function') {
-                await window.carregarItemANIMALx();
-            }
+        console.log(`🏆 [SIMULADOR] Pontos Ganhos: ${infoJogo.pontosGanhos} | Total: ${infoJogo.totalPontos}`);
+        
+        // Testa o disparo do Modal de Nível caso o utilizador ultrapasse um marco (ex: 100 pontos)
+        if (infoJogo.subiuDeNivel && typeof abrirModalNivel === 'function') {
+            abrirModalNivel("Novo Nível Alcançado!", `Alcançaste os ${infoJogo.nivelAtual.limite} pontos e és agora um ${infoJogo.nivelAtual.titulo}.`, infoJogo.nivelAtual.imagem);
         }
-    } else {
-        alert("Falha na submissão do simulador.");
     }
+
+    // ==========================================
+    // 🔄 LÓGICA DE NAVEGAÇÃO DA SIMULAÇÃO
+    // ==========================================
+    if (temOutroAnimal) {
+        console.log("-> [SIMULAÇÃO]: A manter a imagem base e a regressar à Pergunta 2.");
+        limparCamposP2aP6();
+        irParaPasso(2);
+    } else {
+        console.log("-> [SIMULAÇÃO]: Finalizado. Novo registo e regresso à Pergunta 1.");
+        limparFormulario();
+        irParaPasso(1);
+        
+        // Simulação do carregamento de um novo registo
+        simularCarregamentoRegisto();
+    }
+}
+
+// Simulação assíncrona do tempo de carregamento da imagem e da legenda
+async function simularCarregamentoRegisto() {
+    const modalLoading = document.getElementById('modal-carregamento');
+    const legendaDinamica = document.getElementById('legenda-dinamica');
+    
+    if (modalLoading) {
+        modalLoading.style.setProperty('display', 'flex', 'important');
+        const textoLoading = modalLoading.querySelector('.animalx-loading-texto');
+        if (textoLoading) textoLoading.innerText = "A procurar representações no arquivo...";
+    }
+
+    return new Promise(resolve => {
+        setTimeout(() => {
+            if (modalLoading) modalLoading.style.setProperty('display', 'none', 'important');
+            
+            // Simula a injeção da nova legenda
+            const numAleatorio = Math.floor(Math.random() * 800) + 100;
+            if (legendaDinamica) {
+                legendaDinamica.innerHTML = `<strong>Representação ${numAleatorio}</strong>. Acervo simulado (Século XIX).`;
+            }
+            resolve(true);
+        }, 1500); // 1.5s de atraso falso para simular uma rede lenta
+    });
 }
 
 // =========================================
