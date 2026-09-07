@@ -1890,75 +1890,47 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 }
 
 /* 3. Mobile (até 768px) */
-@media screen and (max-width: 768px) {
-    /* Estrutura Global e Desativação do Zoom */
+/* =========================================
+   FORÇAR MODO PAISAGEM (Dispositivos Móveis)
+========================================= */
+
+/* Deteta telemóveis a ser usados na vertical (modo retrato) */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    
+    /* Roda TODO o teu jogo 90 graus à força */
     #animalx-gamification-wrapper {
-        padding: 1rem;
-        zoom: 1 !important;
-        transform: none !important;
-    }
-    .animalx-screen.active {
-        flex-direction: column;
-    }
-    .animalx-btn {
-        width: 100%;
-    }
-    .animalx-top-nav {
-            right: 0 !important;
-            left: 0 !important;
-            bottom: 15px !important;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-    h1 {
-        font-size: 1.5rem;
-    }
-    h2 {
-        font-size: 1.2rem;
-    }
-
-    /* Homescreen */
-    .animalx-homescreen-content {
-        justify-content: flex-start;
-        padding-top: 2rem;
+        transform: rotate(-90deg) !important;
+        transform-origin: left top !important;
         
+        /* Ajusta as dimensões para espelhar a altura na largura */
+        width: 100vh !important;
+        height: 100vw !important;
+        
+        /* Centra a interface no ecrã rodado */
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        
+        overflow-y: auto !important;
     }
-    .animalx-logo-main {
-        max-width: 200px;
-    }
-    .animalx-title-main {
-        font-size: 2.5rem;
-    }
-    .animalx-subtitle-main {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    .animalx-btn-home {
-        font-size: 2rem;
-        width: 100%;
-        max-width: 300px;
-        padding: 1rem 2rem;
-        border-radius: 1.5rem;
-    }
-
-    /* Formulário e Modais (Empilhamento) */
-    .animalx-conteiner-perguntas {
-        padding: 1rem !important;
-    }
-    .animalx-pergunta-row {
-        flex-direction: column !important;
+    
+    /* Podes opcionalmente mostrar um aviso a pedir para virar o telemóvel */
+    body::before {
+        content: "Para jogar Tag ANIMALx, por favor vire o seu telemóvel na horizontal.";
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(90deg);
+        z-index: 999999;
+        font-family: var(--animalx-primary-font);
+        color: #fff;
+        background: rgba(108, 117, 183, 0.95); /* A tua cor roxa */
+        padding: 20px;
+        border-radius: 10px;
         text-align: center;
-        gap: 20px;
-    }
-    .animalx-modal-caixa > div {
-        flex-direction: column !important;
-        text-align: center !important;
-    }
-    .animalx-modal-caixa img#imagem-novo-nivel {
-        width: 150px !important;
+        width: 80%;
     }
 }
-
 /* Estilos extraidos do HTML */
 .animalx-wizard-container {
     position: relative !important;
