@@ -136,6 +136,7 @@ window.carregarItemANIMALx = carregarEApresentarItem;
 // ==========================================
 // LEITURA GLOBAL DE TOTAIS DAS COLEÇÕES
 // ==========================================
+
 window.totaisColecoes = { azulejaria: 0, ceramica: 0, pintura: 0, gravura: 0, escultura: 0, desenho: 0 };
 
 async function calcularTotaisColecoes() {
