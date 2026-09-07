@@ -1225,6 +1225,17 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     color: #000;
 }
 
+#lista-animais,
+#lista-funcao,
+#lista-opcoes-tipologias {
+    max-height: 185px !important; /* Corta de forma limpa após a 5ª opção */
+    overflow-y: auto !important;  
+    position: absolute !important; 
+    z-index: 99999 !important;     
+    border-radius: 0 0 5px 5px !important; 
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.15) !important; /* Adiciona uma sombra para destacar do fundo */
+}
+
 /* =========================================
    RADIO BUTTON "NÃO SEI"
 ========================================= */
