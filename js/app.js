@@ -139,35 +139,17 @@ window.carregarItemANIMALx = carregarEApresentarItem;
 window.totaisColecoes = { azulejaria: 0, ceramica: 0, pintura: 0, gravura: 0, escultura: 0, desenho: 0 };
 
 async function calcularTotaisColecoes() {
-    const totaisGuardados = sessionStorage.getItem('animalx_totais_colecoes');
-    if (totaisGuardados) {
-        window.totaisColecoes = JSON.parse(totaisGuardados);
-        return;
-    }
-
-    console.log("🔍 A varrer o Conjunto de Itens 1 via Serverless...");
+    console.log("🔍 A varrer o Mock DB para contar coleções (Ignorando memória antiga)...");
     
-    try {
-        // Pede os 2000 itens à função da Netlify
-        const resposta = await fetch('/.netlify/functions/obter-item?per_page=2000');
-        if (resposta.ok) {
-            const itens = await resposta.json();
-            
-            itens.forEach(item => {
-                const colecao = identificarColecaoDoItem(item);
-                if (colecao && window.totaisColecoes[colecao] !== undefined) {
-                    window.totaisColecoes[colecao] += 1;
-                }
-            });
-            
-            sessionStorage.setItem('animalx_totais_colecoes', JSON.stringify(window.totaisColecoes));
-            console.log("📊 Contagem global finalizada:", window.totaisColecoes);
-        }
-    } catch (erro) {
-        console.error("❌ Erro ao tentar contar as coleções:", erro);
+    // Invoca o cálculo local que criámos no api.js e atualiza imediatamente
+    if (typeof window.calcularTotaisColecoesSimulacao === 'function') {
+        window.totaisColecoes = window.calcularTotaisColecoesSimulacao();
+        
+        console.log("📊 Contagem global finalizada:", window.totaisColecoes);
+    } else {
+        console.error("❌ A função de simulação calcularTotaisColecoesSimulacao não foi encontrada!");
     }
 }
-
 // ==========================================
 // ACOLHIMENTO: CURADOR ESTAGIÁRIO
 // ==========================================

@@ -228,6 +228,7 @@
                                         
                                         <!-- Lista de opções -->
                                         <ul id="lista-animais" class="animalx-lista-opcoes">
+                                            <li onclick="selecionarAnimal(this)">Outro</li>
                                             <li onclick="selecionarAnimal(this)">Abelha</li>
                                             <li onclick="selecionarAnimal(this)">Açor</li>
                                             <li onclick="selecionarAnimal(this)">Águia</li>
@@ -375,7 +376,13 @@
                                             <li onclick="selecionarAnimal(this)">Zebra-comum</li>
                                             <li onclick="selecionarAnimal(this)">Zebu</li>
                                             <li onclick="selecionarAnimal(this)">Zebro</li>
+
                                         </ul>
+                                    </div>
+
+                                    <div id="grupo-outro-animal" class="animalx-grupo-descricao" style="display:none; margin-top: 15px;">
+                                        <label class="animalx-label-simples">Escrever o nome do animal...</label>
+                                        <input type="text" id="input-outro-animal" class="animalx-textarea-branca" placeholder="Escreve o nome do animal..." style="min-height: 45px !important; padding: 10px !important; width: 100%; box-sizing: border-box;">
                                     </div>
 
                                     <!-- O botão de rádio "Não Sei" -->

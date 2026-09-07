@@ -124,8 +124,45 @@ function acaoBotaoNao(botao, grupoId) { selecionarOpcao(botao, grupoId); }
 // DROPDOWNS E CAIXAS DE PESQUISA
 // =========================================
 function mostrarLista() { document.getElementById('lista-animais').style.display = 'block'; }
-function selecionarNaoSei() { document.getElementById('input-animal').value = ''; document.getElementById('lista-animais').style.display = 'none'; }
-function selecionarAnimal(item) { document.getElementById('input-animal').value = item.innerText; document.getElementById('lista-animais').style.display = 'none'; document.getElementById('check-nao-sei').checked = false; }
+function selecionarNaoSei() {
+    let input = document.getElementById("input-animal");
+    
+    if (input) input.value = ""; 
+    
+  
+    let lista = document.getElementById("lista-animais");
+    if (lista) lista.style.display = "none";
+    
+
+    let grupoOutro = document.getElementById("grupo-outro-animal");
+    let inputOutro = document.getElementById("input-outro-animal");
+    if (grupoOutro) grupoOutro.style.display = "none";
+    if (inputOutro) inputOutro.value = "";
+}
+function selecionarAnimal(itemClicado) {
+    let inputPrincipal = document.getElementById("input-animal"); 
+    let grupoOutro = document.getElementById("grupo-outro-animal"); // Puxa o grupo inteiro
+    let inputOutro = document.getElementById("input-outro-animal");
+    
+    let valorEscolhido = itemClicado.innerText;
+    if (inputPrincipal) inputPrincipal.value = valorEscolhido;
+    
+    let lista = document.getElementById("lista-animais");
+    if (lista) lista.style.display = "none";
+
+    if (grupoOutro) {
+        if (valorEscolhido.includes("Outro")) {
+            grupoOutro.style.display = "flex";
+            if (inputOutro) inputOutro.focus();
+        } else {
+            grupoOutro.style.display = "none";
+            if (inputOutro) inputOutro.value = ""; 
+        }
+    }
+
+    let radioNaoSei = document.getElementById("check-nao-sei");
+    if (radioNaoSei) radioNaoSei.checked = false;
+}
 function filtrarAnimais() { 
     const input = document.getElementById('input-animal'); 
     const lista = document.getElementById('lista-animais'); 

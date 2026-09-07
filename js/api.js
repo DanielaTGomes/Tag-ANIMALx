@@ -139,10 +139,46 @@ async function atualizarItemOriginal(itemOriginal, novaContagem, idColecaoDestin
     return true;
 }
 
+// ==========================================
+// EXTRATOR DE TOTAIS PARA MODO SIMULAÇÃO
+// ==========================================
+window.calcularTotaisColecoesSimulacao = function() {
+    const totais = { azulejaria: 0, ceramica: 0, pintura: 0, gravura: 0, escultura: 0, desenho: 0 };
+    
+    // Dicionário de siglas presente nos inventários
+    const mapaSiglas = {
+        'AZU': 'azulejaria',
+        'CER': 'ceramica',
+        'PIN': 'pintura',
+        'GRA': 'gravura',
+        'ESC': 'escultura',
+        'DES': 'desenho'
+    };
+
+    // Percorre os 100 itens da nossa base de testes
+    ANIMALX_MOCK_DB.forEach(item => {
+        // Tenta ler o número de inventário
+        const metadado = item['dcterms:identifier'];
+        const numInventario = Array.isArray(metadado) ? metadado[0]['@value'] : (metadado || '');
+
+        if (numInventario) {
+            for (const sigla in mapaSiglas) {
+                if (numInventario.includes(sigla)) {
+                    totais[mapaSiglas[sigla]] += 1;
+                    break; 
+                }
+            }
+        }
+    });
+    
+    return totais;
+};
+
 export {
     carregarItemAleatorio,
     obterValorMetadado,
     prepararDadosDoItem,
     submeterRegistoAnimal,
-    atualizarItemOriginal
+    atualizarItemOriginal,
+    calcularTotaisColecoesSimulacao
 };
