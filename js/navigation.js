@@ -295,25 +295,7 @@ function limparCamposP2aP6() {
 }
 
 
-function limparCamposP2aP6Simulacao() {
-    const idInputs = ['input-animal', 'input-quantidade', 'input-funcao', 'input-descricao'];
-    idInputs.forEach(id => {
-        let el = document.getElementById(id);
-        if (el) el.value = '';
-    });
 
-    const idRadios = ['check-nao-sei', 'check-nao-sei-p3', 'check-nao-sei-p4', 'check-nao-sei-p5'];
-    idRadios.forEach(id => {
-        let radio = document.getElementById(id);
-        if (radio) radio.checked = false;
-    });
-
-    const containerP6 = document.getElementById('opcoes-p6');
-    if (containerP6) {
-        let btns = containerP6.querySelectorAll('.animalx-btn-opcao');
-        btns.forEach(btn => btn.classList.remove('selecionado'));
-    }
-}
 
 function limparFormulario() {
     limparCamposP2aP6();
@@ -324,30 +306,32 @@ function limparFormulario() {
     }
 }
 
-// Interceção da submissão na simulação
+
 async function confirmarSubmissao() {
-    fecharModal(); // Esconde o modal de segurança
+    fecharModal(); 
     
-    // Verifica se o botão 'SIM' da Pergunta 6 está selecionado
-    const temOutroAnimal = verificarRespostaSimP6(); // (Usa a tua função existente ou cria uma similar)
+    // 1. Invoca a recolha de dados e a gamificação no app.js
+    const resultado = await window.submeterFormularioReal();
     
-    if (temOutroAnimal) {
-        console.log("-> [SIMULAÇÃO]: Manter a imagem base e regressar à Pergunta 2.");
+    if (resultado && resultado.sucesso) {
+        const temOutroAnimal = verificarRespostaSimP6(); 
         
-        // Limpa os inputs antigos
-        limparCamposP2aP6Simulacao();
-        
-        // Força a navegação de volta para a identificação do novo animal
-        irParaPasso(2);
-        
+        if (temOutroAnimal) {
+            console.log("-> [SIMULAÇÃO]: Manter a imagem base e regressar à Pergunta 2.");
+            limparCamposP2aP6Simulacao();
+            irParaPasso(2);
+        } else {
+            console.log("-> [SIMULAÇÃO]: Concluir e saltar para novo registo.");
+            limparFormulario();
+            irParaPasso(1);
+            
+            // 2. Dispara a rotação para uma nova imagem (via api.js)
+            if (typeof window.carregarItemANIMALx === 'function') {
+                await window.carregarItemANIMALx();
+            }
+        }
     } else {
-        console.log("-> [SIMULAÇÃO]: Concluir e saltar para novo registo.");
-        
-        // Limpa tudo (Perguntas 1 a 6) e recomeça do início
-        limparFormulario();
-        irParaPasso(1);
-        
-        // (Aqui viria o carregamento de uma nova imagem)
+        alert("Falha na submissão do simulador.");
     }
 }
 

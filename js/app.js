@@ -312,6 +312,10 @@ export async function submeterFormularioReal() {
             const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, 0, colecaoItem, itemAtivo['o:id']);
             console.log(` Pontos: +${infoJogo.pontosGanhos} | Coleção: ${colecaoItem}`);
 
+            if (typeof window.atualizarCadernoDeCampo === 'function') {
+                window.atualizarCadernoDeCampo();
+            }
+
 
             if (infoJogo.nivelAtual.titulo === "Curador Estagiário") {
                     console.log("Subida para Estagiário ignorada (já mostrada no onboarding).");
