@@ -324,74 +324,34 @@ function limparFormulario() {
     }
 }
 
-// Interceção da submissão na simulação
 async function confirmarSubmissao() {
-    fecharModal(); // Esconde o modal de segurança
-
-    // ==========================================
-    // 🏆 INJEÇÃO DE PONTOS NO SIMULADOR
-    // ==========================================
-    // Lê o estado das perguntas para atribuir os pontos do jogo
-    const temOutroAnimal = verificarRespostaSimP6();
-    const teveAnimal = !verificarRespostaNaoP1(); 
-    const descricao = document.getElementById('input-descricao')?.value || '';
-    const teveDescricao = descricao.trim().length > 0;
+    fecharModal(); 
     
-    // Na simulação, assumimos 1 animal extra se a P6 for SIM para testar o duplicador
-    const multiplicador = temOutroAnimal ? 1 : 0;
+    // 1. Delega a gravação e a gamificação para o app.js
+    const resultado = await window.submeterFormularioReal();
     
-    if (typeof GestorGamificacao !== 'undefined') {
-        const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, multiplicador, 'simulacao');
+    if (resultado && resultado.sucesso) {
+        const temOutroAnimal = verificarRespostaSimP6(); 
         
-        console.log(`🏆 [SIMULADOR] Pontos Ganhos: ${infoJogo.pontosGanhos} | Total: ${infoJogo.totalPontos}`);
-        
-        // Testa o disparo do Modal de Nível caso o utilizador ultrapasse um marco (ex: 100 pontos)
-        if (infoJogo.subiuDeNivel && typeof abrirModalNivel === 'function') {
-            abrirModalNivel("Novo Nível Alcançado!", `Alcançaste os ${infoJogo.nivelAtual.limite} pontos e és agora um ${infoJogo.nivelAtual.titulo}.`, infoJogo.nivelAtual.imagem);
-        }
-    }
-
-    // ==========================================
-    // 🔄 LÓGICA DE NAVEGAÇÃO DA SIMULAÇÃO
-    // ==========================================
-    if (temOutroAnimal) {
-        console.log("-> [SIMULAÇÃO]: A manter a imagem base e a regressar à Pergunta 2.");
-        limparCamposP2aP6();
-        irParaPasso(2);
-    } else {
-        console.log("-> [SIMULAÇÃO]: Finalizado. Novo registo e regresso à Pergunta 1.");
-        limparFormulario();
-        irParaPasso(1);
-        
-        // Simulação do carregamento de um novo registo
-        simularCarregamentoRegisto();
-    }
-}
-
-// Simulação assíncrona do tempo de carregamento da imagem e da legenda
-async function simularCarregamentoRegisto() {
-    const modalLoading = document.getElementById('modal-carregamento');
-    const legendaDinamica = document.getElementById('legenda-dinamica');
-    
-    if (modalLoading) {
-        modalLoading.style.setProperty('display', 'flex', 'important');
-        const textoLoading = modalLoading.querySelector('.animalx-loading-texto');
-        if (textoLoading) textoLoading.innerText = "A procurar representações no arquivo...";
-    }
-
-    return new Promise(resolve => {
-        setTimeout(() => {
-            if (modalLoading) modalLoading.style.setProperty('display', 'none', 'important');
+        if (temOutroAnimal) {
+            console.log("-> [SIMULAÇÃO]: Manter a imagem base e regressar à Pergunta 2.");
+            limparCamposP2aP6Simulacao();
+            irParaPasso(2);
+        } else {
+            console.log("-> [SIMULAÇÃO]: Fim de ciclo. Limpar e carregar nova imagem.");
+            limparFormulario();
+            irParaPasso(1);
             
-            // Simula a injeção da nova legenda
-            const numAleatorio = Math.floor(Math.random() * 800) + 100;
-            if (legendaDinamica) {
-                legendaDinamica.innerHTML = `<strong>Representação ${numAleatorio}</strong>. Acervo simulado (Século XIX).`;
+            // 2. Aciona o sorteio real do teu JSON mock
+            if (typeof window.carregarItemANIMALx === 'function') {
+                await window.carregarItemANIMALx();
             }
-            resolve(true);
-        }, 1500); // 1.5s de atraso falso para simular uma rede lenta
-    });
+        }
+    } else {
+        alert("Atenção: Houve uma falha ao simular a submissão. Tenta novamente.");
+    }
 }
+
 
 // =========================================
 // MODAIS DE RECOMPENSA E CONSENTIMENTO
