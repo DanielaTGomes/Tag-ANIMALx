@@ -20,6 +20,14 @@ function toggleFullscreen() {
         if (document.exitFullscreen) document.exitFullscreen();
         else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
     }
+    window.addEventListener('DOMContentLoaded', () => {
+    const emIframe = window.self !== window.top;
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (emIframe || urlParams.get('kiosk') === 'true') {
+        document.body.classList.add('em-tela-cheia');
+    }
+});
 }
 
 document.addEventListener('fullscreenchange', () => {
