@@ -2156,3 +2156,36 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 .animalx-livro-aberto-imagem {
     background-image: url('../asset/img/caderno.png');
 }
+
+/* =========================================
+   MODO EXPOSIÇÃO
+========================================= */
+body.em-tela-cheia {
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #6c75b7 !important;
+    overflow: hidden !important;
+}
+
+body.em-tela-cheia #animalx-gamification-wrapper {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #6c75b7 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    zoom: 1 !important;
+    transform: none !important;
+}
+
+/* Esconde o botão redondo de Fullscreen quando já está no Quiosque da Exposição */
+body.em-tela-cheia .animalx-top-nav {
+    display: none !important;
+}
