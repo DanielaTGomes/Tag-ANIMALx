@@ -2520,7 +2520,7 @@ export const ANIMALX_MOCK_DB = [
         "dcterms:identifier": [
             {
                 "type": "literal",
-                "@value": "MC.DES.1662"
+                "@value": "MC.DES.1622"
             }
         ],
         "o:title": "Gallegos - Street in Lisbon",
