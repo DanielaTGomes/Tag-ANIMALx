@@ -180,10 +180,10 @@
                         <!-- 2. PARTE FIXA (Nunca muda, o utilizador pode fazer zoom à vontade) -->
                         <div class="animalx-area-imagem-fixa">
                             <div id="projetor-iiif" data-iiif-manifest="" data-api-item-id="" data-api-metadata="">
-                              <!-- Inserir script para visualização de imagem IIIF -->
+                              
                             </div>
                             <div id="legenda-dinamica" class="animalx-imagem-legenda">    
-                             <!-- Inserir script legenda dinâmica -->
+                        
                             </div>
                         </div>
 
@@ -1012,6 +1012,45 @@
         <div id="animalx-api-form" data-api-form-container></div>
     </div>
 </div>
+
 <script type="module" src="js/navigation.js"></script>
+
+<!-- MOTOR DE ESCALA PROPORCIONAL AUTOMÁTICA (1266x900 -> Qualquer Ecrã) -->
+<script>
+function aplicarEscalaUniversalAnimalx() {
+    const wrapper = document.getElementById('animalx-gamification-wrapper');
+    if (!wrapper) return;
+
+    // Dimensões nativas exatas definidas no teu animalx.css
+    const larguraNativa = 1266;
+    const alturaNativa = 900;
+
+    // Dimensões reais do ecrã onde está a ser aberto (ex: 1920x1080)
+    const larguraEcra = window.innerWidth;
+    const alturaEcra = window.innerHeight;
+
+    // Calcula a proporção exata para caber na largura e na altura (com 2% de margem de segurança)
+    const escala = Math.min(larguraEcra / larguraNativa, alturaEcra / alturaNativa) * 0.98;
+
+    // Aplica a escala mantendo 100% do layout original
+    wrapper.style.setProperty('transform', `scale(${escala})`, 'important');
+}
+
+// Substitui a função de Fullscreen para escalar todo o monitor 1920x1080 perfeitamente
+window.addEventListener('load', () => {
+    aplicarEscalaUniversalAnimalx();
+
+    window.toggleFullscreen = function() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(console.error);
+        } else {
+            document.exitFullscreen();
+        }
+    };
+});
+
+window.addEventListener('resize', aplicarEscalaUniversalAnimalx);
+document.addEventListener('fullscreenchange', aplicarEscalaUniversalAnimalx);
+</script>
 </body>
 </html>
