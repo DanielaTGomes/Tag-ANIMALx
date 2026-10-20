@@ -503,15 +503,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     display: block;
 }
 
-/* Responsivo para ecrãs mais pequenos */
-@media (max-width: 768px) {
-    .animalx-disclaimer-grid {
-        grid-template-columns: 1fr;
-    }
-    .animalx-disclaimer-card {
-        padding: 2rem;
-    }
-}
+
 
 
 /* =========================================
@@ -729,21 +721,6 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     margin-top: 60px;
 }
 
-/* --- RESPONSIVIDADE (ECRÃS MAIS PEQUENOS) --- */
-@media (max-width: 900px) {
-    .animalx-wrapper-principal {
-        padding: 30px;
-        border-width: 15px;
-    }
-    
-    .animalx-layout-colunas {
-        flex-direction: column;
-    }
-    
-    .options-container {
-        flex-direction: column;
-    }
-}
 
 /* =========================================
    FORMULÁRIO ANIMALX - ESTILOS GERAIS
@@ -1851,113 +1828,57 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
 /* =========================================
    MEDIA QUERIES (Responsividade Global)
 ========================================= */
+/* =========================================
+   SISTEMA UNIVERSAL DE ESCALA (1920x1080, 4K e Portáteis)
+   Mantém o layout de 1266x900 inalterado em qualquer ecrã
+========================================= */
 
-/* 1. Laptops e ecrãs curtos (Zoom out automático) */
-@media screen and (max-height: 850px) {
-    #animalx-gamification-wrapper {
-        zoom: 0.85;
-    }
+html, body {
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important; /* Impede barras de scroll externas */
+    background-color: #6c75b7 !important; /* Fundo roxo cobre todo o monitor 1920x1080 */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
 }
 
-@media screen and (max-height: 700px) {
-    #animalx-gamification-wrapper {
-        zoom: 0.75;
-    }
+/* Tranca o wrapper nas dimensões exatas em que foi programado (Modo Normal e Fullscreen) */
+#animalx-gamification-wrapper,
+#animalx-gamification-wrapper:fullscreen,
+#animalx-gamification-wrapper:-webkit-full-screen,
+#animalx-gamification-wrapper:-moz-full-screen,
+:fullscreen #animalx-gamification-wrapper {
+    width: 1266px !important;
+    min-width: 1266px !important;
+    max-width: 1266px !important;
+    height: 900px !important;
+    min-height: 900px !important;
+    max-height: 900px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 1rem !important;
+    zoom: 1 !important; /* Desativa o zoom 0.85 fixo para deixar o JS escalar com precisão */
+    transform-origin: center center !important;
+    flex-shrink: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    display: block !important; /* Anula o flex-direction: column do antigo modo fullscreen */
 }
 
-/* 2. Tablet (até 1024px) */
-@media screen and (max-width: 1024px) {
-    /* Homescreen */
-    .animalx-title-main {
-        font-size: 3.5rem;
-    }
-    .animalx-subtitle-main {
-        font-size: 2rem;
-        margin-bottom: 2.5rem;
-    }
-    .animalx-btn-home {
-        font-size: 2.5rem;
-        width: 350px;
-    }
-    
-    /* Formulário e Modais (Ajustes de espaço) */
-    .animalx-conteiner-perguntas {
-        padding: 2rem !important;
-    }
-    .animalx-modal-caixa {
-        padding: 40px !important;
-        width: 95% !important;
-    }
-}
-
-/* 3. Mobile (até 768px) */
-@media screen and (max-width: 768px) {
-    /* Estrutura Global e Desativação do Zoom */
-    #animalx-gamification-wrapper {
-        padding: 1rem;
-        zoom: 1 !important;
-        transform: none !important;
-    }
-    .animalx-screen.active {
-        flex-direction: column;
-    }
-    .animalx-btn {
-        width: 100%;
-    }
-    .animalx-top-nav {
-            right: 0 !important;
-            left: 0 !important;
-            bottom: 15px !important;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-    h1 {
-        font-size: 1.5rem;
-    }
-    h2 {
-        font-size: 1.2rem;
-    }
-
-    /* Homescreen */
-    .animalx-homescreen-content {
-        justify-content: flex-start;
-        padding-top: 2rem;
-        
-    }
-    .animalx-logo-main {
-        max-width: 200px;
-    }
-    .animalx-title-main {
-        font-size: 2.5rem;
-    }
-    .animalx-subtitle-main {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    .animalx-btn-home {
-        font-size: 2rem;
-        width: 100%;
-        max-width: 300px;
-        padding: 1rem 2rem;
-        border-radius: 1.5rem;
-    }
-
-    /* Formulário e Modais (Empilhamento) */
-    .animalx-conteiner-perguntas {
-        padding: 1rem !important;
-    }
-    .animalx-pergunta-row {
-        flex-direction: column !important;
-        text-align: center;
-        gap: 20px;
-    }
-    .animalx-modal-caixa > div {
-        flex-direction: column !important;
-        text-align: center !important;
-    }
-    .animalx-modal-caixa img#imagem-novo-nivel {
-        width: 150px !important;
-    }
+/* Mantém o padding original de 40px das telas mesmo em modo Fullscreen */
+#animalx-gamification-wrapper:fullscreen .animalx-screen.active,
+:fullscreen #animalx-gamification-wrapper .animalx-screen.active {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    padding: 40px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
 }
 
 /* Estilos extraidos do HTML */
