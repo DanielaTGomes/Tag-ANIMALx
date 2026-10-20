@@ -1,8 +1,16 @@
+/**
+ * Módulo de Navegação - TAG ANIMALx
+ * 
+ * Estrutura de dados e funções para navegação entre as diferentes telas e elementos da aplicação.
+ * 
+ * @module navigation
+ */
+
 // =========================================
 // VARIÁVEIS GLOBAIS DE NAVEGAÇÃO
 // =========================================
 const totalPassos = 6; // Número total de perguntas no formulário
-const totalFolhas = 2; // Número de páginas do caderno de campo
+const totalFolhas = 2; // Número de páginas do caderno de campo.
 const totalPassosGuia = 6; // Número de passos do guia de instruções
 
 let folhaAtual = 1;
@@ -348,7 +356,7 @@ Object.assign(window, {
     verificarConsentimentoEAvancar 
 });
 
-// Inicializa a interface corretamente assim que a página arranca
+// Inicia a interface corretamente assim que a página arranca
 document.addEventListener('DOMContentLoaded', () => { 
     irParaPasso(1); 
     atualizarBotoesNavegacao(); 

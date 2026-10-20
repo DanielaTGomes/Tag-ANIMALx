@@ -1,9 +1,26 @@
+/**
+ * Módulo de Curadoria - TAG ANIMALx
+ * 
+ * Estrutura de dados e funções para gestão do painel de curadoria associado à aplicação.
+ * 
+ * @module curadoria
+ */
+
+
+
 async function carregarPainelCuradoria() {
     const painel = document.getElementById('painel-resultados');
     
     try {
         const resposta = await fetch('/.netlify/functions/carregar-curadoria?acao=itens');
         const itens = await resposta.json();
+
+        if (!Array.isArray(itens)) {
+            const textoCarregamento = document.querySelector('#area-curadoria p');
+            if (textoCarregamento) textoCarregamento.style.display = 'none';
+            painel.innerHTML = `<p style='color:red;'>Erro do servidor: ${itens.erro || 'Falha ao carregar os itens.'}</p>`;
+            return; // Trava a execução para evitar o TypeError
+        }
 
         painel.innerHTML = "";
         let encontrouAlgum = false;
@@ -54,7 +71,7 @@ async function carregarPainelCuradoria() {
                             const valorLimpo = Array.isArray(valor) ? valor[0]['@value'] : valor;
                             const nomeGrupo = `selecao_${idUnicoItem}_${chave.replace(/\s+/g, '')}`;
                             
-                            // TRADUÇÕES VISUAIS: Altera o que aparece no ecrã sem estragar os dados originais
+                            //  Altera o que aparece no ecrã sem estragar os dados originais
                             let chaveVisivel = chave;
                             if (chave === 'Função') chaveVisivel = 'Tipologia';
                             if (chave === 'Animal (Comum)') chaveVisivel = 'Nome Comum';
@@ -119,7 +136,7 @@ async function carregarPainelCuradoria() {
             painel.innerHTML += htmlItem;
         });
 
-        // Remove o texto "A carregar..." do HTML depois de terminar
+        // Remove o texto de carregamento.
         const textoCarregamento = document.querySelector('#area-curadoria p');
         if (textoCarregamento) textoCarregamento.style.display = 'none';
 
@@ -198,8 +215,8 @@ window.concluirCuradoria = async function(idCopia, idOriginal) {
         setTimeout(() => cartao.remove(), 500);
 
     } catch (erro) {
-        console.error("❌ Erro:", erro);
-        divFeedback.innerHTML = `❌ Erro a arquivar.`;
+        console.error(" Erro:", erro);
+        divFeedback.innerHTML = ` Erro a arquivar.`;
     }
 };
 
@@ -217,7 +234,7 @@ window.garantirSelecaoUnica = function(elemento) {
     }
 };
 
-// 2. Seleciona o registo inteiro de um voluntário de uma só vez
+// 2. Seleciona uma resposta inteira de uma só vez
 window.selecionarTudo = function(idItem, indexVoluntario) {
     // Primeiro, limpa TODAS as seleções atuais deste Item
     const todasDoItem = document.querySelectorAll(`input[name^="selecao_${idItem}_"]`);

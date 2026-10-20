@@ -1,3 +1,11 @@
+
+/**
+ * Função serverless para criar o conjunto JSON de dados obtidos nas respostas do formlário, que serão acedidos no painel de curadoria - TAG ANIMALx
+ * 
+ * 
+ * @function criarRascunho
+ */
+
 // =========================================
 // 1. FERRAMENTAS AUXILIARES 
 // // =========================================
@@ -6,8 +14,7 @@
 // MAPEAMENTO DE PROPERTY_IDs DO OMEKA S
 // =========================================
 // Este mapa associa os nomes das propriedades aos seus IDs numéricos no Omeka S.
-// IMPORTANTE: Confirma que estes IDs correspondem à tua instalação do Omeka S!
-// Para obter os IDs corretos, faz um pedido GET a: /api/properties?key_identity=...&key_credential=...
+// IMPORTANTE: Confirmar que estes IDs correspondem à instalação do Omeka S a ser utilizada.
 const MAPA_PROPRIEDADES = {
     'dcterms:title': 1, 'dcterms:subject': 3, 'dcterms:description': 4,
     'dcterms:contributor': 6, 'dcterms:type': 8, 'dcterms:isReferencedBy': 35,

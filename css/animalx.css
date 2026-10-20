@@ -16,7 +16,7 @@
 /* Nohemi 100 */
 @font-face {
     font-family: 'Nohemi';
-    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Thin.ttf') format('truetype');
+   src: url('../asset/fonts/Nohemi-ExtraLight.ttf') format('truetype');
     font-weight: 100;
     font-style: normal;
 }
@@ -24,7 +24,7 @@
 /* Nohemi 200 */
 @font-face {
     font-family: 'Nohemi';
-    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-ExtraLight.ttf') format('truetype');
+    src: url('../asset/fonts/Nohemi-Light.ttf') format('truetype');
     font-weight: 200;
     font-style: normal;
 }
@@ -32,7 +32,7 @@
 /* Nohemi 300 */
 @font-face {
     font-family: 'Nohemi';
-    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Light.ttf') format('truetype');
+    src: url('../asset/fonts/Nohemi-Thin.ttf') format('truetype');
     font-weight: 300;
     font-style: normal;
 }
@@ -40,7 +40,7 @@
 /* Nohemi 400 */
 @font-face {
     font-family: 'Nohemi';
-    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Regular.ttf') format('truetype');
+    src: url('../asset/fonts/Nohemi-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
@@ -48,7 +48,7 @@
 /* Nohemi 500 */
 @font-face {
     font-family: 'Nohemi';
-    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Medium.ttf') format('truetype');
+    src: url('../asset/fonts/Nohemi-Medium.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
 }
@@ -56,7 +56,7 @@
 /* Nohemi 600 */
 @font-face {
     font-family: 'Nohemi';
-    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-SemiBold.ttf') format('truetype');
+    src: url('../asset/fonts/Nohemi-SemiBold.ttf') format('truetype');
     font-weight: 600;
     font-style: normal;
 }
@@ -64,7 +64,7 @@
 /* Nohemi 700 */
 @font-face {
     font-family: 'Nohemi';
-    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Bold.ttf') format('truetype');
+    src: url('../asset/fonts/Nohemi-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
 }
@@ -72,7 +72,7 @@
 /* Nohemi 800 */
 @font-face {
     font-family: 'Nohemi';
-    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-ExtraBold.ttf') format('truetype');
+    src: url('../asset/fonts/Nohemi-ExtraBold.ttf') format('truetype');
     font-weight: 800;
     font-style: normal;
 }
@@ -80,7 +80,7 @@
 /* Nohemi 900 */
 @font-face {
     font-family: 'Nohemi';
-    src: url('C:/xampp/htdocs/omeka_s/modules/TagAnimalx/asset/fonts/Nohemi-Black.ttf') format('truetype');
+    src: url('../asset/fonts/Nohemi-Black.ttf') format('truetype');
     font-weight: 900;
     font-style: normal;
 }
@@ -503,15 +503,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     display: block;
 }
 
-/* Responsivo para ecrãs mais pequenos */
-@media (max-width: 768px) {
-    .animalx-disclaimer-grid {
-        grid-template-columns: 1fr;
-    }
-    .animalx-disclaimer-card {
-        padding: 2rem;
-    }
-}
+
 
 
 /* =========================================
@@ -729,21 +721,7 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     margin-top: 60px;
 }
 
-/* --- RESPONSIVIDADE (ECRÃS MAIS PEQUENOS) --- */
-@media (max-width: 900px) {
-    .animalx-wrapper-principal {
-        padding: 30px;
-        border-width: 15px;
-    }
-    
-    .animalx-layout-colunas {
-        flex-direction: column;
-    }
-    
-    .options-container {
-        flex-direction: column;
-    }
-}
+
 
 /* =========================================
    FORMULÁRIO ANIMALX - ESTILOS GERAIS
@@ -1856,44 +1834,55 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
    MEDIA QUERIES (Responsividade Global)
 ========================================= */
 
-/* 1. Laptops e ecrãs curtos (Zoom out automático) */
-@media screen and (max-height: 850px) {
-    #animalx-gamification-wrapper {
-        zoom: 0.85;
-    }
+html, body {
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important; /* Impede barras de scroll externas */
+    background-color: #6c75b7 !important; /* Fundo roxo cobre todo o monitor 1920x1080 */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
 }
 
-@media screen and (max-height: 700px) {
-    #animalx-gamification-wrapper {
-        zoom: 0.75;
-    }
+/* Tranca o wrapper nas dimensões exatas em que foi programado (Modo Normal e Fullscreen) */
+#animalx-gamification-wrapper,
+#animalx-gamification-wrapper:fullscreen,
+#animalx-gamification-wrapper:-webkit-full-screen,
+#animalx-gamification-wrapper:-moz-full-screen,
+:fullscreen #animalx-gamification-wrapper {
+    width: 1266px !important;
+    min-width: 1266px !important;
+    max-width: 1266px !important;
+    height: 900px !important;
+    min-height: 900px !important;
+    max-height: 900px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 1rem !important;
+    zoom: 1 !important; /* Desativa o zoom 0.85 fixo para deixar o JS escalar com precisão */
+    transform-origin: center center !important;
+    flex-shrink: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    display: block !important; /* Anula o flex-direction: column do antigo modo fullscreen */
 }
 
-/* 2. Tablet (até 1024px) */
-@media screen and (max-width: 1024px) {
-    /* Homescreen */
-    .animalx-title-main {
-        font-size: 3.5rem;
-    }
-    .animalx-subtitle-main {
-        font-size: 2rem;
-        margin-bottom: 2.5rem;
-    }
-    .animalx-btn-home {
-        font-size: 2.5rem;
-        width: 350px;
-    }
-    
-    /* Formulário e Modais (Ajustes de espaço) */
-    .animalx-conteiner-perguntas {
-        padding: 2rem !important;
-    }
-    .animalx-modal-caixa {
-        padding: 40px !important;
-        width: 95% !important;
-    }
+/* Mantém o padding original de 40px das telas mesmo em modo Fullscreen */
+#animalx-gamification-wrapper:fullscreen .animalx-screen.active,
+:fullscreen #animalx-gamification-wrapper .animalx-screen.active {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    padding: 40px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
 }
 
+<<<<<<< Updated upstream
 /* 3. Mobile (até 768px) */
 @media screen and (max-width: 768px) {
     /* Estrutura Global e Desativação do Zoom */
@@ -1963,6 +1952,9 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
     }
 }
 /* 3. Mobile (até 768px) */
+=======
+
+>>>>>>> Stashed changes
 
 /* Deteta telemóveis a ser usados na vertical (modo retrato) */
 @media screen and (max-width: 768px) and (orientation: portrait) {

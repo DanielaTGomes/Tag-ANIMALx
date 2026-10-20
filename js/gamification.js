@@ -1,4 +1,10 @@
-// js/gamification.js
+/**
+ * Módulo de Gamificação - TAG ANIMALx
+ * 
+ * Estrutura de dados e funções para gestão da gamificação da aplicação.
+ * 
+ * @module gamification
+ */
 
 // 1. CONFIGURAÇÕES DO JOGO (MATEMÁTICA)
 export const animalxConfig = {
@@ -8,7 +14,7 @@ export const animalxConfig = {
         bonus_descricao: 10,
         multiplicador_especie_extra: 2
     },
-    // NOVO: Dicionário de siglas para as coleções
+    //  Dicionário de siglas para as coleções
     colecoes: {
         'AZU': 'azulejaria',
         'CER': 'ceramica',
@@ -67,24 +73,22 @@ registarSubmissao(teveAnimal, teveDescricao, multiplicadorEspecie, colecaoSubmet
                 pontosGanhos += 10; // Bónus de Descrição
             }
             
-            // ==========================================
-            // A LINHA RESTAURADA: Soma +1 Animal Identificado!
-            // ==========================================
+            // Soma 1 Animal Identificado se o utilizador submeteu um registo com animal.
+
             progresso.animaisIdentificados = (progresso.animaisIdentificados || 0) + 1;
         }
 
-        // Aplica a duplicação se for espécie extra (O "Combo")
+        // Aplica a duplicação se tiver mais de uma espécie identificada no mesmo registo.
         if (multiplicadorEspecie > 0) {
             pontosGanhos = pontosGanhos * (2 ** multiplicadorEspecie); 
         }
 
-        // 2. ATUALIZAR A MEMÓRIA DO JOGADOR
-        // O utilizador ganha SEMPRE os pontos pelo esforço
+        
         progresso.pontos += pontosGanhos;
 
         // 3. VERIFICAÇÃO DE ID: Este item já subiu a barra de coleção nesta sessão?
         if (!progresso.idsItensTratados) {
-            progresso.idsItensTratados = []; // Cria a lista de memória se não existir
+            progresso.idsItensTratados = []; 
         }
 
         let itemJaFoiContado = false;
@@ -111,7 +115,7 @@ registarSubmissao(teveAnimal, teveDescricao, multiplicadorEspecie, colecaoSubmet
             }
         }
 
-        // 5. GUARDAR E VERIFICAR CARREIRA
+        // 5. GUARDAR E VERIFICAR PROGRESSO
         this.guardarProgresso(progresso);
         let nivelNovo = this.obterNivelAtual(progresso.pontos);
         let subiuDeNivel = false;
@@ -131,5 +135,5 @@ registarSubmissao(teveAnimal, teveDescricao, multiplicadorEspecie, colecaoSubmet
     }
 };
 
-// Se precisares de aceder diretamente via consola para testes:
+
 window.GestorGamificacao = GestorGamificacao;

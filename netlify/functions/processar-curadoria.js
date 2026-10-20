@@ -1,3 +1,11 @@
+
+/**
+ * Função serverless para criar os registos finais, a partir da agregação definida no painel de curadoria - TAG ANIMALx
+ * 
+ * 
+ * @function criarRascunho
+ */
+
 exports.handler = async function(event, context) {
     if (event.httpMethod !== "POST") return { statusCode: 405, body: "Método não permitido" };
 
@@ -8,10 +16,10 @@ exports.handler = async function(event, context) {
         const auth = `key_identity=${process.env.KEY_IDENTITY}&key_credential=${process.env.KEY_CREDENTIAL}`;
 
         // ==========================================
-        // AÇÃO 1: EXTRAIR ANIMAL (Criar Registo Final)
+        // AÇÃO 1: EXTRAIR ANIMAL 
         // ==========================================
         if (tipo === 'extrair') {
-            // 1. Buscar propriedades para mapear
+            // 1. Definir propriedades a mapear
             const resProps = await fetch(`${baseUrl}/properties?${auth}&per_page=1000`);
             const propriedadesData = await resProps.json();
             const mapaProps = {};
@@ -23,7 +31,7 @@ exports.handler = async function(event, context) {
                 "@value": String(valor)
             }];
 
-            // 2. Buscar item original
+            // 2. Procurar o item original no Omeka S
             const resOriginal = await fetch(`${baseUrl}/items/${idOriginal}?${auth}`);
             const itemOriginal = await resOriginal.json();
 
@@ -40,7 +48,7 @@ exports.handler = async function(event, context) {
                 }
             }
 
-            // Injeta as características usando o formatador seguro com as NOVAS CHAVES
+            //3. Injeta os metadados no item novo, de modo a preservar os metadados originais e adicionar os novos campos do formulário
             if (dadosFinais['Nome Comum']) payloadNovoItem['dcterms:title'] = formatarSeguro(dadosFinais['Nome Comum'], 'dcterms:title');
             if (dadosFinais['Tem animal?']) payloadNovoItem['dcterms:subject'] = formatarSeguro(dadosFinais['Tem animal?'], 'dcterms:subject');
             if (dadosFinais['Nome Científico']) payloadNovoItem['dwc:scientificName'] = formatarSeguro(dadosFinais['Nome Científico'], 'dwc:scientificName');
@@ -90,10 +98,10 @@ exports.handler = async function(event, context) {
         }
 
         // ==========================================
-        // AÇÃO 2: CONCLUIR E ARQUIVAR (Remover da fila)
+        // AÇÃO 2: CONCLUIR E ARQUIVAR O REGISTO
         // ==========================================
         if (tipo === 'concluir') {
-            // 1. Tira o Item Original da Coleção Pública
+            // 1. Remove o Item Original da Coleção de Entrada
             await fetch(`${baseUrl}/items/${idOriginal}?${auth}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },

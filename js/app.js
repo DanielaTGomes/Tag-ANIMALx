@@ -64,17 +64,17 @@ function inicializarImagemIIIF(item) {
 function identificarColecaoDoItem(item) {
     if (!item) return null;
     
-    // 1. Puxa o código formatado usando a tua função existente
+    // 1. Puxa o código formatado usando a função existente
     const codigoFormatado = extrairCodigoMedia(item); 
     if (!codigoFormatado) return null;
     
-    // 2. Lê o dicionário de siglas da nossa configuração
+    // 2. Lê o dicionário de siglas para coleções do Museu de Lisboa 
     const mapaSiglas = animalxConfig.colecoes;
     
     // 3. Procura qual das siglas existe no código da imagem
     for (const sigla in mapaSiglas) {
         if (codigoFormatado.includes(sigla)) {
-            return mapaSiglas[sigla]; // Devolve 'azulejaria', 'ceramica', etc.
+            return mapaSiglas[sigla]; 
         }
     }
     
@@ -112,7 +112,7 @@ async function carregarEApresentarItem() {
         return;
     }
 
-    // 2. Verifica se houve um erro crítico
+    // 2. Verifica erro no carregamento de metadados do item
     if (item && item.erroCritico) {
         if (elementoLegenda) elementoLegenda.innerHTML = `<span style='color:red;'><b>DIAGNÓSTICO:</b> ${item.erroCritico}</span>`;
         if (modalLoading) modalLoading.style.setProperty('display', 'none', 'important');
@@ -148,7 +148,7 @@ async function calcularTotaisColecoes() {
     console.log("🔍 A varrer o Conjunto de Itens 1 via Serverless...");
     
     try {
-        // Pede os 2000 itens à função da Netlify
+        // Pede 2000 itens à função da Netlify. Pode ser necessário ajustar conforme o tamanho da base de dados.
         const resposta = await fetch('/.netlify/functions/obter-item?per_page=2000');
         if (resposta.ok) {
             const itens = await resposta.json();
@@ -169,7 +169,7 @@ async function calcularTotaisColecoes() {
 }
 
 // ==========================================
-// ACOLHIMENTO: CURADOR ESTAGIÁRIO
+// Modal de boas-vindas para o formulário
 // ==========================================
 function darBoasVindasEstagiario() {
     const progresso = GestorGamificacao.carregarProgresso();
@@ -179,7 +179,7 @@ function darBoasVindasEstagiario() {
     if (progresso.pontos === 0 && !jaDeuBoasVindas) {
         const nivelEstagiario = animalxConfig.niveis[0];
         
-        // OS TEUS NOVOS TEXTOS PERSONALIZADOS
+        
         const titulo = "O teu primeiro passo na História!";
         const texto = "Acabaste de entrar no arquivo do Museu de Lisboa como Curador Estagiário. Começa a explorar as coleções e ajuda-nos a desvendar as primeiras representações de animais.";
         
@@ -200,10 +200,10 @@ window.darBoasVindasEstagiario = darBoasVindasEstagiario;
 const contagemAtual = obterContagemValidacoes(itemAtivo);
 const novaContagem = contagemAtual + 1;
 
-// 1. Destino do ITEM ORIGINAL (A Imagem Base): Fica no 1 até ter 5 votos
+// 1. Destino do ITEM ORIGINAL: Fica no 1 até ter 5 votos
 const destinoItemOriginal = novaContagem >= 5 ? 22 : 1;
 
-// 2. Destino do NOVO ITEM (A tua classificação): Vai sempre para a 22 (oculto do sorteio)
+// 2. Destino do NOVO ITEM: Vai sempre para a 22 (oculto do sorteio)
 const idColecaoDestino = 22
 /**
  * Obtém a contagem atual de validações de um item.
@@ -315,7 +315,7 @@ export async function submeterFormularioReal() {
         // ============================================
         console.log(`🔄 A criar cópia no Conjunto Intermédio para o Item Base ID: ${itemAtivo['o:id']}...`);
         
-        // Chamamos a função (POST) e passamos o pacote limpo e o item completo para clonagem
+        // Função (POST) para clonagem do item original e agregação de metadados recolhidos.
         const resultado = await submeterRegistoAnimal(dadosParaPainel, itemAtivo);
 
         if (resultado && resultado.sucesso) {
@@ -329,7 +329,7 @@ export async function submeterFormularioReal() {
             const infoJogo = GestorGamificacao.registarSubmissao(teveAnimal, teveDescricao, 0, colecaoItem, itemAtivo['o:id']);
             console.log(` Pontos: +${infoJogo.pontosGanhos} | Coleção: ${colecaoItem}`);
 
-
+            // Verifica se o nível mudou. Em caso afirmativo, mostra o modal de subida de nível.
             if (infoJogo.nivelAtual.titulo === "Curador Estagiário") {
                     console.log("Subida para Estagiário ignorada (já mostrada no onboarding).");
                 } else {
@@ -373,11 +373,11 @@ export async function submeterFormularioReal() {
         return { sucesso: false, erro: erro.message || 'Erro inesperado ao submeter o formulário.' };
     }
 }
-// Torna a função acessível globalmente para o HTML e outras funções
+
 window.submeterFormularioReal = submeterFormularioReal;
 
 // =========================================
-// ATUALIZAÇÃO DO CADERNO DE CAMPO (COM DIAGNÓSTICO)
+// ATUALIZAÇÃO DO CADERNO DE CAMPO 
 // =========================================
 
 window.atualizarCadernoDeCampo = function() {
@@ -403,9 +403,9 @@ window.atualizarCadernoDeCampo = function() {
     const niveis = animalxConfig.niveis;
     
     let limiteBase = 0;
-    let proximoLimite = 100; // Começa por defeito com a meta do Nível 2
+    let proximoLimite = 100; 
     let pontosFaltam = 0;
-    let percentagemBarra = 100; // Por defeito 100% (caso seja o nível máximo)
+    let percentagemBarra = 100; 
 
     // Descobre qual é a meta do próximo nível
     for (let i = 0; i < niveis.length; i++) {
@@ -440,7 +440,7 @@ window.atualizarCadernoDeCampo = function() {
     const totaisGlobais = window.totaisColecoes || {};
     const colecoesProgresso = progresso.colecoes || {};
 
-    // Dicionário com TODAS as 6 tipologias!
+    // Dicionário com as coleções disponíveis.
     const mapeamentoColecoes = {
         'azulejaria': 'Azulejaria',
         'ceramica': 'Ceramica',
@@ -454,7 +454,7 @@ window.atualizarCadernoDeCampo = function() {
         const totalNoServidor = totaisGlobais[chaveApi] || 0;
         const totalVistoPeloUser = colecoesProgresso[chaveApi] || 0;
         
-        // 1. Injeta os números
+        // 1. Injeta os números de itens de cada coleção que há foram analisados.
         const elTratados = document.querySelector(`[data-api-field="tratados${sufixoHtml}"]`);
         const elTotal = document.querySelector(`[data-api-field="total${sufixoHtml}"]`);
         

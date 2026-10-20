@@ -1,9 +1,16 @@
+/**
+ * Função serverless para obter itens do servidor Omeka S - TAG ANIMALx
+ * 
+ * 
+ * @function obterItens
+ */
+
 exports.handler = async function(event, context) {
     try {
         const baseUrl = process.env.API_URL.replace(/\/+$/, '');
         const auth = `key_identity=${process.env.KEY_IDENTITY}&key_credential=${process.env.KEY_CREDENTIAL}`;
         
-        // Lê quantos itens queremos buscar (por defeito 50, mas pode ser 2000)
+        // Lê quantos itens a obter (parâmetro per_page) ou define um limite padrão de 50
         const limite = event.queryStringParameters.per_page || 50;
         const url = `${baseUrl}/items?item_set_id=1&per_page=${limite}&${auth}`;
 

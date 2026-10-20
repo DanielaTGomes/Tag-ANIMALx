@@ -1,3 +1,11 @@
+/**
+ * Função serverless para carregar itens  curadoria - TAG ANIMALx
+ * 
+    * Esta função é responsável por receber dados de submissão do usuário, atualizar o item original com a nova contagem e registrar o histórico de submissões.
+ * 
+ * @function carregarCuradoria
+ */
+
 exports.handler = async function(event, context) {
     try {
         const baseUrl = process.env.API_URL.replace(/\/+$/, '');

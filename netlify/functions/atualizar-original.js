@@ -1,3 +1,11 @@
+/**
+ * Função serverless para atualização de itens na curadoria - TAG ANIMALx
+ * 
+    * Esta função é responsável por receber dados de submissão do usuário, atualizar o item original com a nova contagem e registrar o histórico de submissões.
+ * 
+ * @function atualizarOriginal
+ */
+
 exports.handler = async function(event, context) {
     if (event.httpMethod !== "POST") return { statusCode: 405, body: "Método não permitido" };
 

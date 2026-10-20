@@ -26,22 +26,22 @@
             return { erroCritico: `A coleção está vazia ou não foi encontrada.` };
         }
 
-        // 1. LER A LISTA DE ITENS JÁ VISTOS NESTA SESSÃO
+        // 1. Verificar itens já analisados na sessão
         let vistosStr = sessionStorage.getItem('animalx_vistos');
         let itensVistos = vistosStr ? JSON.parse(vistosStr) : [];
 
-        // 2. FILTRAR OS ITENS (Manter apenas os que NÃO estão na lista de vistos)
+        // 2. Manter apenas os que NÃO estão na lista de analisados)
         const itensDisponiveis = items.filter(item => !itensVistos.includes(item['o:id']));
 
-        // 3. SE NÃO HOUVER MAIS ITENS, AVISA O APP.JS
+        // 3. Quando não houver mais itens disponíveis, avisa o APP.JS
         if (itensDisponiveis.length === 0) {
             return { fimDeRegistos: true }; 
         }
 
-        // 4. ESCOLHE UM ITEM ALEATÓRIO DOS QUE SOBRARAM
+        // 4. Escolhe um item aleatório da lista de disponíveis
         const itemAleatorio = itensDisponiveis[Math.floor(Math.random() * itensDisponiveis.length)];
         
-        // 5. REGISTA ESTE ITEM COMO "VISTO" PARA A PRÓXIMA VEZ
+        // 5. Regista esse item como analisado na sessão para não ser repetido
         itensVistos.push(itemAleatorio['o:id']);
         sessionStorage.setItem('animalx_vistos', JSON.stringify(itensVistos));
 
@@ -126,7 +126,7 @@ function prepararDadosDoItem(item) {
  * Esta função cria um novo "Item" no Omeka S com todos os metadados
  * recolhidos do formulário da aplicação TAG ANIMALx, mapeados para os
  * padrões Dublin Core (dcterms) e Darwin Core (dwc). O item é automaticamente
- * associado ao Item Set com ID 2.
+ * associado ao Item Set intermédio.
  *
  * @param {Object} dadosFormulario - Objeto com os dados do formulário preenchido
  *        Esperado com as propriedades (caso existam):
