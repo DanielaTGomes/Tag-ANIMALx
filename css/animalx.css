@@ -1834,19 +1834,20 @@ PERSONALIZAÇÃO GERAL TAG ANIMALx
    MEDIA QUERIES (Responsividade Global)
 ========================================= */
 
+
 html, body {
     width: 100vw !important;
     height: 100vh !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden !important; /* Impede barras de scroll externas */
-    background-color: #6c75b7 !important; /* Fundo roxo cobre todo o monitor 1920x1080 */
+    overflow: hidden !important; /* Impede scroll duplo fora do jogo */
+    background-color: #6c75b7 !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
 }
 
-/* Tranca o wrapper nas dimensões exatas em que foi programado (Modo Normal e Fullscreen) */
+/* Contentor principal com medidas fixas (1266x900) e SCROLL ATIVO SEMPRE */
 #animalx-gamification-wrapper,
 #animalx-gamification-wrapper:fullscreen,
 #animalx-gamification-wrapper:-webkit-full-screen,
@@ -1861,15 +1862,17 @@ html, body {
     margin: 0 !important;
     padding: 0 !important;
     border-radius: 1rem !important;
-    zoom: 1 !important; /* Desativa o zoom 0.85 fixo para deixar o JS escalar com precisão */
+    zoom: 1 !important;
     transform-origin: center center !important;
     flex-shrink: 0 !important;
+    
+    /* CRUCIAL: Permite sempre fazer scroll vertical (mesmo em Fullscreen!) */
     overflow-y: auto !important;
     overflow-x: hidden !important;
-    display: block !important; /* Anula o flex-direction: column do antigo modo fullscreen */
+    display: block !important;
 }
 
-/* Mantém o padding original de 40px das telas mesmo em modo Fullscreen */
+/* Impede que a regra antiga de fullscreen corte o topo das páginas longas */
 #animalx-gamification-wrapper:fullscreen .animalx-screen.active,
 :fullscreen #animalx-gamification-wrapper .animalx-screen.active {
     display: flex !important;
@@ -1880,6 +1883,26 @@ html, body {
     width: 100% !important;
     height: auto !important;
     min-height: 100% !important;
+}
+
+/* =========================================
+   BARRA DE SCROLL CAMUFLADA 
+========================================= */
+#animalx-gamification-wrapper::-webkit-scrollbar {
+    width: 6px; /* Fina e discreta */
+}
+
+#animalx-gamification-wrapper::-webkit-scrollbar-track {
+    background: transparent; /* Calha 100% invisível sobre o fundo roxo */
+}
+
+#animalx-gamification-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(237, 232, 233, 0.35); /* Tom subtil que só se nota ao deslizar */
+    border-radius: 10px;
+}
+
+#animalx-gamification-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: #ede8e9;
 }
 
 <<<<<<< Updated upstream
