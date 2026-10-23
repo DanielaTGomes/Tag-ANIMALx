@@ -17,10 +17,10 @@
     <div id="animalx-wizard-container" class="animalx-wizard-container">
         
         <nav class="animalx-top-nav">
-      <button onclick="toggleFullscreen()" class="animalx-nav-circle" title="Ecrã Inteiro" style="cursor: pointer;">
+        <!--<button onclick="toggleFullscreen()" class="animalx-nav-circle" title="Ecrã Inteiro" style="cursor: pointer;">
             ⛶
-        </button>
-    </nav>
+        </button> -->
+        </nav>
 
         <div class="animalx-image-container" style="display:none;"></div>
 
@@ -1012,6 +1012,68 @@
         <div id="animalx-api-form" data-api-form-container></div>
     </div>
 </div>
+
+<!-- Formulário Nativo do Omeka S -->
+    <div id="content" role="main" style="display: none;">
+        <div id="animalx-api-form" data-api-form-container></div>
+    </div>
+    <!-- TECLADO VIRTUAL FLUTUANTE E ARRASTÁVEL (DENTRO DO GAMIFICATION WRAPPER) -->
+    <div id="teclado-virtual" class="teclado-escondido">
+        
+        <!-- Barra superior para o utilizador arrastar o teclado para onde quiser -->
+        <div id="teclado-drag-handle" class="teclado-cabecalho">
+            <span class="teclado-drag-icone">⠿ Arrastar Teclado</span>
+            <button type="button" class="teclado-fechar-topo" data-action="close" title="Fechar Teclado">✕</button>
+        </div>
+
+        <!-- Linha 1 -->
+        <div class="teclado-linha">
+            <button type="button" class="tecla" data-char="Q">Q</button>
+            <button type="button" class="tecla" data-char="W">W</button>
+            <button type="button" class="tecla" data-char="E">E</button>
+            <button type="button" class="tecla" data-char="R">R</button>
+            <button type="button" class="tecla" data-char="T">T</button>
+            <button type="button" class="tecla" data-char="Y">Y</button>
+            <button type="button" class="tecla" data-char="U">U</button>
+            <button type="button" class="tecla" data-char="I">I</button>
+            <button type="button" class="tecla" data-char="O">O</button>
+            <button type="button" class="tecla" data-char="P">P</button>
+        </div>
+        <!-- Linha 2 (Com o G corrigido!) -->
+        <div class="teclado-linha">
+            <button type="button" class="tecla" data-char="A">A</button>
+            <button type="button" class="tecla" data-char="S">S</button>
+            <button type="button" class="tecla" data-char="D">D</button>
+            <button type="button" class="tecla" data-char="F">F</button>
+            <button type="button" class="tecla" data-char="G">G</button>
+            <button type="button" class="tecla" data-char="H">H</button>
+            <button type="button" class="tecla" data-char="J">J</button>
+            <button type="button" class="tecla" data-char="K">K</button>
+            <button type="button" class="tecla" data-char="L">L</button>
+            <button type="button" class="tecla" data-char="Ç">Ç</button>
+        </div>
+        <!-- Linha 3 -->
+        <div class="teclado-linha">
+            <button type="button" class="tecla" data-char="Z">Z</button>
+            <button type="button" class="tecla" data-char="X">X</button>
+            <button type="button" class="tecla" data-char="C">C</button>
+            <button type="button" class="tecla" data-char="V">V</button>
+            <button type="button" class="tecla" data-char="B">B</button>
+            <button type="button" class="tecla" data-char="N">N</button>
+            <button type="button" class="tecla" data-char="M">M</button>
+            <button type="button" class="tecla tecla-acao" data-action="backspace">⌫ APAGAR</button>
+        </div>
+        <!-- Linha 4: Ações -->
+        <div class="teclado-linha">
+            <button type="button" class="tecla tecla-acao" data-action="close">FECHAR</button>
+            <button type="button" class="tecla tecla-espaco" data-char=" ">ESPAÇO</button>
+        </div>
+    </div>
+
+
+</div> <!-- FIM DO #animalx-gamification-wrapper -->
+
+
 
 <script type="module" src="js/navigation.js"></script>
 

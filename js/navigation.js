@@ -38,6 +38,7 @@ document.addEventListener('fullscreenchange', () => {
 // NAVEGAÇÃO ENTRE TELAS PRINCIPAIS
 // =========================================
 function irParaTela(idTela) {
+    if (typeof fecharTeclado === 'function') fecharTeclado();
     document.querySelectorAll('.animalx-screen').forEach(tela => tela.classList.remove('active'));
     
     const destino = document.getElementById(idTela);
@@ -100,6 +101,7 @@ function atualizarBotoesNavegacao() {
 // NAVEGAÇÃO DO FORMULÁRIO (PERGUNTAS)
 // =========================================
 function irParaPasso(destino) {
+    if (typeof fecharTeclado === 'function') fecharTeclado();
     for (let passo = 1; passo <= totalPassos; passo++) {
         document.getElementById(`passo-${passo}`)?.style.setProperty('display', passo === destino ? 'flex' : 'none', 'important');
     }
@@ -288,7 +290,7 @@ function verificarRespostaSimP6() {
 }
 
 function limparCamposP2aP6() {
-    const idInputs = ['input-animal', 'input-quantidade', 'input-funcao', 'input-descricao'];
+    const idInputs = ['input-animal', 'input-outro-animal', 'input-quantidade', 'input-funcao', 'input-descricao'];
     idInputs.forEach(id => { let el = document.getElementById(id); if (el) el.value = ''; });
 
     const idRadios = ['check-nao-sei', 'check-nao-sei-p3', 'check-nao-sei-p4', 'check-nao-sei-p5'];
@@ -304,7 +306,7 @@ function limparCamposP2aP6() {
 
 
 function limparCamposP2aP6Simulacao() {
-    const idInputs = ['input-animal', 'input-quantidade', 'input-funcao', 'input-descricao'];
+    const idInputs = ['input-animal', 'input-outro-animal', 'input-quantidade', 'input-funcao', 'input-descricao'];
     idInputs.forEach(id => {
         let el = document.getElementById(id);
         if (el) el.value = '';
@@ -402,3 +404,289 @@ document.addEventListener('DOMContentLoaded', () => {
     irParaPasso(1); 
     atualizarBotoesNavegacao(); 
 });
+
+// =========================================
+// LÓGICA DO TECLADO VIRTUAL (ACENTOS + DRAG & DROP + ESCALA)
+// =========================================
+
+let inputAtivo = null;
+let timerPressaoLonga = null;
+let popupAcentosAtivo = null;
+let pressaoLongaAtivada = false;
+
+const MAPA_ACENTOS = {
+    'A': ['Á', 'À', 'Â', 'Ã'],
+    'E': ['É', 'Ê'],
+    'I': ['Í'],
+    'O': ['Ó', 'Ô', 'Õ'],
+    'U': ['Ú'],
+    'C': ['Ç']
+};
+
+function obterEscalaWrapper() {
+    const wrapper = document.getElementById('animalx-gamification-wrapper');
+    if (!wrapper) return 1;
+    const rect = wrapper.getBoundingClientRect();
+    return rect.width / (wrapper.offsetWidth || 1266);
+}
+
+function inicializarTecladoVirtual() {
+    const teclado = document.getElementById('teclado-virtual');
+    const wrapper = document.getElementById('animalx-gamification-wrapper');
+    if (!teclado) return;
+
+    // Garante que o teclado está dentro do #animalx-gamification-wrapper para escalar sempre a 67%
+    if (wrapper && teclado.parentElement !== wrapper) {
+        wrapper.appendChild(teclado);
+    }
+
+    // 1. SISTEMA DE ARRASTAR O TECLADO (DRAG & DROP)
+    let aArrastar = false;
+    let inicioX = 0, inicioY = 0;
+    let inicialLeft = 0, inicialTop = 0;
+
+    teclado.addEventListener('pointerdown', (e) => {
+        // Se tocou num acento do pop-up, escreve o acento imediatamente!
+        const btnAcento = e.target.closest('.tecla-acento');
+        if (btnAcento) {
+            e.preventDefault();
+            e.stopPropagation();
+            digitarChar(btnAcento.dataset.acento);
+            fecharPopupAcentos();
+            return;
+        }
+
+        // Se tocou no botão X de fechar no topo
+        const btnFecharTopo = e.target.closest('.teclado-fechar-topo');
+        if (btnFecharTopo) {
+            e.preventDefault();
+            fecharTeclado();
+            return;
+        }
+
+        // Se tocou na barra de arrasto ou no fundo roxo do teclado (fora das teclas), inicia o arrasto
+        if (!e.target.closest('.tecla')) {
+            e.preventDefault();
+            aArrastar = true;
+            inicioX = e.clientX;
+            inicioY = e.clientY;
+            inicialLeft = teclado.offsetLeft;
+            inicialTop = teclado.offsetTop;
+            teclado.setPointerCapture(e.pointerId);
+        } else {
+            // Impede que o clique numa tecla tire o foco da caixa de texto
+            e.preventDefault();
+        }
+    });
+
+    teclado.addEventListener('pointermove', (e) => {
+        if (!aArrastar) return;
+        e.preventDefault();
+
+        const escala = obterEscalaWrapper();
+        const deltaX = (e.clientX - inicioX) / escala;
+        const deltaY = (e.clientY - inicioY) / escala;
+
+        const maxLeft = (wrapper ? wrapper.scrollWidth : 1266) - teclado.offsetWidth;
+        const maxTop = (wrapper ? wrapper.scrollHeight : 900) - teclado.offsetHeight;
+
+        const novoLeft = Math.max(0, Math.min(maxLeft, inicialLeft + deltaX));
+        const novoTop = Math.max(0, Math.min(maxTop, inicialTop + deltaY));
+
+        teclado.style.left = `${novoLeft}px`;
+        teclado.style.top = `${novoTop}px`;
+    });
+
+    teclado.addEventListener('pointerup', (e) => {
+        if (aArrastar) {
+            aArrastar = false;
+            try { teclado.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
+    });
+
+    // 2. CONFIGURAÇÃO DAS TECLAS E LONG-PRESS
+    const teclas = teclado.querySelectorAll('.tecla');
+    teclas.forEach(tecla => {
+        const charBase = tecla.dataset.char;
+        const acao = tecla.dataset.action;
+
+        if (charBase && MAPA_ACENTOS[charBase]) {
+            tecla.classList.add('tem-acentos');
+        }
+
+        tecla.addEventListener('pointerdown', (e) => {
+            // Ignora se o clique veio do pop-up de acentos filho desta tecla
+            if (e.target.closest('.acentos-popup')) return;
+
+            e.preventDefault();
+            pressaoLongaAtivada = false;
+            fecharPopupAcentos();
+
+            if (charBase && MAPA_ACENTOS[charBase]) {
+                timerPressaoLonga = setTimeout(() => {
+                    pressaoLongaAtivada = true;
+                    mostrarPopupAcentos(tecla, MAPA_ACENTOS[charBase]);
+                }, 350);
+            }
+        });
+
+        tecla.addEventListener('pointerup', (e) => {
+            if (e.target.closest('.acentos-popup')) return;
+
+            e.preventDefault();
+            clearTimeout(timerPressaoLonga);
+
+            if (!pressaoLongaAtivada) {
+                if (charBase) {
+                    digitarChar(charBase);
+                } else if (acao === 'backspace') {
+                    apagarChar();
+                } else if (acao === 'close') {
+                    fecharTeclado();
+                }
+            }
+        });
+
+        tecla.addEventListener('pointerleave', () => {
+            clearTimeout(timerPressaoLonga);
+        });
+        tecla.addEventListener('pointercancel', () => {
+            clearTimeout(timerPressaoLonga);
+        });
+    });
+}
+
+function mostrarPopupAcentos(teclaElemento, listaAcentos) {
+    fecharPopupAcentos();
+
+    const popup = document.createElement('div');
+    popup.className = 'acentos-popup';
+
+    listaAcentos.forEach(acento => {
+        const btnAcento = document.createElement('button');
+        btnAcento.type = 'button';
+        btnAcento.className = 'tecla-acento';
+        btnAcento.dataset.acento = acento;
+        btnAcento.innerText = acento;
+        popup.appendChild(btnAcento);
+    });
+
+    teclaElemento.appendChild(popup);
+    popupAcentosAtivo = popup;
+}
+
+function fecharPopupAcentos() {
+    if (popupAcentosAtivo) {
+        popupAcentosAtivo.remove();
+        popupAcentosAtivo = null;
+    }
+}
+
+// Abre o teclado ao tocar numa caixa de texto editável
+document.addEventListener('focusin', function(e) {
+    const el = e.target;
+    const isInputTexto = el.tagName === 'INPUT' && el.type === 'text' && !el.hasAttribute('readonly');
+    const isTextarea = el.tagName === 'TEXTAREA' && !el.hasAttribute('readonly');
+
+    if (isInputTexto || isTextarea) {
+        inputAtivo = el;
+        abrirTeclado(el);
+    }
+});
+
+// Fecha o teclado automaticamente ao escolher um animal da lista (exceto "Outro")
+document.addEventListener('click', function(e) {
+    const itemLista = e.target.closest('#lista-animais li');
+    if (itemLista && !itemLista.innerText.includes('Outro')) {
+        fecharTeclado();
+    }
+});
+
+// Fecha o pop-up de acentos se tocar fora dele
+document.addEventListener('pointerdown', function(e) {
+    if (popupAcentosAtivo && !e.target.closest('.acentos-popup')) {
+        fecharPopupAcentos();
+    }
+});
+
+function abrirTeclado(elementoFocado) {
+    const teclado = document.getElementById('teclado-virtual');
+    const wrapper = document.getElementById('animalx-gamification-wrapper');
+    if (!teclado) return;
+
+    // Posição inicial inteligente que não tapa nem a imagem nem a caixa de texto à direita:
+    // No formulário de perguntas, abre no canto inferior esquerdo (por baixo da pergunta, ao lado da textarea)!
+    if (elementoFocado && elementoFocado.closest('#screen-formulario')) {
+        teclado.style.left = '80px';
+        teclado.style.top = '545px';
+    } else {
+            const scrollY = wrapper ? wrapper.scrollTop : 0;
+            teclado.style.left = '293px';
+            teclado.style.top = `${560 + scrollY}px`; 
+            
+            setTimeout(() => {
+                elementoFocado?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+    }
+
+    teclado.classList.remove('teclado-escondido');
+}
+
+function fecharTeclado() {
+    fecharPopupAcentos();
+    const teclado = document.getElementById('teclado-virtual');
+    if (teclado) teclado.classList.add('teclado-escondido');
+    if (inputAtivo) {
+        inputAtivo.blur();
+        inputAtivo = null;
+    }
+}
+
+function digitarChar(letra) {
+    if (!inputAtivo) return;
+
+    const start = typeof inputAtivo.selectionStart === 'number' ? inputAtivo.selectionStart : inputAtivo.value.length;
+    const end = typeof inputAtivo.selectionEnd === 'number' ? inputAtivo.selectionEnd : inputAtivo.value.length;
+    const textoAtual = inputAtivo.value;
+
+    inputAtivo.value = textoAtual.slice(0, start) + letra + textoAtual.slice(end);
+
+    try {
+        inputAtivo.selectionStart = inputAtivo.selectionEnd = start + letra.length;
+    } catch (_) {}
+
+    inputAtivo.focus();
+    inputAtivo.dispatchEvent(new Event('input', { bubbles: true }));
+    inputAtivo.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
+}
+
+function apagarChar() {
+    if (!inputAtivo) return;
+
+    const start = typeof inputAtivo.selectionStart === 'number' ? inputAtivo.selectionStart : inputAtivo.value.length;
+    const end = typeof inputAtivo.selectionEnd === 'number' ? inputAtivo.selectionEnd : inputAtivo.value.length;
+    const textoAtual = inputAtivo.value;
+
+    if (start !== end) {
+        inputAtivo.value = textoAtual.slice(0, start) + textoAtual.slice(end);
+        try { inputAtivo.selectionStart = inputAtivo.selectionEnd = start; } catch (_) {}
+    } else if (start > 0) {
+        inputAtivo.value = textoAtual.slice(0, start - 1) + textoAtual.slice(start);
+        try { inputAtivo.selectionStart = inputAtivo.selectionEnd = start - 1; } catch (_) {}
+    }
+
+    inputAtivo.focus();
+    inputAtivo.dispatchEvent(new Event('input', { bubbles: true }));
+    inputAtivo.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
+}
+
+window.abrirTeclado = abrirTeclado;
+window.fecharTeclado = fecharTeclado;
+window.digitarChar = digitarChar;
+window.apagarChar = apagarChar;
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inicializarTecladoVirtual);
+} else {
+    inicializarTecladoVirtual();
+}
