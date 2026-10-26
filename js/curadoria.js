@@ -24,7 +24,7 @@ async function carregarPainelCuradoria() {
 
             if (identificador) {
                 let codigoLimpo = identificador.replaceAll('.', '_').trim();
-                let urlInfoJson = `https://DanielaTGomes.github.io/imagens_omeka/resultado/${codigoLimpo}/info.json`;
+                let urlInfoJson = `https://projeto-ANIMALx.github.io/imagens_iiif/resultado/${codigoLimpo}/info.json`;
                 
                 // Em vez de <img>, criamos uma <div> vazia com um ID único (baseado no ID do item)
                 let idProjetor = `osd-curadoria-${item['o:id']}`;

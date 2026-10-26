@@ -16,7 +16,7 @@ import { GestorGamificacao, animalxConfig } from './gamification.js';
 let itemAtivo = null;
 let visualizadorIIIF = null;
 
-const URL_BASE_IIIF = 'https://DanielaTGomes.github.io/imagens_omeka/resultado';
+const URL_BASE_IIIF = 'https://projeto-ANIMALx.github.io/imagens_iiif/resultado';
 const PREFIXO_OPEN_SEADRAGON = 'https://cdn.jsdelivr.net/npm/openseadragon@4.1/build/openseadragon/images/';
 
 function extrairCodigoMedia(item) {

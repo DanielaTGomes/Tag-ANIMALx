@@ -80,7 +80,7 @@ function prepararDadosDoItem(item) {
     return {
         item,
         codigoMedia,
-        urlInfoJson: `https://DanielaTGomes.github.io/imagens_omeka/resultado/${codigoMedia}/info.json`,
+        urlInfoJson: `https://projeto-ANIMALx.github.io/imagens_iiif/resultado/${codigoMedia}/info.json`,
         itemId: item?.['o:id'] ?? item?.id ?? '',
         metadata: JSON.stringify(item),
         legenda: `${titulo} (${dataRegisto}) de ${autoria}, disponível no acervo do Museu de Lisboa (${nInventario}).`
@@ -94,7 +94,7 @@ function gerarUrlIiif(itemOriginal) {
     if (!itemOriginal || !itemOriginal['dcterms:identifier']) return null;
     const numInventario = itemOriginal['dcterms:identifier'][0]['@value'];
     const codigoMedia = numInventario.replaceAll('.', '_');
-    return `https://DanielaTGomes.github.io/imagens_omeka/resultado/${codigoMedia}/info.json`;
+    return `https://projeto-ANIMALx.github.io/imagens_iiif/resultado/${codigoMedia}/info.json`;
 }
 
 // =========================================
