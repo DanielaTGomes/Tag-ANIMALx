@@ -262,35 +262,66 @@ export async function submeterFormularioReal() {
         }
 
         // ============================================
-        // PASSO 3: RECOLHA DE DADOS E TAXONOMIA
+        // PASSO 3: RECOLHA DE DADOS E TAXONOMIA (P1 a P6)
         // ============================================
-        const p1Resposta = document.querySelector('#opcoes-p1 .selecionado')?.innerText || "SIM";
+        const p1Resposta = document.querySelector('#opcoes-p1 .selecionado')?.innerText?.trim() || "SIM";
+        const temAnimal = (p1Resposta === "SIM");
 
-        const isAnimalNaoSei = document.getElementById('check-nao-sei')?.checked;
-        const animalSelecionado = isAnimalNaoSei ? "Não sei" : (document.getElementById('input-animal')?.value || "Não identificado");
-        const infoTaxonomia = obterDadosTaxonomicos(animalSelecionado);
+        // P2: Que animal se encontra na imagem? (Menu + Caixa de texto "Outro" + "Não sei")
+        const isAnimalNaoSei = document.getElementById('check-nao-sei')?.checked || false;
+        const menuAnimal = document.getElementById('input-animal')?.value?.trim() || "";
+        const textoOutroAnimal = document.getElementById('input-outro-animal')?.value?.trim() || "";
 
-        const isQuantidadeNaoSei = document.getElementById('check-nao-sei-p3')?.checked;
-        const quantidadeSelecionada = isQuantidadeNaoSei ? "Não sei" : (document.getElementById('input-quantidade')?.value || "Não especificado");
+        let animalSelecionado = "Não aplicável";
+        if (temAnimal) {
+            if (isAnimalNaoSei) {
+                animalSelecionado = "Não sei";
+            } else if (menuAnimal === "Outro" && textoOutroAnimal !== "") {
+                animalSelecionado = `Outro (${textoOutroAnimal})`;
+            } else {
+                animalSelecionado = menuAnimal || "Não identificado";
+            }
+        }
 
-        const isFuncaoNaoSei = document.getElementById('check-nao-sei-p4')?.checked;
-        const funcaoSelecionada = isFuncaoNaoSei ? "Não sei" : (document.getElementById('input-funcao')?.value || "Não especificado");
+        // Se escolheu "Outro" ou "Não tem animal", evita erro na taxonomia
+        const infoTaxonomia = (temAnimal && !isAnimalNaoSei && menuAnimal !== "Outro")
+            ? obterDadosTaxonomicos(menuAnimal)
+            : { cientifico: "Não aplicável", categoria: "Não aplicável" };
 
-        const isDescricaoNaoSei = document.getElementById('check-nao-sei-p5')?.checked;
-        const descricaoPreenchida = isDescricaoNaoSei ? "Sem descrição" : (document.getElementById('input-descricao')?.value || "");
+        // P3: Quantidade (Menu + "Não sei")
+        const isQuantidadeNaoSei = document.getElementById('check-nao-sei-p3')?.checked || false;
+        const menuQuantidade = document.getElementById('input-quantidade')?.value?.trim() || "";
+        const quantidadeSelecionada = !temAnimal ? "Não aplicável" : (isQuantidadeNaoSei ? "Não sei" : (menuQuantidade || "Não especificado"));
+
+        // P4: Função (Menu + "Não sei")
+        const isFuncaoNaoSei = document.getElementById('check-nao-sei-p4')?.checked || false;
+        const menuFuncao = document.getElementById('input-funcao')?.value?.trim() || "";
+        const funcaoSelecionada = !temAnimal ? "Não aplicável" : (isFuncaoNaoSei ? "Não sei" : (menuFuncao || "Não especificado"));
+
+        // P5: Descrição (Textarea + "Não sei")
+        const isDescricaoNaoSei = document.getElementById('check-nao-sei-p5')?.checked || false;
+        const textoDescricao = document.getElementById('input-descricao')?.value?.trim() || "";
+        const descricaoPreenchida = !temAnimal ? "Não aplicável" : (isDescricaoNaoSei ? "Não sei" : (textoDescricao || "Sem descrição"));
+
+        // P6: Há mais algum animal de outra espécie na imagem?
+        const p6Resposta = !temAnimal ? "Não aplicável" : (document.querySelector('#opcoes-p6 .selecionado')?.innerText?.trim() || "NÃO");
 
         // ============================================
         // PASSO 4: EMPACOTAMENTO DOS DADOS LIMPOS
         // ============================================
         const dadosParaPainel = {
+            'Modo de Participação': (modoParticipacao === 'registar' && consentimentoMarcado) ? 'Registado' : 'Anónimo',
             'Curador': nomeUtilizador,
-            'Tem animal?': p1Resposta,
-            'Animal (Comum)': animalSelecionado,
+            'P1 - Tem animal?': p1Resposta,
+            'P2 - Animal (Valor Final)': animalSelecionado,
+            'P2 - Menu Seleção': temAnimal ? menuAnimal : null,
+            'P2 - Texto Outro Animal': (temAnimal && menuAnimal === "Outro") ? textoOutroAnimal : null,
             'Nome Científico': infoTaxonomia.cientifico,
-            'Categoria': infoTaxonomia.categoria,
-            'Quantidade': quantidadeSelecionada,
-            'Função': funcaoSelecionada,
-            'Descrição': descricaoPreenchida
+            'Categoria Taxonómica': infoTaxonomia.categoria,
+            'P3 - Quantidade': quantidadeSelecionada,
+            'P4 - Função': funcaoSelecionada,
+            'P5 - Descrição': descricaoPreenchida,
+            'P6 - Mais algum animal?': p6Resposta
         };
 
         // ============================================
@@ -305,7 +336,7 @@ export async function submeterFormularioReal() {
             console.log(` Sucesso! Cópia criada. A processar gamificação...`);
 
             const teveAnimal = p1Resposta === 'SIM';
-            const teveDescricao = descricaoPreenchida.trim().length > 0 && !isDescricaoNaoSei;
+            const teveDescricao = temAnimal && textoDescricao.length > 0 && !isDescricaoNaoSei;
             const colecaoItem = typeof identificarColecaoDoItem === 'function' ? identificarColecaoDoItem(itemAtivo) : "Desconhecida";
 
             // Aplica os pontos

@@ -98,36 +98,151 @@ function gerarUrlIiif(itemOriginal) {
 }
 
 // =========================================
-// SUBMISSÃO DUPLA (ITEM + MULTIMÉDIA) - MODO SIMULAÇÃO
+// SUBMISSÃO E REGISTO EM JSON - MODO SIMULAÇÃO / EXPOSIÇÃO
 // =========================================
+
 async function submeterRegistoAnimal(dadosFormulario, itemOriginal) {
     try {
         console.log("🛠️ Simulação: A empacotar dados para o localStorage...");
-        const nomeUtilizador = sessionStorage.getItem('animalx_utilizador') || 'Curador Anónimo';
+        const nomeUtilizador = dadosFormulario['Curador'] || sessionStorage.getItem('animalx_utilizador') || 'Curador Anónimo';
 
-        // Tempo de espera artificial para a barra "A guardar a tua descoberta..."
+        // Tempo de espera artificial para a animação de carregamento
         await new Promise(resolve => setTimeout(resolve, 1500));
+
+        const agora = new Date();
+
+        // Extrai os metadados essenciais do registo tratado para leitura rápida no JSON, mantendo também os dados brutos
+        const metadadosRegistoTratado = {
+            id_omeka: itemOriginal?.['o:id'] ?? '',
+            n_inventario: obterValorMetadado(itemOriginal, 'dcterms:identifier') || 'S/N',
+            titulo: obterValorMetadado(itemOriginal, 'dcterms:relation') || obterValorMetadado(itemOriginal, 'o:title') || 'Sem título',
+            data_peca: obterValorMetadado(itemOriginal, 'dcterms:date') || 'S/D',
+            autoria: obterValorMetadado(itemOriginal, 'dcterms:provenance') || 'Autoria desconhecida',
+            tipologia: obterValorMetadado(itemOriginal, 'dcterms:type') || 'Não especificada'
+        };
 
         const novoRegisto = {
             id: `simulacao-${Date.now()}`,
-            dataSubmissao: new Date().toISOString(),
+            diaSubmissao: agora.toLocaleDateString('pt-PT'),
+            horaSubmissao: agora.toLocaleTimeString('pt-PT'),
+            dataSubmissaoISO: agora.toISOString(),
             autor: nomeUtilizador,
-            dadosOriginais: itemOriginal,
-            avaliacao: dadosFormulario,
+            modoParticipacao: dadosFormulario['Modo de Participação'] || 'Anónimo',
+            metadadosRegisto: metadadosRegistoTratado,
+            respostasFormulario: dadosFormulario,
+            dadosOriginaisCompletos: itemOriginal,
             estado: "pendente"
         };
 
-        // Gravação segura no navegador
+        // 1. Gravação segura e cumulativa no navegador
         let dbSimulacao = JSON.parse(localStorage.getItem('animalx_mock_database')) || [];
         dbSimulacao.push(novoRegisto);
         localStorage.setItem('animalx_mock_database', JSON.stringify(dbSimulacao));
 
-        console.log("✅ Registo arquivado na memória local!", novoRegisto);
+        console.log(`✅ Participação #${dbSimulacao.length} arquivada na memória local!`, novoRegisto);
+
+        // 2. Sincroniza com o Gist ANTES de terminar a função!
+        await sincronizarGistGitHub(dbSimulacao);
+
+        // 3. Agora sim, termina e devolve o sucesso ao app.js
         return { sucesso: true, itemId: novoRegisto.id };
 
     } catch (erro) {
         console.error('❌ Erro na simulação de submissão:', erro);
         return { sucesso: false, erro: erro.message };
+    }
+}
+window.sincronizarGistGitHub = sincronizarGistGitHub;
+// =========================================
+// EXPORTADOR DO FICHEIRO JSON DA EXPOSIÇÃO
+// =========================================
+window.descarregarRelatorioJSON = function() {
+    const registos = JSON.parse(localStorage.getItem('animalx_mock_database')) || [];
+
+    if (registos.length === 0) {
+        alert("Ainda não existem participações registadas neste computador.");
+        return;
+    }
+
+    const relatorioFinal = {
+        projeto: "Tag ANIMALx - Registo de Participações",
+        dataExportacao: new Date().toLocaleString('pt-PT'),
+        totalParticipacoes: registos.length,
+        participacoesRegistadasComNome: registos.filter(r => r.modoParticipacao === 'Registado').length,
+        participacoesAnonimas: registos.filter(r => r.modoParticipacao === 'Anónimo').length,
+        registos: registos
+    };
+
+    const jsonString = JSON.stringify(relatorioFinal, null, 2);
+    const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `participacoes_tag_animalx_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
+// Atalho de teclado para a equipa na exposição: Ctrl + Shift + J descarrega o ficheiro JSON imediatamente
+window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) {
+        e.preventDefault();
+        window.descarregarRelatorioJSON();
+    }
+});
+
+// =========================================
+// SINCRONIZAÇÃO ASSÍNCRONA COM GIST SECRETO DO GITHUB
+// =========================================
+const GITHUB_GIST_ID = "36f68911041ce625fec7171c0abc1575";
+const GITHUB_TOKEN = "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";
+
+async function sincronizarGistGitHub(listaCompletaLocal) {
+    console.log("☁️ A iniciar sincronização com o Gist do GitHub...");
+
+    if (!GITHUB_GIST_ID || GITHUB_GIST_ID.includes("COLA_AQUI") || !GITHUB_TOKEN || GITHUB_TOKEN.includes("cola_aqui")) {
+        console.error("❌ ERRO GIST: Falta preencher o GITHUB_GIST_ID ou o GITHUB_TOKEN no api.js!");
+        return;
+    }
+
+    try {
+        const pacoteNuvem = {
+            projeto: "Tag ANIMALx - Exposição",
+            ultimaAtualizacao: new Date().toLocaleString('pt-PT'),
+            totalParticipacoes: listaCompletaLocal.length,
+            participacoesComNome: listaCompletaLocal.filter(r => r.modoParticipacao === 'Registado').length,
+            participacoesAnonimas: listaCompletaLocal.filter(r => r.modoParticipacao === 'Anónimo').length,
+            registos: listaCompletaLocal
+        };
+
+        const resposta = await fetch(`https://api.github.com/gists/${GITHUB_GIST_ID.trim()}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${GITHUB_TOKEN.trim()}`,
+                'Accept': 'application/vnd.github+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                files: {
+                    "participacoes_exposicao.json": {
+                        content: JSON.stringify(pacoteNuvem, null, 2)
+                    }
+                }
+            })
+        });
+
+        if (resposta.ok) {
+            console.log("✅ GIST ATUALIZADO COM SUCESSO! Já podes fazer refresh à página do teu Gist.");
+        } else {
+            const detalheErro = await resposta.json();
+            console.error(`❌ Erro do GitHub (${resposta.status}):`, detalheErro.message);
+        }
+
+    } catch (erro) {
+        console.error("⚠️ Falha de rede ao tentar contactar o GitHub:", erro);
     }
 }
 
